@@ -70,7 +70,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        {/* Light is the default on every visit, whatever the OS says —
+            dark is a deliberate switch, never an assumption. */}
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
           {/* Inside ThemeProvider so the board is drawn in whichever theme is
               on. Last in the tree because it is the last thing that should

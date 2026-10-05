@@ -52,7 +52,10 @@ export function CoinFavicon() {
       if (stopped) return;
       if (now - last >= 80) {
         last = now;
-        angle = (angle + 9) % 360;
+        /* Dwell at the fronts, whip through the edge — the header's own
+           rhythm: readable faces, a blink of a flip between them. */
+        const eased = 4 + 12 * (1 - Math.abs(Math.cos((angle * Math.PI) / 180)));
+        angle = (angle + eased) % 360;
         const squish = Math.abs(Math.cos((angle * Math.PI) / 180));
         ctx.clearRect(0, 0, SIZE, SIZE);
         ctx.save();
