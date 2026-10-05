@@ -89,14 +89,17 @@ function writeFile(all: Record<string, DayEntry>): boolean {
  * The store is KV when connected, a small JSON file otherwise (local dev,
  * or prod before the store is attached). The file backend keeps the Test
  * Webhook button green end to end; KV makes it survive restarts.
+ * The KV hash is namespaced — the team store is shared with other
+ * projects, and our days must never collide with theirs.
  */
+const KV_HASH = "portfolio:steps:days";
 export async function saveDay(
   day: string,
   steps: number,
 ): Promise<{ persisted: boolean }> {
   const entry: DayEntry = { steps, updatedAt: new Date().toISOString() };
   if (hasKvStore()) {
-    await kv.hset("steps:days", { [day]: JSON.stringify(entry) });
+    await kv.hset(KV_HASH, { [day]: JSON.stringify(entry) });
     return { persisted: true };
   }
   const all = readFile();
@@ -106,7 +109,7 @@ export async function saveDay(
 
 export async function readDays(): Promise<Record<string, DayEntry>> {
   if (hasKvStore()) {
-    const raw = await kv.hgetall<Record<string, string>>("steps:days");
+    const raw = await kv.hgetall<Record<string, string>>(KV_HASH);
     const out: Record<string, DayEntry> = {};
     if (raw) {
       for (const [k, v] of Object.entries(raw)) {
