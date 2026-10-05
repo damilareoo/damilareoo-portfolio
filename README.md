@@ -74,22 +74,45 @@ public/dossier/       all artwork, films, case frames, og-image.png
 
 ## Environment
 
-`.env.local` (gitignored, never committed) holds the Spotify app credentials
-for the footer music tile:
+`.env.local` (gitignored, never committed) holds the two app credentials:
 
 ```
 SPOTIFY_CLIENT_ID=
 SPOTIFY_CLIENT_SECRET=
-SPOTIFY_REFRESH_TOKEN=
+SPOTIFY_REFRESH_TOKEN=      # mint once via the authorize flow, reuse everywhere
+STEPS_WEBHOOK_SECRET=       # any long random string; must match the macro header
+STEPS_STRIDE_M=0.762        # metres per step; tunes steps → km
 ```
 
-Without them the tile renders its idle state — the build does not need
-them. To wire live playback: create an app at
+Without Spotify values the music tile renders its idle state — the build
+does not need them. To wire live playback: create an app at
 `developer.spotify.com/dashboard`, whitelist
 `http://localhost:3002/spotify-callback` (plus
 `https://<domain>/spotify-callback` in production), complete the
 authorization-code flow once, and store the resulting refresh token.
 The same token serves every environment.
+
+### Daily steps (Health Connect → macro → webhook)
+
+The footer steps tile shows real kilometres from the owner's phone:
+
+1. On Android: Health Connect shares step data with a macro app
+   (MacroDroid). The macro fires once a day: HTTP POST to
+   `https://<domain>/api/steps` with header
+   `Authorization: Bearer <STEPS_WEBHOOK_SECRET>` and JSON body
+   `{"steps": <count>}` (`step_count`, `value`, `count`, or `km` /
+   `distance_km` are accepted too; an optional `"date": "YYYY-MM-DD"`
+   backfills another day).
+2. The route verifies the bearer, converts with `STEPS_STRIDE_M`,
+   and stores the day.
+3. The tile polls every 5 minutes (and on tab focus) and morphs to the
+   new reading in dot-matrix. Tap flips between today and today+average.
+
+Storage is Vercel KV when `KV_REST_API_URL` + `KV_REST_API_TOKEN` are
+set (dashboard → Storage → Create KV → connect to the project — no code
+changes), otherwise a small JSON file (`data/steps.local.json` locally,
+`/tmp` on serverless). The file backend keeps the macro's Test button
+green end to end; KV makes readings survive restarts and redeploys.
 
 ## Deployment
 

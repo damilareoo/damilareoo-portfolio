@@ -365,7 +365,7 @@ export function MusicTile() {
   );
 }
 
-/* ── steps: dot digits, tap flips ───────────────────────── */
+/* ── steps: morphing dot-matrix kilometres ────────────── */
 
 const DIGITS: Record<string, string[]> = {
   "0": ["111", "101", "101", "101", "111"],
@@ -378,60 +378,151 @@ const DIGITS: Record<string, string[]> = {
   "7": ["111", "001", "001", "010", "010"],
   "8": ["111", "101", "111", "101", "111"],
   "9": ["111", "101", "111", "001", "111"],
-  ",": ["000", "000", "000", "010", "100"],
+  ".": ["0", "0", "0", "0", "1"],
 };
 
-function group(n: number) {
-  return new Intl.NumberFormat("en-US").format(n);
-}
+const DOT_CELL = 24;
+/* Widest reading the tile ever holds ("00.00"), so the units column
+   never wanders while the decimals tick. Steps digits run bigger than
+   the shared field — the tile is the number. */
+const MAX_COLS = 3 + 3 + 1 + 3 + 3 + 4;
+const STEPS_CELL = 19;
 
-function stampNumber(
-  ctx: CanvasRenderingContext2D,
-  S: number,
-  text: string,
-  cx: number,
-  cy: number,
-  color: string,
-) {
-  const cell = S / 24;
-  const glyphs = text.split("").map((ch) => DIGITS[ch] ?? DIGITS["0"]);
-  const widths = glyphs.map((g) => g[0].length);
-  const total = widths.reduce((a, b) => a + b, 0) + (glyphs.length - 1);
-  let x = cx - (total * cell) / 2;
-  glyphs.forEach((g, gi) => {
+type Dot = { col: number; row: number; x: number; y: number };
+
+function layoutDots(text: string, S: number, cy: number): Dot[] {
+  const cell = S / STEPS_CELL;
+  const x0 = S / 2 - (MAX_COLS * cell) / 2;
+  const dots: Dot[] = [];
+  let col = 0;
+  for (const ch of text.split("")) {
+    const g = DIGITS[ch] ?? DIGITS["0"];
     for (let r = 0; r < g.length; r++) {
       for (let c = 0; c < g[r].length; c++) {
         if (g[r][c] === "1") {
-          ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.arc(x + (c + 0.5) * cell, cy + (r - 2.5) * cell, cell * 0.34, 0, Math.PI * 2);
-          ctx.fill();
+          dots.push({
+            col: col + c,
+            row: r,
+            x: x0 + (col + c + 0.5) * cell,
+            y: cy + (r - 2.5) * cell,
+          });
         }
       }
     }
-    x += (widths[gi] + 1) * cell;
-  });
+    col += g[0].length + 1;
+  }
+  return dots;
 }
 
-type StepsReading = { today: number; average: number } | null;
+const dotKey = (d: Dot) => `${d.col}:${d.row}:${Math.round(d.y)}`;
+
+/**
+ * The morph — dots the new reading needs grow in left to right, dots
+ * it drops shrink away first. Shared dots never blink, so a 5.11 →
+ * 5.12 change moves one dot instead of repainting the digit.
+ */
+function morphDots(
+  ctx: CanvasRenderingContext2D,
+  S: number,
+  from: Dot[],
+  to: Dot[],
+  color: string,
+  chrome: () => void,
+) {
+  const cell = S / STEPS_CELL;
+  const fromKeys = new Set(from.map(dotKey));
+  const toMap = new Map(to.map((d) => [dotKey(d), d]));
+  const leaving = from.filter((d) => !toMap.has(dotKey(d)));
+  const entering = to.filter((d) => !fromKeys.has(dotKey(d)));
+  const staying = to.filter((d) => fromKeys.has(dotKey(d)));
+  const calm =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const t0 = performance.now();
+
+  if (calm) {
+    paintDots(ctx, S, 0, () => null);
+    ctx.fillStyle = color;
+    for (const d of to) {
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, cell * 0.34, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    chrome();
+    return () => {};
+  }
+
+  let raf = 0;
+  const paint = (now: number) => {
+    const t = now - t0;
+    ctx.clearRect(0, 0, S, S);
+    ctx.fillStyle = color;
+    for (const d of staying) {
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, cell * 0.34, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    for (const d of leaving) {
+      const k = Math.max(0, 1 - t / 180);
+      if (k <= 0) continue;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, cell * 0.34 * k, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    let live = t < 180;
+    for (const d of entering) {
+      const k = Math.min(1, Math.max(0, (t - 120 - d.col * 14) / 260));
+      if (k <= 0) {
+        live = true;
+        continue;
+      }
+      if (k < 1) live = true;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, cell * 0.34 * k, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (live) {
+      raf = requestAnimationFrame(paint);
+    }
+    chrome();
+  };
+  raf = requestAnimationFrame(paint);
+  return () => cancelAnimationFrame(raf);
+}
+
+type StepsReading = { km: number; averageKm: number; steps: number; date: string } | null;
+
+const fmtKm = (n: number) => n.toFixed(2);
 
 export function StepsTile() {
   const ref = useRef<HTMLCanvasElement>(null);
-  const [data, setData] = useState<StepsReading | null>(null);
+  const [data, setData] = useState<StepsReading>(null);
   const [page, setPage] = useState(0);
+  const shownRef = useRef<Dot[] | null>(null);
 
   useEffect(() => {
     let dead = false;
-    fetch("/api/steps", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => {
-        if (!dead && j && typeof j.today === "number") {
-          setData({ today: j.today, average: j.average ?? j.today });
+    const poll = async () => {
+      try {
+        const res = await fetch("/api/steps", { cache: "no-store" });
+        const j = await res.json();
+        if (!dead && j && j.configured && typeof j.km === "number") {
+          setData({ km: j.km, averageKm: j.averageKm ?? j.km, steps: j.steps ?? 0, date: j.date ?? "" });
         }
-      })
-      .catch(() => {});
+      } catch {
+        /* offline — the last reading (or the rest field) stands */
+      }
+    };
+    poll();
+    const id = setInterval(poll, 5 * 60_000);
+    const onVis = () => {
+      if (document.visibilityState === "visible") poll();
+    };
+    document.addEventListener("visibilitychange", onVis);
     return () => {
       dead = true;
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
     };
   }, []);
 
@@ -439,35 +530,46 @@ export function StepsTile() {
     const s = setupCanvas(ref);
     if (!s) return;
     const { ctx, S } = s;
-    ctx.clearRect(0, 0, S, S);
     if (!data) {
       // unreported: the field at rest
+      shownRef.current = null;
       paintDots(ctx, S, DOT.cols, () => "rgba(255,255,255,0.10)");
       return;
     }
-    if (page === 0) {
-      stampNumber(ctx, S, group(data.today), S / 2, S / 2, "rgba(255,255,255,0.95)");
-    } else {
-      stampNumber(ctx, S, group(data.today), S / 2, S * 0.28, "rgba(255,255,255,0.95)");
-      stampNumber(ctx, S, group(data.average), S / 2, S * 0.72, "rgba(255,255,255,0.95)");
-    }
-    // pager
-    ctx.fillStyle = "rgba(255,255,255,0.9)";
-    [0, 1].forEach((i) => {
-      ctx.globalAlpha = i === page ? 1 : 0.25;
-      ctx.beginPath();
-      ctx.arc(S / 2 + (i - 0.5) * 14, S - 16, 2.5, 0, Math.PI * 2);
-      ctx.fill();
+    const regions =
+      page === 0
+        ? [{ text: fmtKm(data.km), cy: S / 2 }]
+        : [
+            { text: fmtKm(data.km), cy: S * 0.28 },
+            { text: fmtKm(data.averageKm), cy: S * 0.72 },
+          ];
+    const next = regions.flatMap((r) => layoutDots(r.text, S, r.cy));
+    const from = shownRef.current ?? [];
+    shownRef.current = next;
+    const cancel = morphDots(ctx, S, from, next, "rgba(255,255,255,0.95)", () => {
+      // pager — repainted every frame because the morph clears the canvas
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
+      [0, 1].forEach((i) => {
+        ctx.globalAlpha = i === page ? 1 : 0.25;
+        ctx.beginPath();
+        ctx.arc(S / 2 + (i - 0.5) * 14, S - 16, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
     });
-    ctx.globalAlpha = 1;
+    return cancel;
   }, [data, page]);
 
   return (
     <Tile
-      label={data ? `Steps today ${group(data.today)}, 7-day average ${group(data.average)}. Tap to turn the page.` : "Steps not reported"}
-      value={data ? group(data.today) : "—"}
+      label={
+        data
+          ? `Run ${data.date}: ${fmtKm(data.km)} kilometres, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres. Tap to turn the page.`
+          : "Steps not reported"
+      }
+      value={data ? `${fmtKm(data.km)} km` : "—"}
       onTap={() => setPage((p) => (p + 1) % 2)}
-      tapLabel={data ? `Steps, page ${page + 1} of 2. Tap to turn the page.` : "Steps not reported"}
+      tapLabel={data ? `Run, page ${page + 1} of 2. Tap to turn the page.` : "Steps not reported"}
     >
       <canvas ref={ref} aria-hidden className="h-full w-full" />
     </Tile>
