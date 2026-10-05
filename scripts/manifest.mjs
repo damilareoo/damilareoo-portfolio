@@ -1,0 +1,199 @@
+#!/usr/bin/env node
+/**
+ * Scans public/shots and public/work/<slug> and writes data/assets.generated.ts.
+ *
+ * Carried across from /Users/v/portfolio-v2 with one directory renamed: the
+ * source's feed lives in `public/feed`, and this repo's fourteen App Store
+ * screenshots already lived in `public/shots` before the design language
+ * changed. The export is still called `feedAssets` because that is the name
+ * `app/shots/page.tsx` reads.
+ *
+ * Intrinsic dimensions are read straight out of the file headers so the site
+ * takes no image dependency and no frame ever causes layout shift. Drop files
+ * in, run `pnpm manifest`, and the grid knows their shape.
+ *
+ * Naming is the only authoring interface:
+ *   public/shots/2026-04-sylvan-marks.png ->  dated, titled "Sylvan marks"
+ *   public/work/chessever/01-board.png    ->  ordered by the numeric prefix
+ */
+import { readdirSync, statSync, openSync, readSync, closeSync, writeFileSync } from "node:fs";
+import { join, dirname, extname, basename } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const PUBLIC = join(root, "public");
+const EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".avif", ".gif", ".svg"]);
+
+/** PNG carries width and height as big-endian 32-bit ints in the IHDR chunk. */
+function pngSize(fd) {
+  const head = Buffer.alloc(24);
+  readSync(fd, head, 0, 24, 0);
+  if (head.toString("ascii", 12, 16) !== "IHDR") return null;
+  return { width: head.readUInt32BE(16), height: head.readUInt32BE(20) };
+}
+
+/**
+ * JPEG has no fixed header — walk the marker segments until a start-of-frame.
+ * SOF0..SOF15 carry the dimensions; the DHT/DRI/RST markers in between do not.
+ */
+function jpegSize(fd, size) {
+  const buf = Buffer.alloc(size);
+  readSync(fd, buf, 0, size, 0);
+  let offset = 2;
+  while (offset + 9 < size) {
+    if (buf[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+    const marker = buf[offset + 1];
+    const isFrame = marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker);
+    if (isFrame) {
+      return { height: buf.readUInt16BE(offset + 5), width: buf.readUInt16BE(offset + 7) };
+    }
+    offset += 2 + buf.readUInt16BE(offset + 2);
+  }
+  return null;
+}
+
+/** WebP stores dimensions three different ways depending on the codec used. */
+function webpSize(fd) {
+  const buf = Buffer.alloc(32);
+  readSync(fd, buf, 0, 32, 0);
+  const format = buf.toString("ascii", 12, 16);
+  if (format === "VP8X") {
+    return {
+      width: (buf.readUIntLE(24, 3) & 0xffffff) + 1,
+      height: (buf.readUIntLE(27, 3) & 0xffffff) + 1,
+    };
+  }
+  if (format === "VP8 ") {
+    return { width: buf.readUInt16LE(26) & 0x3fff, height: buf.readUInt16LE(28) & 0x3fff };
+  }
+  if (format === "VP8L") {
+    const bits = buf.readUInt32LE(21);
+    return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1 };
+  }
+  return null;
+}
+
+/** GIF puts width and height at bytes 6..9, little-endian, in every version. */
+function gifSize(fd) {
+  const buf = Buffer.alloc(10);
+  readSync(fd, buf, 0, 10, 0);
+  if (buf.toString("ascii", 0, 3) !== "GIF") return null;
+  return { width: buf.readUInt16LE(6), height: buf.readUInt16LE(8) };
+}
+
+/**
+ * Sniffed from the bytes, not the extension — files arrive misnamed often
+ * enough (a JPEG saved as .png) that trusting the suffix silently produces
+ * wrong dimensions, and a wrong dimension is a layout shift.
+ */
+function dimensions(file) {
+  const fd = openSync(file, "r");
+  try {
+    const bytes = statSync(file).size;
+    const magic = Buffer.alloc(12);
+    readSync(fd, magic, 0, 12, 0);
+
+    if (magic.toString("hex", 0, 8) === "89504e470d0a1a0a") return pngSize(fd);
+    if (magic[0] === 0xff && magic[1] === 0xd8) return jpegSize(fd, Math.min(bytes, 1 << 20));
+    if (magic.toString("ascii", 0, 4) === "RIFF" && magic.toString("ascii", 8, 12) === "WEBP") {
+      return webpSize(fd);
+    }
+    if (magic.toString("ascii", 0, 3) === "GIF") return gifSize(fd);
+
+    /* A vector carries its size in the markup rather than in a header, so the
+       viewBox is the honest source — it is what the browser lays the frame out
+       against, whatever width and height attributes claim. */
+    if (extname(file).toLowerCase() === ".svg") {
+      const head = Buffer.alloc(Math.min(bytes, 1024));
+      readSync(fd, head, 0, head.length, 0);
+      const box = head.toString("utf8").match(/viewBox="[\d.]+ [\d.]+ ([\d.]+) ([\d.]+)"/);
+      if (box) return { width: Math.round(+box[1]), height: Math.round(+box[2]) };
+      return null;
+    }
+
+    return null; // avif falls back to the declared ratio below
+  } catch {
+    return null;
+  } finally {
+    closeSync(fd);
+  }
+}
+
+function list(dir) {
+  try {
+    return readdirSync(dir)
+      .filter((name) => EXTENSIONS.has(extname(name).toLowerCase()))
+      .sort();
+  } catch {
+    return []; // the directory not existing yet is a normal state, not an error
+  }
+}
+
+/** "2026-04-sylvan-marks.png" -> { date: "2026-04", title: "Sylvan marks" } */
+function parseName(name) {
+  const stem = basename(name, extname(name));
+  const dated = stem.match(/^(\d{4}(?:-\d{2})?)-(.+)$/);
+  const ordered = stem.match(/^\d+[-_](.+)$/);
+  const rest = dated ? dated[2] : ordered ? ordered[1] : stem;
+  const title = rest.replace(/[-_]+/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+  return { date: dated ? dated[1] : null, title };
+}
+
+function entry(publicPath, absolute, name) {
+  const size = dimensions(absolute) ?? { width: 1600, height: 1200 };
+  const { date, title } = parseName(name);
+  return { src: publicPath, title, date, ...size };
+}
+
+const feed = list(join(PUBLIC, "shots")).map((name) =>
+  entry(`/shots/${name}`, join(PUBLIC, "shots", name), name),
+);
+
+const workDirs = (() => {
+  try {
+    return readdirSync(join(PUBLIC, "work"), { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name)
+      .sort();
+  } catch {
+    return [];
+  }
+})();
+
+const byWork = Object.fromEntries(
+  workDirs.map((slug) => [
+    slug,
+    list(join(PUBLIC, "work", slug)).map((name) =>
+      entry(`/work/${slug}/${name}`, join(PUBLIC, "work", slug, name), name),
+    ),
+  ]),
+);
+
+const out = `// Generated by scripts/manifest.mjs — do not edit by hand.
+// Run \`pnpm manifest\` after dropping files into public/shots or public/work/<slug>.
+
+export type Asset = {
+  src: string;
+  title: string;
+  date: string | null;
+  width: number;
+  height: number;
+};
+
+export const feedAssets: Asset[] = ${JSON.stringify(feed, null, 2)};
+
+export const workAssets: Record<string, Asset[]> = ${JSON.stringify(byWork, null, 2)};
+`;
+
+writeFileSync(join(root, "data", "assets.generated.ts"), out);
+
+const workCount = Object.values(byWork).reduce((n, a) => n + a.length, 0);
+console.log(
+  `manifest: ${feed.length} shot${feed.length === 1 ? "" : "s"}, ` +
+    `${workCount} work asset${workCount === 1 ? "" : "s"} across ${workDirs.length} project${
+      workDirs.length === 1 ? "" : "s"
+    }`,
+);

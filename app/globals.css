@@ -1,0 +1,919 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* A phone held sideways, and the short browser window that measures the same.
+   Height is the scarce axis there, not width: measured at 800×400 the hero band
+   ended 363px down a 400px screen — 91% of the device spent before the first
+   piece of work had begun. These two exist so a short viewport can be given its
+   own arrangement rather than the tall one scrolled. `short` tightens what a
+   short screen spends vertically; `short-wide` is the half of it that may also
+   turn a stacked band into two columns, and it carries the min-width because a
+   340px column is not a column, it is a squeeze. */
+@custom-variant short (@media (max-height: 540px));
+@custom-variant short-wide (@media (max-height: 540px) and (min-width: 600px));
+
+:root {
+  /* Spacing and radii. These were the density dial's three steps and are now
+     one, at the value it shipped in the middle of — the dial went and the
+     tokens stayed, because every surface reads them and a literal 16px
+     scattered across twenty files is what they were written to prevent.
+     `--type-scale` was the fourth and does not survive: it multiplied the root
+     font size, which is what forced every size on the site into rem. */
+  --pg-gap: 16px;
+  --pad: 20px;
+  --radius-window: 16px;
+  --radius-tile: 12px;
+
+  /* How much of the screen one frame may occupy. 78% leaves the frame, its
+     caption, and the top edge of whatever follows on screen together, so
+     scrolling is always a choice rather than a repair. See `.frame-cap`. */
+  --frame-cap: 78svh;
+
+  /* The type scale. Six steps, every one of them used — a reserved seventh for
+     work that might arrive is furniture, which is what the tier vocabulary was.
+
+     Three of them are fluid now, which they could not be while the type dial
+     existed: it multiplied the root font size, so every size on the site had to
+     be a rem for the dial to reach it. The dial is gone and clamp() is
+     available to type for the first time.
+
+     Fluid only where growth is worth something. The three small steps are
+     fixed, because they carry captions, labels, years and counts — type that is
+     already at its floor, and that gets worse rather than better when it grows
+     with the window. The three large steps carry the name, the section titles,
+     the lead lines and the body, and those are the ones a wide column can
+     actually spend room on.
+
+     Every ramp runs 320px to 1280px and then stops. 1280 is not arbitrary: the
+     page's own measure is `max-w-[1240px]` with 24px of gutter, so past roughly
+     there the column stops growing. Type that keeps growing after the measure
+     has stopped is not more readable, it is only bigger, and on a 2560px screen
+     it would be a headline shouting across a column that never widened to take
+     it.
+
+     Both ends of every clamp are rem, and so is the leading term of the
+     preferred value. That is what keeps browser text-size and zoom reaching
+     them — a preferred value of pure vw would pin the size to the window and
+     ignore the visitor entirely, which is the exact failure the dial was a
+     clumsy apology for. lib/type-scale.test.ts holds the shape.
+
+     Nothing is smaller at any width than it was on the fixed scale: each
+     minimum is the value that step used to hold everywhere. */
+  --text-2xs: 0.5625rem;
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-base: clamp(0.9375rem, 0.9167rem + 0.104vw, 1rem);
+  --text-lg: clamp(1.25rem, 1.1667rem + 0.42vw, 1.5rem);
+  --text-xl: clamp(1.875rem, 1.667rem + 1.04vw, 2.5rem);
+
+  /* One cell of a rule, how much of it the dash fills, and what an unlit dot in
+     a field is still worth.
+
+     The rule's fill was `PIXEL_FILL` until the field's pixel became a circle.
+     They were the same number because they meant the same thing, and they
+     stopped meaning it: `PIXEL_FILL` went to 0.82 to repay the area a circle
+     loses to the square it is inscribed in — π/4 of it — and a rule's dash is
+     a square, so it owes no such tax. Sharing the number handed the rules a
+     compensation for a cost they do not pay, and shrank the gap in this 2px
+     pitch from 0.52px to 0.36px, which on a 2× display is a resolvable gap
+     becoming a sub-pixel one. So the rule keeps the hand the pixel had, under
+     its own name, and the field's fill is free to move without dragging it.
+     pixel.test.ts holds that seam open.
+
+     The floor lives here rather than in TypeScript because it is a property of
+     the skin, like a colour, and GlyphCell reads it beside the ink. An unlit
+     dot has to stay present without becoming a wash, and presence costs more
+     ink on a pale ground than on a dark one. This is the light value; `.dark`
+     takes it down. The reasoning is written out in lib/glyph/pixel.ts. */
+  --rule-fill: 0.74;
+  --rule-cell: 2px;
+  --pixel-floor: 0.1;
+
+  /* A grey ramp, one rung brighter than it was.
+
+     Two things were taken from sophia-liu.work and only one of them survived.
+     The hue did not: her neutral is faintly olive, the ramp was rotated to
+     match, the owner looked at it and did not want the cast. What survived is
+     the *ground* — --bg is #fcfcfc exactly, which he asked for by name, and
+     that one value is what moved everything else.
+
+     The old ground sat at #f2f2f2 with the raised surfaces *above* it, and
+     there is no room above #fcfcfc for a frame: #ffffff is already spoken for
+     by --surface, and anything between the two is flatter than the separation
+     test admits. So --surface-2 crossed the ground and became a frame beneath
+     it, landing at almost exactly the luminance --bg used to hold. Read that
+     way nothing in the ramp got lighter or darker: the reading ground climbed
+     one rung and the frame took the rung it left. Every text pair measured
+     against --bg improved; every pair measured against --surface-2 now
+     measures what it used to measure against --bg.
+
+     Taking the hue back out cost none of that. Each grey here was chosen by
+     matching the relative luminance of the warm value it replaces, level for
+     level, so every ratio holds to within 0.02 of what the warm ramp measured
+     — the brightness was doing the work, and the cast was only along for the
+     ride. lib/contrast.test.ts holds all of it, equal channels included. */
+  --bg: #fcfcfc;
+  --surface: #ffffff;
+  --surface-2: #f3f3f3;
+  --border: #dbdbdb;
+  --text-1: #0f0f0f;
+  --text-2: #575757;
+  --text-3: #777777;
+  --fill-strong: #0f0f0f;
+  /* The one hue on the site, and it earns it by carrying a single meaning: a
+     day the goal was missed. Everything around it is a true grey, so this is
+     the only place a channel is allowed to differ from its neighbours. Deeper
+     on the light skin so it holds its weight against a pale ground, brighter
+     on the dark one so it does not go muddy. */
+  --miss: #d92222;
+  /* Pure white, on the strong fill, where the ratio is the whole point and
+     there is nothing above white to spend. */
+  --on-strong: #ffffff;
+}
+
+.dark {
+  /* Near-black still reads as a surface, so an unlit dot needs far less here
+     than on the light skin to be present rather than absent. */
+  --pixel-floor: 0.05;
+
+  /* The dark skin moved for the same reason and kept the movement when the
+     hue came back out. The ground went a shade darker and the inks a shade
+     brighter than they were before the second pass, so every dark pair reads
+     at or above what it used to. Matched to luminance the same way the light
+     skin was. */
+  --bg: #090909;
+  --surface: #161616;
+  --surface-2: #1f1f1f;
+  --border: #2e2e2e;
+  --text-1: #f5f5f5;
+  --text-2: #9a9a9a;
+  --text-3: #6c6c6c;
+  --fill-strong: #f5f5f5;
+  --miss: #ff4d4d;
+  --on-strong: #111111;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-ink: var(--text-1);
+  --color-ink-2: var(--text-2);
+  --color-ink-3: var(--text-3);
+  --color-strong: var(--fill-strong);
+  --color-miss: var(--miss);
+  --color-on-strong: var(--on-strong);
+  --text-2xs: var(--text-2xs);
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-lg: var(--text-lg);
+  --text-xl: var(--text-xl);
+  --font-sans: var(--font-bdo), system-ui, sans-serif;
+  --font-mono: var(--font-suisse-mono), ui-monospace, monospace;
+}
+
+html {
+  background: var(--bg);
+  /* No root font size is declared on purpose. The dial used to multiply one
+     here, which meant the site overrode whatever the visitor had set in their
+     browser and then handed them its own three steps instead. With the dial
+     gone the browser's own text size is simply honoured, which is the setting
+     they already had. */
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--text-1);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--text-1);
+  outline-offset: 2px;
+}
+
+/* A border that separates is a mark; a border that contains is an edge. Rules
+   are drawn as pixels on the icon's own pitch, and square rather than round —
+   a dash reads as a rule, and a row of circles reads as a dotted line imitating
+   one. The field's pixel is a circle now and the rule deliberately did not
+   follow it; see `--rule-fill` above for why it kept the old number too.
+   Containment borders — frames, cards, chips, inputs — are untouched and stay
+   hairlines.
+
+   Wrapped in @layer utilities so last:bg-none — itself emitted inside
+   @layer utilities by Tailwind — can win on cascade order instead of
+   losing to an unlayered declaration regardless of specificity. */
+@layer utilities {
+  .rule-b,
+  .rule-t {
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--border) 0,
+      var(--border) calc(var(--rule-cell) * var(--rule-fill)),
+      transparent calc(var(--rule-cell) * var(--rule-fill)),
+      transparent var(--rule-cell)
+    );
+    background-repeat: repeat-x;
+    background-size: 100% calc(var(--rule-cell) * var(--rule-fill));
+  }
+
+  .rule-b {
+    background-position: bottom left;
+  }
+
+  .rule-t {
+    background-position: top left;
+  }
+
+  /* A frame may not be taller than the screen it is read on.
+
+     Frames are sized by width — they take the measure and let height fall out
+     of the aspect ratio — and nothing used to check the result against the
+     viewport. Measured on a 13" MacBook Air (1440x789): a 1400x1000 capture
+     rendered 1240x886, which is 1.12x the viewport, so the whole frame was
+     never visible at once. /shots was worse at 1.15x. On a 1080p screen it
+     "fit" with 51px to spare — no caption, no next section, no signal that
+     the page continued.
+
+     The cap is expressed as a max-width rather than a max-height, because
+     `aspect-ratio` yields to whichever axis is explicitly constrained: cap the
+     height directly and the box keeps the parent's width and simply crops.
+     Capping the width instead — at exactly the width the ratio needs to reach
+     the height cap — keeps the ratio intact and lets the frame shrink whole.
+
+     `--frame-ratio` is the frame's own width/height as a bare number, set
+     inline by whichever component owns the slot. `svh` is the *small* viewport
+     height, so a phone with its browser chrome showing is measured with the
+     chrome present and the frame still fits when the toolbar returns. This is
+     a viewport unit on purpose: the type dial multiplies rem so that type can
+     be resized, and a picture is not type.
+
+     `width: 100%` is load-bearing and not redundant. An auto inline margin is
+     what centres the frame once the cap has narrowed it, but on a grid or flex
+     item auto margins absorb the free space and cancel the default `stretch`,
+     so the item falls back to its content width. Measured, on the shots
+     mosaic: frames that were nowhere near the cap collapsed anyway — an
+     841x601 band item became 525x375 and a 733x412 became 720x405, neither of
+     which the cap should ever have touched. Declaring the width restores the
+     stretch the margin took away; `max-width` then caps it, and the margins
+     only have free space to absorb once it has. */
+  .frame-cap {
+    width: 100%;
+    max-width: calc(var(--frame-cap) * var(--frame-ratio));
+    margin-inline: auto;
+  }
+}
+
+/* Law 4, amended: an element may animate on arrival, once. It is transformed
+   into place rather than animated by a keyframe, so an element that has already
+   arrived holds no running animation — a page at rest is a screenshot of
+   itself. See lib/reveal.tsx. */
+/* Guarded on scripting: with no JS nothing sets data-arrived, so the starting
+   state must never be applied or the page would render blank. */
+@media (scripting: enabled) {
+  .arrive {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 420ms cubic-bezier(0.16, 1, 0.3, 1) var(--arrive-delay, 0ms),
+      transform 420ms cubic-bezier(0.16, 1, 0.3, 1) var(--arrive-delay, 0ms);
+  }
+
+  .arrive[data-arrived] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The About timeline's line, which is the same arrival one layer down.
+
+   `.arrive` moves a whole element into place; this draws a hairline along a
+   path. The mechanics are the only difference: `pathLength="1"` on the segment
+   redeclares its length as 1, so an offset of 1 is a line not yet drawn and 0
+   is a line finished, whatever height the row it sits in turned out to be. That
+   matters because the timeline's rows are auto — the type decides where a role
+   ends — so nothing on the chart can be given a pixel coordinate in advance.
+
+   Delay and duration come from the dates. Each segment is handed the month it
+   starts on and the months it lasts, so the wavefront travels the chart at one
+   speed in time rather than one speed in pixels: two roles held at once are
+   drawn at once, and a four-month contract takes less of the arrival than a
+   thirteen-month one.
+
+   Guarded on scripting for the same reason `.arrive` is: with no JS nothing
+   ever sets data-drawn, and a line that starts hidden would stay hidden.
+
+   Reduced motion needs both halves. The blanket rule at the foot of this file
+   takes every duration to 0.01ms, which is not enough on its own — a segment
+   nine hundred milliseconds into the sequence would still sit empty for most of
+   a second before snapping in, which is a worse thing to show someone who asked
+   for less motion than the animation was. Zeroing the delay too is what makes
+   the line simply present: the journey withheld, the information not. */
+@media (scripting: enabled) {
+  .tl-track {
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset var(--tl-draw, 600ms) linear var(--tl-delay, 0ms);
+  }
+
+  [data-drawn] .tl-track {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* The delay the blanket rule above cannot reach. See `.tl-track`. */
+  .tl-track {
+    transition-delay: 0ms !important;
+  }
+}
+
+/* Shot tiles deal themselves in on arrival, the same move as the
+   About strip: a short rise, staggered down the stack. Pure CSS so
+   it plays with no JS; reduced motion holds the finished wall. */
+@keyframes shot-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer utilities {
+  .shot-in {
+    animation: shot-in 450ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .micro-button {
+    display: inline-flex;
+    min-width: 2rem;
+    min-height: 2rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-1);
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease,
+      transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .micro-button:hover {
+    border-color: var(--text-3);
+  }
+
+  .micro-button:active {
+    transform: scale(0.94);
+  }
+
+  .micro-button:focus-visible {
+    outline-offset: 3px;
+  }
+
+  .link-micro {
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 4px;
+    transition:
+      color 180ms ease,
+      text-decoration-color 180ms ease;
+  }
+
+  .link-micro:hover {
+    color: var(--text-1);
+    text-decoration-color: var(--text-3);
+  }
+
+  /* The hover sheen: grey type with a light stripe sliding through it,
+     forever while hovered. Pure CSS — no JS, so touch and no-JS readers
+     simply keep the plain resting color. The gradient holds exactly two
+     stripe periods across a 200%-wide tile, so a 0%→100% background slide
+     lands back where it started: the loop has no seam. */
+  .link-sheen {
+    transition: color 180ms ease;
+  }
+
+  .cover-rainbow {
+    background-image: linear-gradient(
+      105deg,
+      transparent 0%,
+      #0198e7 12%,
+      #11b3f8 19%,
+      #fb8429 27%,
+      #f774a6 34%,
+      transparent 42%,
+      transparent 50%,
+      #0198e7 62%,
+      #11b3f8 69%,
+      #fb8429 77%,
+      #f774a6 84%,
+      transparent 92%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    mix-blend-mode: overlay;
+    animation: cover-drift 2s linear infinite;
+  }
+
+  /* Same drift as the rainbow, bands drawn from ChessEver blue
+     (`#0fb4e4` sampled from the app icon) — motion in brand. */
+  .cover-chessever {
+    background-image: linear-gradient(
+      105deg,
+      transparent 0%,
+      #0fb4e4 12%,
+      #7fdcf7 19%,
+      #ffffff 24%,
+      #0fb4e4 29%,
+      transparent 38%,
+      transparent 50%,
+      #0fb4e4 62%,
+      #7fdcf7 69%,
+      #ffffff 74%,
+      #0fb4e4 79%,
+      transparent 88%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    mix-blend-mode: overlay;
+    animation: cover-drift 2s linear infinite;
+  }
+
+  /* Hitman — amber drift on volt yellow. Sylvan — pale green
+     light through the deep dotted ground. Same drift, brand bands. */
+  .cover-hitman {
+    background-image: linear-gradient(
+      105deg,
+      transparent 0%,
+      #e0a92e 12%,
+      #ffffff 19%,
+      #e0a92e 24%,
+      transparent 33%,
+      transparent 50%,
+      #e0a92e 62%,
+      #ffffff 69%,
+      #e0a92e 74%,
+      transparent 83%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    mix-blend-mode: overlay;
+    animation: cover-drift 2s linear infinite;
+  }
+
+  .cover-sylvan {
+    background-image: linear-gradient(
+      105deg,
+      transparent 0%,
+      #3e6b60 12%,
+      #8fc0b3 19%,
+      #ffffff 24%,
+      #3e6b60 29%,
+      transparent 38%,
+      transparent 50%,
+      #3e6b60 62%,
+      #8fc0b3 69%,
+      #ffffff 74%,
+      #3e6b60 79%,
+      transparent 88%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    mix-blend-mode: overlay;
+    animation: cover-drift 2s linear infinite;
+  }
+}
+
+@keyframes sheen-slide {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
+}
+
+/* The cover drift: the reference's thermal rainbow sliding across the
+   Endgame cover forever, no hover needed. Two stripe periods across a
+   200%-wide tile, so the loop has no seam. Overlay blend keeps the
+   black ground black and lets the white wordmark take the color. */
+@keyframes cover-drift {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
+}
+
+/* Link colors. Every link rests grey — solid and readable, no hover
+   needed to know it is a link, touch included. Hover swaps in the
+   sliding stripe. The stripe itself lives in `--sheen`, set per
+   brand next to its resting color. Detail links (vinyl, badge) rest
+   grey and reveal their brand stripe plus popover on hover. */
+.link-sheen {
+  color: #8c8d8c;
+  cursor: pointer;
+  --sheen: linear-gradient(
+    105deg,
+    #8c8d8c 0%,
+    #8c8d8c 14%,
+    #ffffff 19%,
+    #8c8d8c 24%,
+    #8c8d8c 50%,
+    #8c8d8c 64%,
+    #ffffff 69%,
+    #8c8d8c 74%,
+    #8c8d8c 100%
+  );
+}
+
+.dark .link-sheen {
+  color: #9a9a9a;
+  --sheen: linear-gradient(
+    105deg,
+    #9a9a9a 0%,
+    #9a9a9a 14%,
+    #ffffff 19%,
+    #9a9a9a 24%,
+    #9a9a9a 50%,
+    #9a9a9a 64%,
+    #ffffff 69%,
+    #9a9a9a 74%,
+    #9a9a9a 100%
+  );
+}
+
+/* Company sheens — grey at rest (inherited from .link-sheen), brand
+   stripe on hover. Base and band drawn from each brand: HEX teal/mint
+   from their SVG, ChessEver blue sampled from the app icon (4/4 samples
+   `#0fb4e4`), Endgame violet. Dark variants lift the base so the stripe
+   reads on the dark ground. */
+.sheen-hex {
+  --sheen: linear-gradient(
+    105deg,
+    #0f4d51 0%,
+    #0f4d51 14%,
+    #21ffbc 19%,
+    #0f4d51 24%,
+    #0f4d51 50%,
+    #0f4d51 64%,
+    #21ffbc 69%,
+    #0f4d51 74%,
+    #0f4d51 100%
+  );
+}
+
+.dark .sheen-hex {
+  --sheen: linear-gradient(
+    105deg,
+    #21ffbc 0%,
+    #21ffbc 14%,
+    #ffffff 19%,
+    #21ffbc 24%,
+    #21ffbc 50%,
+    #21ffbc 64%,
+    #ffffff 69%,
+    #21ffbc 74%,
+    #21ffbc 100%
+  );
+}
+
+.sheen-chessever {
+  --sheen: linear-gradient(
+    105deg,
+    #0fb4e4 0%,
+    #0fb4e4 14%,
+    #ffffff 19%,
+    #0fb4e4 24%,
+    #0fb4e4 50%,
+    #0fb4e4 64%,
+    #ffffff 69%,
+    #0fb4e4 74%,
+    #0fb4e4 100%
+  );
+}
+
+.dark .sheen-chessever {
+  --sheen: linear-gradient(
+    105deg,
+    #4cc9f0 0%,
+    #4cc9f0 14%,
+    #ffffff 19%,
+    #4cc9f0 24%,
+    #4cc9f0 50%,
+    #4cc9f0 64%,
+    #ffffff 69%,
+    #4cc9f0 74%,
+    #4cc9f0 100%
+  );
+}
+
+.sheen-endgame {
+  --sheen: linear-gradient(
+    105deg,
+    #4400ff 0%,
+    #4400ff 14%,
+    #a38cd5 19%,
+    #4400ff 24%,
+    #4400ff 50%,
+    #4400ff 64%,
+    #a38cd5 69%,
+    #4400ff 74%,
+    #4400ff 100%
+  );
+}
+
+.dark .sheen-endgame {
+  --sheen: linear-gradient(
+    105deg,
+    #a38cd5 0%,
+    #a38cd5 14%,
+    #ffffff 19%,
+    #a38cd5 24%,
+    #a38cd5 50%,
+    #a38cd5 64%,
+    #ffffff 69%,
+    #a38cd5 74%,
+    #a38cd5 100%
+  );
+}
+
+/* Chelsea — grey at rest, the club blue stripe on hover. */
+.sheen-chelsea {
+  --sheen: linear-gradient(
+    105deg,
+    #034694 0%,
+    #034694 14%,
+    #ffffff 19%,
+    #034694 24%,
+    #034694 50%,
+    #034694 64%,
+    #ffffff 69%,
+    #034694 74%,
+    #034694 100%
+  );
+}
+
+.dark .sheen-chelsea {
+  --sheen: linear-gradient(
+    105deg,
+    #3d7bc4 0%,
+    #3d7bc4 14%,
+    #ffffff 19%,
+    #3d7bc4 24%,
+    #3d7bc4 50%,
+    #3d7bc4 64%,
+    #ffffff 69%,
+    #3d7bc4 74%,
+    #3d7bc4 100%
+  );
+}
+
+/* Artist sheens — grey at rest, brand stripe plus vinyl popover on
+   hover. 9ice blue sampled from the Gongo Aso sleeve, Skepta thermal
+   blue/orange from Ignorance Is Bliss. Dark variants lift the base. */
+.sheen-9ice {
+  --sheen: linear-gradient(
+    105deg,
+    #36649f 0%,
+    #36649f 14%,
+    #ffffff 19%,
+    #36649f 24%,
+    #36649f 50%,
+    #36649f 64%,
+    #ffffff 69%,
+    #36649f 74%,
+    #36649f 100%
+  );
+}
+
+.dark .sheen-9ice {
+  --sheen: linear-gradient(
+    105deg,
+    #7aa3d6 0%,
+    #7aa3d6 14%,
+    #ffffff 19%,
+    #7aa3d6 24%,
+    #7aa3d6 50%,
+    #7aa3d6 64%,
+    #ffffff 69%,
+    #7aa3d6 74%,
+    #7aa3d6 100%
+  );
+}
+
+.sheen-skepta {
+  --sheen: linear-gradient(
+    105deg,
+    #0198e7 0%,
+    #0198e7 14%,
+    #fb8429 19%,
+    #0198e7 24%,
+    #0198e7 50%,
+    #0198e7 64%,
+    #fb8429 69%,
+    #0198e7 74%,
+    #0198e7 100%
+  );
+}
+
+.dark .sheen-skepta {
+  --sheen: linear-gradient(
+    105deg,
+    #38b6f4 0%,
+    #38b6f4 14%,
+    #fb8429 19%,
+    #38b6f4 24%,
+    #38b6f4 50%,
+    #38b6f4 64%,
+    #fb8429 69%,
+    #38b6f4 74%,
+    #38b6f4 100%
+  );
+}
+
+@media (hover: hover) {
+  .link-sheen:hover {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background-image: var(--sheen);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: sheen-slide 1.1s linear infinite;
+  }
+}
+@keyframes vinyl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The vinyl drop. Sleeve up front, disc parked behind it; on hover the
+   disc slides right and spins until you leave. Hover-capable pointers
+   only — elsewhere this whole layer never displays. */
+.vinyl-pop {
+  display: none;
+}
+
+@media (hover: hover) {
+  .vinyl-pop {
+    display: block;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    width: 132px;
+    height: 96px;
+    margin-bottom: 10px;
+    transform: translateX(-50%) translateY(4px) scale(0.92);
+    opacity: 0;
+    transition:
+      opacity 220ms ease,
+      transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    z-index: 30;
+  }
+
+  .group\/vinyl:hover .vinyl-pop {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  .vinyl-sleeve {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 96px;
+    height: 96px;
+    border-radius: 6px;
+    background-size: cover;
+    background-position: center;
+    z-index: 2;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    outline: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .vinyl-disc {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 80px;
+    height: 80px;
+    border-radius: 9999px;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    transition: left 260ms cubic-bezier(0.16, 1, 0.3, 1);
+    animation: vinyl-spin 6s linear infinite;
+  }
+
+  .vinyl-disc::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    transform: translate(-50%, -50%);
+    background: #fafafa;
+    outline: 1px solid rgba(0, 0, 0, 0.2);
+  }
+
+  .group\/vinyl:hover .vinyl-disc {
+    left: 44px;
+  }
+
+  .badge-crest {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 76px;
+    height: 76px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.3));
+  }
+}
+
+/* The frost hint breathes once in a while — an invitation, not a button.
+   Pure CSS so it plays with no JS; reduced motion holds it still. */
+@keyframes frost-hint {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.72;
+    transform: translateY(2px);
+  }
+}
+
+@layer utilities {
+  .frost-hint {
+    animation: frost-hint 2.6s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-sheen:hover {
+    animation: none;
+  }
+
+  .cover-rainbow {
+    animation: none;
+  }
+
+  .cover-chessever {
+    animation: none;
+  }
+
+  .cover-hitman {
+    animation: none;
+  }
+
+  .cover-sylvan {
+    animation: none;
+  }
+
+  .vinyl-disc {
+    animation: none;
+  }
+
+  .frost-hint {
+    animation: none;
+  }
+}
