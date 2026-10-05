@@ -7,3 +7,6 @@ node_modules/
 .env*
 !.env.example
 .vercel
+
+# local step readings (dev only, never commit)
+data/steps.local.json

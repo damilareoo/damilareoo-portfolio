@@ -547,15 +547,39 @@ export function StepsTile() {
     const from = shownRef.current ?? [];
     shownRef.current = next;
     const cancel = morphDots(ctx, S, from, next, "rgba(255,255,255,0.95)", () => {
-      // pager — repainted every frame because the morph clears the canvas
-      ctx.fillStyle = "rgba(255,255,255,0.9)";
-      [0, 1].forEach((i) => {
-        ctx.globalAlpha = i === page ? 1 : 0.25;
+      // chrome — repainted every frame because the morph clears the canvas.
+      // The pager borrows the poster's rule: red means you-are-here, so the
+      // today dot burns red while it is the page underfoot, nowhere else.
+      const pager: Array<[number, string, number]> = [
+        [S / 2 - 7, page === 0 ? "#D71920" : "rgba(255,255,255,0.9)", page === 0 ? 1 : 0.25],
+        [S / 2 + 7, "rgba(255,255,255,0.9)", page === 1 ? 1 : 0.25],
+      ];
+      for (const [x, c, a] of pager) {
+        ctx.globalAlpha = a;
+        ctx.fillStyle = c;
         ctx.beginPath();
-        ctx.arc(S / 2 + (i - 0.5) * 14, S - 16, 2.5, 0, Math.PI * 2);
+        ctx.arc(x, S - 16, 3, 0, Math.PI * 2);
         ctx.fill();
-      });
+      }
       ctx.globalAlpha = 1;
+      if (page === 0) {
+        // the poster's unit line, letterspaced mono under the numerals
+        ctx.fillStyle = "rgba(255,255,255,0.55)";
+        ctx.font = `500 ${Math.max(10, S * 0.04)}px ui-monospace, "SF Mono", Menlo, monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "alphabetic";
+        try {
+          (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "3px";
+        } catch {
+          /* older canvas — tracking falls back to the font itself */
+        }
+        ctx.fillText("KILOMETRES", S / 2, S * 0.74);
+        try {
+          (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "0px";
+        } catch {
+          /* reset is best-effort; the canvas clears every frame anyway */
+        }
+      }
     });
     return cancel;
   }, [data, page]);
