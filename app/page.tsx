@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DFooter } from "@/components/dfooter";
 import { DNav } from "@/components/dnav";
+import { ExplorationsRail } from "@/components/explorations-rail";
 
 export const metadata: Metadata = {
   title: { absolute: "Damilare Osofisan — Product Designer" },
@@ -48,26 +49,6 @@ const WORK = [
     img: "/dossier/work/sylvan/sylvan-logo-full.jpg",
     alt: "Sylvan mark and wordmark",
     tint: "sylvan",
-  },
-];
-
-const EXPLORATIONS = [
-  {
-    slug: "nothing-pedometer",
-    exhibit: "Exploration 01",
-    title: "Nothing Pedometer",
-    sub: "Interaction concept — widget to run to poster",
-    video: {
-      src: "/dossier/explorations/nothing-pedometer/nothing-pedometer-concept.mp4",
-      poster: "/dossier/explorations/nothing-pedometer/nothing-pedometer-poster.png",
-    },
-  },
-  {
-    slug: "workbench",
-    exhibit: "Exploration 02",
-    title: "Workbench",
-    sub: "Live canvas — open and arrange",
-    embed: "https://nacre-quake-50137672.figma.site/",
   },
 ];
 
@@ -189,66 +170,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── explorations — swipe rail, playground card layout ── */}
-        <section aria-label="Explorations" className="mt-12">
-          <div className="flex items-baseline justify-between">
-            <h2 className="font-sans text-sm font-medium">Explorations</h2>
-            <p aria-hidden className="font-mono text-xs uppercase tracking-widest text-[#767676] dark:text-[#8a8a8a]">
-              Swipe →
-            </p>
-          </div>
-          <div className="mt-3 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {EXPLORATIONS.map((e, i) => (
-              <article
-                key={e.slug}
-                className="w-[85%] shrink-0 snap-start rounded-2xl bg-[#e8e8e6] p-4 ring-1 ring-[#e0e0de]"
-              >
-                <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-widest text-[#55534f]">
-                  <span>{e.exhibit}</span>
-                  <span aria-hidden>[{String(i + 1).padStart(2, "0")}]</span>
-                </div>
-                <div className="mt-3 h-80 overflow-hidden rounded-xl bg-[#0b0b0d]">
-                  {"video" in e && e.video ? (
-                    <video
-                      src={e.video.src}
-                      poster={e.video.poster}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                      aria-label={`${e.title} interaction concept film`}
-                      className="mx-auto h-full w-auto"
-                    />
-                  ) : "embed" in e && e.embed ? (
-                    <iframe
-                      src={e.embed}
-                      title={`${e.title} — live canvas`}
-                      loading="lazy"
-                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                      className="h-full w-full border-0 bg-white"
-                    />
-                  ) : null}
-                </div>
-                <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
-                  <span className="truncate">{e.title}</span>
-                  {"embed" in e && e.embed ? (
-                    <a
-                      href={e.embed}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="shrink-0 underline decoration-[#b9b9b6] underline-offset-2"
-                    >
-                      Open live ↗
-                    </a>
-                  ) : (
-                    <span aria-hidden className="shrink-0">Concept film</span>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+        {/* ── explorations rail ── */}
+        <ExplorationsRail />
 
         <DFooter />
       </div>
