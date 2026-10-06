@@ -40,10 +40,10 @@ app/
   work/[slug]/        case-file pages with desktop rail + mobile pill
   api/now-playing/    Spotify currently-playing proxy (needs env, below)
   api/steps/          step-count proxy
-  icon.tsx            generated tab icon (face crop, static fallback)
+  icon.tsx            generated tab icon (cap, frame zero of the loop)
 components/
   coin.tsx            header coin — cap front, him back, tap to whip it
-  coin-favicon.tsx    tab coin — the header flip at favicon scale (~12fps)
+  coin-favicon.tsx    tab coin — the header flip at favicon scale (~30fps)
   shots-wall.tsx      sticky icon toolbar, shuffle, captionless viewer
   warp-shot.tsx       pointer-tracked 2D tilt for wall tiles
   harbour-reveal.tsx  canvas frost you drag to wipe; video underneath
@@ -61,8 +61,9 @@ public/dossier/       all artwork, films, case frames, og-image.png
 ## Signature interactions
 
 - **Coin + tab coin** — the header coin spins cap↔him endlessly and whips
-  on tap (with sound, mutable). The tab icon replays the same flip on
-  canvas. Reduced motion rests both on him.
+  on tap (with sound, mutable). The tab icon runs the same linear flip on
+  canvas at the same speed. Reduced motion freezes both — header on him,
+  tab on the static cap.
 - **Shots wall** — three-icon sticky pill (wall / deck / shuffle), click for
   a captionless viewer (arrows + Esc work, no hint text), drag-to-deal deck.
 - **Harbour wipe** — procedural canvas frost (speckle, beaded drops, drip

@@ -7,13 +7,19 @@ const CAP = "/dossier/cap.png";
    object-fit: cover, object-position 50% 38%. */
 const FACE = "/dossier/dami.jpg";
 const SIZE = 64;
+/* The header's own speed — 1.8 degrees per 1/60s frame, linear, endless.
+   Time-based so the tab keeps the exact phase speed at any frame rate. */
+const DEGREES_PER_MS = 1.8 / (1000 / 60);
 
 /**
  * The tab coin — the header flip at favicon scale: his cap to him and
- * back, twelve frames a second. Reduced motion keeps the static face
- * every page already serves; background tabs pause on their own
- * because the loop runs on rAF. Safari (and no-JS) keeps the static
- * icon link this upgrades — the animation is progressive enhancement.
+ * back, linear and endless at the header's own 108°/s. The squish is the
+ * bare cosine with no minimum and the faces trade at edge-on, exactly
+ * like the header's backface swap — no dwell, no whip, one motion in
+ * both places. Reduced motion keeps the static face every page already
+ * serves; background tabs pause on their own because the loop runs on
+ * rAF. Safari (and no-JS) keeps the static icon link this upgrades —
+ * the animation is progressive enhancement.
  */
 export function CoinFavicon() {
   useEffect(() => {
@@ -31,42 +37,32 @@ export function CoinFavicon() {
     let stopped = false;
     let raf = 0;
     let last = 0;
-    let angle = 0;
+    let start = 0;
 
-    const drawContain = (img: HTMLImageElement) => {
-      const s = Math.max(img.naturalWidth, img.naturalHeight);
-      const sc = SIZE / s;
-      const w = img.naturalWidth * sc;
-      const h = img.naturalHeight * sc;
-      ctx.drawImage(img, (SIZE - w) / 2, (SIZE - h) / 2, w, h);
-    };
-
-    const drawHead = (img: HTMLImageElement) => {
+    const drawCover = (img: HTMLImageElement, yFrac: number) => {
       const sc = Math.max(SIZE / img.naturalWidth, SIZE / img.naturalHeight);
       const w = img.naturalWidth * sc;
       const h = img.naturalHeight * sc;
-      ctx.drawImage(img, (SIZE - w) / 2, 0.38 * (SIZE - h), w, h);
+      ctx.drawImage(img, (SIZE - w) / 2, yFrac * (SIZE - h), w, h);
     };
 
     const frame = (now: number) => {
       if (stopped) return;
-      if (now - last >= 80) {
+      if (!start) start = now;
+      if (now - last >= 33) {
         last = now;
-        /* Dwell at the fronts, whip through the edge — the header's own
-           rhythm: readable faces, a blink of a flip between them. */
-        const eased = 4 + 12 * (1 - Math.abs(Math.cos((angle * Math.PI) / 180)));
-        angle = (angle + eased) % 360;
-        const squish = Math.abs(Math.cos((angle * Math.PI) / 180));
+        const angle = (((now - start) * DEGREES_PER_MS) % 360) * (Math.PI / 180);
+        const squish = Math.cos(angle);
         ctx.clearRect(0, 0, SIZE, SIZE);
         ctx.save();
         ctx.beginPath();
         ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2);
         ctx.clip();
         ctx.translate(SIZE / 2, 0);
-        ctx.scale(Math.max(0.1, squish), 1);
+        ctx.scale(Math.max(Math.abs(squish), 0.001), 1);
         ctx.translate(-SIZE / 2, 0);
-        if (angle < 180) drawContain(cap);
-        else drawHead(face);
+        if (squish >= 0) drawCover(cap, 0.5);
+        else drawCover(face, 0.38);
         ctx.restore();
         if (link) link.href = canvas.toDataURL("image/png");
       }

@@ -1,18 +1,20 @@
 import { ImageResponse } from "next/og";
-import { HEAD, portraitDataUri } from "@/lib/portrait-file";
+import { capDataUri, capSize } from "@/lib/portrait-file";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
 /**
- * The home-screen icon: the same crop as the tab icon, at 180.
+ * The home-screen icon: the coin's opening face, at 180.
  *
- * The same window rather than a looser one. iOS rounds the corners itself and a
- * wider crop would put the shoulders where the rounding takes them, so the two
- * icons are deliberately the same picture at two sizes. See `app/icon.tsx`.
+ * The same cap as the tab icon — iOS rounds the corners itself, and a
+ * different crop here would be a second icon. See `app/icon.tsx`.
  */
 export default function AppleIcon() {
-  const scale = 1 / HEAD.size;
+  const nat = capSize();
+  const scale = Math.max(size.width / nat.width, size.height / nat.height);
+  const w = nat.width * scale;
+  const h = nat.height * scale;
 
   return new ImageResponse(
     (
@@ -26,13 +28,13 @@ export default function AppleIcon() {
         }}
       >
         <img
-          src={portraitDataUri()}
+          src={capDataUri()}
           alt=""
-          width={size.width * scale}
-          height={size.height * scale}
+          width={w}
+          height={h}
           style={{
-            marginLeft: -size.width * scale * HEAD.x,
-            marginTop: -size.height * scale * HEAD.y,
+            marginLeft: (size.width - w) / 2,
+            marginTop: (size.height - h) / 2,
           }}
         />
       </div>
