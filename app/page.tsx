@@ -57,11 +57,17 @@ const EXPLORATIONS = [
     exhibit: "Exploration 01",
     title: "Nothing Pedometer",
     sub: "Interaction concept — widget to run to poster",
-    alt: "Nothing pedometer interaction concept film",
     video: {
       src: "/dossier/explorations/nothing-pedometer/nothing-pedometer-concept.mp4",
       poster: "/dossier/explorations/nothing-pedometer/nothing-pedometer-poster.png",
     },
+  },
+  {
+    slug: "workbench",
+    exhibit: "Exploration 02",
+    title: "Workbench",
+    sub: "Live canvas — open and arrange",
+    embed: "https://nacre-quake-50137672.figma.site/",
   },
 ];
 
@@ -183,31 +189,68 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── explorations — same card format as work, labelled apart ── */}
+        {/* ── explorations — swipe rail, playground card layout ── */}
         <section aria-label="Explorations" className="mt-12">
-          <h2 className="font-sans text-sm font-medium">Explorations</h2>
-          <div className="mt-3 space-y-8">
-            {EXPLORATIONS.map((e) => (
-              <div key={e.slug}>
-                <div className="relative block overflow-hidden rounded-lg bg-[#0b0b0d] ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]">
-                  <video
-                    src={e.video.src}
-                    poster={e.video.poster}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    aria-label={e.alt}
-                    className="aspect-[16/10] w-full object-cover"
-                  />
+          <div className="flex items-baseline justify-between">
+            <h2 className="font-sans text-sm font-medium">Explorations</h2>
+            <p aria-hidden className="font-mono text-xs uppercase tracking-widest text-[#767676] dark:text-[#8a8a8a]">
+              Swipe →
+            </p>
+          </div>
+          <div className="mt-3 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {EXPLORATIONS.map((e, i) => (
+              <article
+                key={e.slug}
+                className="w-[85%] shrink-0 snap-start rounded-2xl bg-[#e8e8e6] p-4 ring-1 ring-[#e0e0de]"
+              >
+                <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-widest text-[#55534f]">
+                  <span>{e.exhibit}</span>
+                  <span aria-hidden>[{String(i + 1).padStart(2, "0")}]</span>
                 </div>
-                <p className="mt-2 font-sans text-xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">{e.exhibit}</p>
-                <p className="mt-1 font-sans text-sm font-medium">{e.title}</p>
-                <p className="font-sans text-sm text-[#626262] dark:text-[#a8a8a8]">{e.sub}</p>
-              </div>
+                <div className="mt-3 h-80 overflow-hidden rounded-xl bg-[#0b0b0d]">
+                  {"video" in e && e.video ? (
+                    <video
+                      src={e.video.src}
+                      poster={e.video.poster}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                      aria-label={`${e.title} interaction concept film`}
+                      className="mx-auto h-full w-auto"
+                    />
+                  ) : "embed" in e && e.embed ? (
+                    <iframe
+                      src={e.embed}
+                      title={`${e.title} — live canvas`}
+                      loading="lazy"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                      className="h-full w-full border-0 bg-white"
+                    />
+                  ) : null}
+                </div>
+                <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
+                  <span className="truncate">{e.title}</span>
+                  {"embed" in e && e.embed ? (
+                    <a
+                      href={e.embed}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 underline decoration-[#b9b9b6] underline-offset-2"
+                    >
+                      Open live ↗
+                    </a>
+                  ) : (
+                    <span aria-hidden className="shrink-0">Concept film</span>
+                  )}
+                </div>
+              </article>
             ))}
           </div>
+          <p className="mt-2 font-sans text-sm text-[#626262] dark:text-[#a8a8a8]">
+            Interaction concepts and studies — swipe through, newest last.
+          </p>
         </section>
 
         <DFooter />
