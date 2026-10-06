@@ -248,9 +248,6 @@ export default function Home() {
               </article>
             ))}
           </div>
-          <p className="mt-2 font-sans text-sm text-[#626262] dark:text-[#a8a8a8]">
-            Interaction concepts and studies — swipe through, newest last.
-          </p>
         </section>
 
         <DFooter />
