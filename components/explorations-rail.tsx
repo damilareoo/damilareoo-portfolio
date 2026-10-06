@@ -7,7 +7,7 @@ type Exploration =
       slug: string;
       exhibit: string;
       title: string;
-      video: { src: string; poster: string; wide?: boolean };
+      video: { src: string; poster: string };
       embed?: undefined;
     }
   | {
@@ -33,16 +33,6 @@ const EXPLORATIONS: Exploration[] = [
     exhibit: "Exploration 02",
     title: "Workbench",
     embed: "https://nacre-quake-50137672.figma.site/",
-  },
-  {
-    slug: "harbour-wipe",
-    exhibit: "Exploration 03",
-    title: "Harbour Wipe",
-    video: {
-      src: "/dossier/explorations/harbour-wipe/harbour-wipe.mp4",
-      poster: "/dossier/explorations/harbour-wipe/harbour-wipe-poster.png",
-      wide: true,
-    },
   },
 ];
 
@@ -130,7 +120,7 @@ export function ExplorationsRail() {
                   playsInline
                   preload="metadata"
                   aria-label={`${e.title} interaction concept film`}
-                  className={e.video.wide ? "h-auto w-full rounded-xl" : "h-full w-auto rounded-xl"}
+                  className="h-full w-auto rounded-xl"
                 />
               ) : (
                 <iframe
