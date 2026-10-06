@@ -7,7 +7,7 @@ type Exploration =
       slug: string;
       exhibit: string;
       title: string;
-      video: { src: string; poster: string };
+      video: { src: string; poster: string; wide?: boolean };
       embed?: undefined;
     }
   | {
@@ -33,6 +33,16 @@ const EXPLORATIONS: Exploration[] = [
     exhibit: "Exploration 02",
     title: "Workbench",
     embed: "https://nacre-quake-50137672.figma.site/",
+  },
+  {
+    slug: "harbour-wipe",
+    exhibit: "Exploration 03",
+    title: "Harbour Wipe",
+    video: {
+      src: "/dossier/explorations/harbour-wipe/harbour-wipe.mp4",
+      poster: "/dossier/explorations/harbour-wipe/harbour-wipe-poster.png",
+      wide: true,
+    },
   },
 ];
 
@@ -109,7 +119,7 @@ export function ExplorationsRail() {
               <span>{e.exhibit}</span>
               <span aria-hidden>[{String(i + 1).padStart(2, "0")}]</span>
             </div>
-            <div className="mt-3 flex h-80 justify-center overflow-hidden rounded-xl">
+            <div className="mt-3 flex h-80 items-center justify-center overflow-hidden rounded-xl">
               {e.video ? (
                 <video
                   src={e.video.src}
@@ -120,7 +130,7 @@ export function ExplorationsRail() {
                   playsInline
                   preload="metadata"
                   aria-label={`${e.title} interaction concept film`}
-                  className="h-full w-auto rounded-xl"
+                  className={e.video.wide ? "h-auto w-full rounded-xl" : "h-full w-auto rounded-xl"}
                 />
               ) : (
                 <iframe
