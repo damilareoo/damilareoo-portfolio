@@ -109,7 +109,7 @@ export function ExplorationsRail() {
               <span>{e.exhibit}</span>
               <span aria-hidden>[{String(i + 1).padStart(2, "0")}]</span>
             </div>
-            <div className="mt-3 h-80 overflow-hidden rounded-xl bg-[#0b0b0d]">
+            <div className="mt-3 flex h-80 justify-center overflow-hidden rounded-xl">
               {e.video ? (
                 <video
                   src={e.video.src}
@@ -120,7 +120,7 @@ export function ExplorationsRail() {
                   playsInline
                   preload="metadata"
                   aria-label={`${e.title} interaction concept film`}
-                  className="mx-auto h-full w-auto"
+                  className="h-full w-auto rounded-xl"
                 />
               ) : (
                 <iframe
@@ -128,7 +128,7 @@ export function ExplorationsRail() {
                   title={`${e.title} — live canvas`}
                   loading="lazy"
                   sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                  className="h-full w-full border-0 bg-white"
+                  className="h-full w-full border-0 bg-white rounded-xl"
                 />
               )}
             </div>
@@ -145,7 +145,7 @@ export function ExplorationsRail() {
                 </a>
               ) : (
                 <span aria-hidden className="shrink-0">
-                  Concept film
+                  Interaction concept
                 </span>
               )}
             </div>
