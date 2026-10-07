@@ -74,25 +74,6 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
     <div className="pt-8">
       <p className="text-xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">Shots</p>
 
-      {/* one sticky pill, one icon: shuffle */}
-      <div className="sticky top-4 z-30 mb-8 mt-6 flex justify-center">
-        <div className="bg-white/85 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-[#e5e5e5] backdrop-blur-md rounded-full dark:bg-[#1e1e1e]/85 dark:ring-white/10">
-          <button
-            type="button"
-            onClick={shuffle}
-            aria-label="Shuffle the wall"
-            data-tone="shuffle"
-            className="cursor-pointer rounded-full p-2.5 text-[#767676] transition-colors hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
-          >
-            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M1.5 5h3l7 6h3" />
-              <path d="M1.5 11h3l1.8-1.5M10.7 6.5 12.5 5h2" />
-              <path d="M12.5 2.5v2.5h-2.5M12.5 13.5V11H10" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
       <motion.div layout={!reduced} className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         {order.map((shotIdx, pos) => {
           const s = shots[shotIdx];
@@ -114,6 +95,25 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
           );
         })}
       </motion.div>
+
+      {/* one sticky pill, one icon: shuffle — pinned to the bottom */}
+      <div className="sticky bottom-6 z-30 mt-8 flex justify-center">
+        <div className="bg-white/85 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-[#e5e5e5] backdrop-blur-md rounded-full dark:bg-[#1e1e1e]/85 dark:ring-white/10">
+          <button
+            type="button"
+            onClick={shuffle}
+            aria-label="Shuffle the wall"
+            data-tone="shuffle"
+            className="cursor-pointer rounded-full p-2.5 text-[#767676] transition-colors hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
+          >
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1.5 5h3l7 6h3" />
+              <path d="M1.5 11h3l1.8-1.5M10.7 6.5 12.5 5h2" />
+              <path d="M12.5 2.5v2.5h-2.5M12.5 13.5V11H10" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
       {/* the viewer — captionless: blurred stage, counter, arrows, Esc */}
       {current !== null && focus !== null && (
