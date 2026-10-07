@@ -45,7 +45,7 @@ export function ExplorationIndex({ shots }: { shots: LabShots[] }) {
       >
         {shots[at] && (
           /* eslint-disable-next-line @next/next/no-img-element */
-          <img key={shots[at].src} src={shots[at].src} alt="" aria-hidden draggable={false} className="block h-full w-full object-cover" />
+          <img key={shots[at].src} src={shots[at].src} alt="" aria-hidden draggable={false} className="block h-full w-full object-contain" />
         )}
       </button>
       {open && shots[at] && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setOpen(false)} />}

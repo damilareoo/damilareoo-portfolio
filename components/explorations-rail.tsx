@@ -131,7 +131,7 @@ export function ExplorationsRail() {
                   playsInline
                   preload="metadata"
                   aria-label={`${e.title} interaction concept film`}
-                  className="mx-auto h-full w-auto rounded-xl"
+                  className="h-full w-auto max-w-none rounded-2xl scale-[1.08]"
                 />
               ) : (
                 <iframe
