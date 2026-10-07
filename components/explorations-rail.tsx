@@ -34,21 +34,15 @@ const EXPLORATIONS: Exploration[] = [
       poster: "/dossier/explorations/nothing-pedometer/nothing-pedometer-poster.png",
     },
   },
-  {
-    slug: "workbench",
-    exhibit: "Exploration 02",
-    title: "Workbench",
-    embed: "https://nacre-quake-50137672.figma.site/",
-  },
 ];
 
 /** Inline interaction studies — labeled exhibits, unlabeled images. */
 const LIVE = [
-  { slug: "x-index", exhibit: "Exploration 03", title: "Numeric index", kind: "index", set: "index" },
-  { slug: "x-morph", exhibit: "Exploration 04", title: "Index ⇄ grid", kind: "morph", set: "cover" },
-  { slug: "x-spotlight", exhibit: "Exploration 05", title: "Spotlight", kind: "spotlight", set: "rivers" },
-  { slug: "x-shader", exhibit: "Exploration 06", title: "Shader drift", kind: "shader", set: "" },
-  { slug: "x-warp", exhibit: "Exploration 07", title: "WebGL warp", kind: "warp", set: "waterfall" },
+  { slug: "x-index", exhibit: "Exploration 02", title: "Numeric index", kind: "index", set: "index" },
+  { slug: "x-morph", exhibit: "Exploration 03", title: "Index ⇄ grid", kind: "morph", set: "cover" },
+  { slug: "x-spotlight", exhibit: "Exploration 04", title: "Spotlight", kind: "spotlight", set: "rivers" },
+  { slug: "x-shader", exhibit: "Exploration 05", title: "Shader drift", kind: "shader", set: "" },
+  { slug: "x-warp", exhibit: "Exploration 06", title: "WebGL warp", kind: "warp", set: "waterfall" },
 ] as const;
 
 /**
