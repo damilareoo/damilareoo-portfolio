@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { motion } from "motion/react";
 import { WarpShot } from "./warp-shot";
+import { useReducedMotion } from "@/lib/motion";
 
 type Shot = { src: string; alt: string };
-type View = "stack" | "deck";
+type View = "stack" | "cascade";
 
 function shuffled(n: number): number[] {
   const a = Array.from({ length: n }, (_, i) => i);
@@ -15,43 +17,30 @@ function shuffled(n: number): number[] {
   return a;
 }
 
-/** Deck offsets — a loose pile, top card straight. Shared rhythm per depth. */
-function deckPose(depth: number) {
-  if (depth === 0) return { r: 0, x: 0, y: 0 };
-  const side = depth % 2 === 0 ? 1 : -1;
-  return { r: side * (3 + depth * 2.5), x: side * (14 + depth * 12), y: 6 + depth * 10 };
-}
-
 /**
  * The wall in two views. Stack is the masonry run — shufflable,
- * click-to-open; Deck the viewfinder pile that deals itself in
- * and re-deals on tap. No captions, no chips, no counts: one
- * sticky pill with three icons, plus the title above it.
+ * click-to-open; Cascade the same wall with shuffle as the verb: one
+ * tap and every tile glides to its new home in a staggered wave.
+ * No captions, no chips, no counts: one sticky pill, plus the title.
  */
 export function ShotsWall({ shots }: { shots: Shot[] }) {
   const [view, setView] = useState<View>("stack");
-  const [epoch, setEpoch] = useState(0);
-  const [stackOrder, setStackOrder] = useState<number[] | null>(null);
   const [order, setOrder] = useState<number[]>(() => shots.map((_, i) => i));
   const [focus, setFocus] = useState<number | null>(null);
+  const reduced = useReducedMotion();
 
-  const displayed = useMemo(
-    () =>
-      stackOrder && stackOrder.length === shots.length
-        ? stackOrder.map((p) => shots[p])
-        : shots,
-    [shots, stackOrder],
-  );
+  const displayed = useMemo(() => order.map((p) => shots[p]), [shots, order]);
+  const positions = useMemo(() => {
+    const pos = new Array<number>(shots.length);
+    order.forEach((shotIdx, i) => {
+      pos[shotIdx] = i;
+    });
+    return pos;
+  }, [order, shots.length]);
 
   const shuffle = useCallback(() => {
-    setStackOrder(shuffled(shots.length));
     setOrder(shuffled(shots.length));
-    setEpoch((e) => e + 1);
   }, [shots.length]);
-
-  const cycle = useCallback(() => {
-    setOrder((o) => [...o.slice(1), o[0]]);
-  }, []);
 
   const step = useCallback(
     (dir: 1 | -1) => {
@@ -64,63 +53,19 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
     [displayed.length],
   );
 
-  /* Drag-to-deal: the top card follows the pointer and flings past a
-     threshold. Tap still deals. Reduced motion keeps tap-only. */
-  const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
-  const startRef = useRef<{ x: number; y: number; id: number } | null>(null);
-  const flungRef = useRef(false);
-  const calm = () =>
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  const onDown = (e: React.PointerEvent) => {
-    if (calm()) return;
-    startRef.current = { x: e.clientX, y: e.clientY, id: e.pointerId };
-    flungRef.current = false;
-  };
-  const onMove = (e: React.PointerEvent) => {
-    const s = startRef.current;
-    if (!s || s.id !== e.pointerId) return;
-    const dx = e.clientX - s.x;
-    const dy = e.clientY - s.y;
-    if (Math.hypot(dx, dy) > 8) flungRef.current = true;
-    setDrag({ x: dx, y: dy });
-  };
-  const onUp = (e: React.PointerEvent) => {
-    const s = startRef.current;
-    if (!s || s.id !== e.pointerId) return;
-    startRef.current = null;
-    const dx = e.clientX - s.x;
-    setDrag(null);
-    if (Math.abs(dx) > 90) cycle();
-  };
-  const onTap = () => {
-    if (flungRef.current) {
-      flungRef.current = false;
-      return;
-    }
-    cycle();
-  };
-
-  /* Keys: the viewer takes arrows + Esc when open, otherwise arrows deal the deck. */
+  /* Keys: the viewer takes arrows + Esc when open. */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
-      if (focus !== null) {
-        if (e.key === "Escape") setFocus(null);
-        else if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); step(1); }
-        else if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); step(-1); }
-        return;
-      }
-      if (view !== "deck") return;
-      if (e.key !== "ArrowRight" && e.key !== "ArrowDown" && e.key !== " ") return;
-      e.preventDefault();
-      cycle();
+      if (focus === null) return;
+      if (e.key === "Escape") setFocus(null);
+      else if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); step(1); }
+      else if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); step(-1); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [cycle, focus, step, view]);
+  }, [focus, step]);
 
   /* Lock the page behind the viewer. */
   useEffect(() => {
@@ -138,16 +83,16 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
     <div className="pt-8">
       <p className="text-xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">Shots</p>
 
-      {/* the toolbar — one sticky pill, three icons: wall, deck, shuffle */}
+      {/* the toolbar — one sticky pill: wall, cascade, shuffle */}
       <div className="sticky top-4 z-30 mb-8 mt-6 flex justify-center" role="group" aria-label="Change the wall view">
         <div className="flex items-center gap-1 rounded-full bg-white/85 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-[#e5e5e5] backdrop-blur-md dark:bg-[#1e1e1e]/85 dark:ring-white/10">
-          {(["stack", "deck"] as View[]).map((v) => (
+          {(["stack", "cascade"] as View[]).map((v) => (
             <button
               key={v}
               type="button"
               onClick={() => setView(v)}
               aria-pressed={view === v}
-              aria-label={v === "stack" ? "Show wall" : "Show deck"}
+              aria-label={v === "stack" ? "Show wall" : "Show cascade"}
               data-tone="tap"
               className={`cursor-pointer rounded-full p-2.5 transition-colors ${
                 view === v
@@ -162,9 +107,11 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
                   <line x1="2" y1="12" x2="14" y2="12" />
                 </svg>
               ) : (
-                <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round">
-                  <rect x="4.5" y="4.5" width="9" height="9" rx="2" />
-                  <path d="M11.5 4.5v-1a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1" />
+                <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="1.5" y="1.5" width="5" height="5" rx="1" />
+                  <rect x="9.5" y="1.5" width="5" height="5" rx="1" />
+                  <rect x="1.5" y="9.5" width="5" height="5" rx="1" />
+                  <rect x="9.5" y="9.5" width="5" height="5" rx="1" />
                 </svg>
               )}
             </button>
@@ -190,7 +137,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
         <div className="columns-2 gap-3 sm:columns-3 sm:gap-4">
           {displayed.map((s, i) => (
             <button
-              key={`${epoch}-${s.src}`}
+              key={s.src}
               type="button"
               onClick={() => setFocus(i)}
               aria-label={`Open ${s.alt}`}
@@ -203,51 +150,27 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
         </div>
       )}
 
-      {view === "deck" && (
-        <div className="relative mx-auto h-[68vh] max-h-[560px] min-h-[400px] w-full max-w-[420px]">
-          {order.map((shotIdx, depth) => {
+      {view === "cascade" && (
+        <motion.div layout={!reduced} className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+          {order.map((shotIdx, pos) => {
             const s = shots[shotIdx];
-            if (!s) return null;
-            const pose = deckPose(Math.min(depth, 5));
             return (
-              <div
+              <motion.button
                 key={s.src}
-                className={`absolute left-1/2 top-1/2 w-[82%] transition-transform duration-300 ease-[cubic-bezier(0.34,1.35,0.64,1)] motion-reduce:transition-none ${depth === 0 ? "touch-pan-y select-none" : ""}`}
-                style={{
-                  transform:
-                    drag && depth === 0
-                      ? `translate(calc(-50% + ${pose.x + drag.x}px), calc(-50% + ${pose.y + drag.y}px)) rotate(${pose.r + drag.x * 0.05}deg)`
-                      : `translate(calc(-50% + ${pose.x}px), calc(-50% + ${pose.y}px)) rotate(${pose.r}deg)`,
-                  transition: drag && depth === 0 ? "none" : undefined,
-                  zIndex: shots.length - depth,
-                }}
-                onPointerDown={depth === 0 ? onDown : undefined}
-                onPointerMove={depth === 0 ? onMove : undefined}
-                onPointerUp={depth === 0 ? onUp : undefined}
-                onPointerCancel={depth === 0 ? onUp : undefined}
+                type="button"
+                layout={!reduced}
+                transition={{ type: "spring", stiffness: 210, damping: 28, delay: reduced ? 0 : Math.min(pos * 0.008, 0.4) }}
+                onClick={() => setFocus(pos)}
+                aria-label={`Open ${s.alt}`}
+                data-tone="tap"
+                className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white text-left ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               >
-                <button
-                  type="button"
-                  onClick={depth === 0 ? onTap : cycle}
-                  data-tone="shuffle"
-                  aria-label={depth === 0 ? "Shots pile — tap to deal the next one" : `Show ${s.alt}`}
-                  tabIndex={depth > 2 ? -1 : 0}
-                  className="shot-in block w-full cursor-pointer overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] drop-shadow-[0_16px_28px_rgba(0,0,0,0.16)] motion-reduce:animate-none dark:bg-[#1e1e1e] dark:ring-[#2b2b2b] dark:drop-shadow-[0_16px_28px_rgba(0,0,0,0.5)]"
-                  style={{ animationDelay: `${Math.min(depth, 10) * 40}ms` }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={s.src}
-                    alt=""
-                    loading={depth > 1 ? "lazy" : undefined}
-                    draggable={false}
-                    className="pointer-events-none block max-h-[52vh] w-full object-contain"
-                  />
-                </button>
-              </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={s.src} alt={s.alt} loading={pos < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+              </motion.button>
             );
           })}
-        </div>
+        </motion.div>
       )}
 
       {/* the viewer — captionless: blurred stage, counter, arrows, Esc */}
