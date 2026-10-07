@@ -1,6 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { EXPLORATION_SETS } from "@/data/exploration-sets";
+import { ExplorationIndex } from "./exploration-index";
+import { ExplorationMorph } from "./exploration-morph";
+import { ExplorationSpotlight } from "./exploration-spotlight";
 
 type Exploration =
   | {
@@ -34,73 +38,14 @@ const EXPLORATIONS: Exploration[] = [
     title: "Workbench",
     embed: "https://nacre-quake-50137672.figma.site/",
   },
-  {
-    slug: "x-coverflow",
-    exhibit: "Exploration 03",
-    title: "Coverflow",
-    embed: "/shots/lab/coverflow?set=coverflow",
-  },
-  {
-    slug: "x-velocity",
-    exhibit: "Exploration 04",
-    title: "Velocity skew",
-    embed: "/shots/lab/velocity?set=velocity",
-  },
-  {
-    slug: "x-index",
-    exhibit: "Exploration 05",
-    title: "Numeric index",
-    embed: "/shots/lab/index-preview?set=index",
-  },
-  {
-    slug: "x-accordion",
-    exhibit: "Exploration 06",
-    title: "Expanding accordion",
-    embed: "/shots/lab/accordion?set=accordion",
-  },
-  {
-    slug: "x-waterfall",
-    exhibit: "Exploration 07",
-    title: "Waterfall",
-    embed: "/shots/lab/waterfall?set=waterfall",
-  },
-  {
-    slug: "x-rivers",
-    exhibit: "Exploration 08",
-    title: "Rivers",
-    embed: "/shots/lab/rivers?set=rivers",
-  },
-  {
-    slug: "x-cover",
-    exhibit: "Exploration 09",
-    title: "Cover + mosaic",
-    embed: "/shots/lab/cover?set=cover",
-  },
-  {
-    slug: "x-matt-jinn",
-    exhibit: "Exploration 10",
-    title: "Matt Jinn study",
-    embed: "/shots/lab/mattjinn?set=matt-jinn",
-  },
-  {
-    slug: "x-compass",
-    exhibit: "Exploration 11",
-    title: "Compass dial",
-    embed: "/shots/lab/compass?set=compass",
-  },
-  {
-    slug: "x-progress",
-    exhibit: "Exploration 12",
-    title: "Progress rail",
-    embed: "/shots/lab/progressrail?set=progressrail",
-  },
-  {
-    slug: "x-triangle",
-    exhibit: "Exploration 13",
-    title: "Triangle",
-    embed: "/shots/lab/triangle?set=triangle",
-  },
 ];
+
+/** Inline interaction studies — labeled exhibits, unlabeled images. */
+const LIVE = [
+  { slug: "x-index", exhibit: "Exploration 03", title: "Numeric index", kind: "index", set: "index" },
+  { slug: "x-morph", exhibit: "Exploration 04", title: "Index ⇄ grid", kind: "morph", set: "cover" },
+  { slug: "x-spotlight", exhibit: "Exploration 05", title: "Spotlight", kind: "spotlight", set: "rivers" },
+] as const;
 
 /**
  * Explorations rail — native horizontal swipe with arrow buttons that
@@ -175,7 +120,7 @@ export function ExplorationsRail() {
               <span>{e.exhibit}</span>
               <span aria-hidden>[{String(i + 1).padStart(2, "0")}]</span>
             </div>
-            <div className="mt-3 flex h-80 items-center justify-center overflow-hidden rounded-xl">
+            <div className="mt-3 h-80 overflow-hidden rounded-xl">
               {e.video ? (
                 <video
                   src={e.video.src}
@@ -186,7 +131,7 @@ export function ExplorationsRail() {
                   playsInline
                   preload="metadata"
                   aria-label={`${e.title} interaction concept film`}
-                  className="h-full w-auto rounded-xl"
+                  className="mx-auto h-full w-auto rounded-xl"
                 />
               ) : (
                 <iframe
@@ -217,6 +162,31 @@ export function ExplorationsRail() {
             </div>
           </article>
         ))}
+        {LIVE.map((e, j) => {
+          const shots = EXPLORATION_SETS[e.set].shots;
+          return (
+            <article
+              key={e.slug}
+              className="w-[85%] shrink-0 snap-start rounded-2xl bg-[#e8e8e6] p-4 ring-1 ring-[#e0e0de]"
+            >
+              <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-widest text-[#55534f]">
+                <span>{e.exhibit}</span>
+                <span aria-hidden>[{String(EXPLORATIONS.length + j + 1).padStart(2, "0")}]</span>
+              </div>
+              <div className="mt-3">
+                {e.kind === "index" && <ExplorationIndex shots={shots} />}
+                {e.kind === "morph" && <ExplorationMorph shots={shots} />}
+                {e.kind === "spotlight" && <ExplorationSpotlight shots={shots} />}
+              </div>
+              <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
+                <span className="truncate">{e.title}</span>
+                <span aria-hidden className="shrink-0">
+                  Interaction concept
+                </span>
+              </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
