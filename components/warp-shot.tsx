@@ -53,7 +53,7 @@ export function WarpShot({ src, alt, eager, index, square }: { src: string; alt:
   return (
     <figure
       ref={frameRef}
-      className="shot-in block w-full break-inside-avoid overflow-hidden rounded-xl ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b] motion-reduce:animate-none"
+      className="shot-in block h-full w-full break-inside-avoid overflow-hidden ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b] motion-reduce:animate-none"
       style={{ perspective: "600px", animationDelay: `${Math.min(index, 10) * 40}ms` }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -64,7 +64,7 @@ export function WarpShot({ src, alt, eager, index, square }: { src: string; alt:
         loading={eager ? undefined : "lazy"}
         sizes="(max-width: 600px) 50vw, 280px"
         draggable={false}
-        className={`w-full object-cover will-change-transform ${square ? "aspect-square" : ""}`}
+        className={`h-full w-full object-cover will-change-transform ${square ? "aspect-square" : ""}`}
       />
     </figure>
   );
