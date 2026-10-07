@@ -5,6 +5,8 @@ import { EXPLORATION_SETS } from "@/data/exploration-sets";
 import { ExplorationIndex } from "./exploration-index";
 import { ExplorationMorph } from "./exploration-morph";
 import { ExplorationSpotlight } from "./exploration-spotlight";
+import { ExplorationShader } from "./exploration-shader";
+import { ExplorationWarp } from "./exploration-warp";
 
 type Exploration =
   | {
@@ -45,6 +47,8 @@ const LIVE = [
   { slug: "x-index", exhibit: "Exploration 03", title: "Numeric index", kind: "index", set: "index" },
   { slug: "x-morph", exhibit: "Exploration 04", title: "Index ⇄ grid", kind: "morph", set: "cover" },
   { slug: "x-spotlight", exhibit: "Exploration 05", title: "Spotlight", kind: "spotlight", set: "rivers" },
+  { slug: "x-shader", exhibit: "Exploration 06", title: "Shader drift", kind: "shader", set: "" },
+  { slug: "x-warp", exhibit: "Exploration 07", title: "WebGL warp", kind: "warp", set: "waterfall" },
 ] as const;
 
 /**
@@ -131,7 +135,7 @@ export function ExplorationsRail() {
                   playsInline
                   preload="metadata"
                   aria-label={`${e.title} interaction concept film`}
-                  className="h-full w-auto max-w-none rounded-2xl scale-[1.08]"
+                  className="mx-auto h-full w-auto rounded-xl"
                 />
               ) : (
                 <iframe
@@ -163,7 +167,7 @@ export function ExplorationsRail() {
           </article>
         ))}
         {LIVE.map((e, j) => {
-          const shots = EXPLORATION_SETS[e.set].shots;
+          const shots = (e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? [];
           return (
             <article
               key={e.slug}
@@ -177,6 +181,8 @@ export function ExplorationsRail() {
                 {e.kind === "index" && <ExplorationIndex shots={shots} />}
                 {e.kind === "morph" && <ExplorationMorph shots={shots} />}
                 {e.kind === "spotlight" && <ExplorationSpotlight shots={shots} />}
+                {e.kind === "shader" && <ExplorationShader />}
+                {e.kind === "warp" && <ExplorationWarp shots={shots} />}
               </div>
               <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
                 <span className="truncate">{e.title}</span>
