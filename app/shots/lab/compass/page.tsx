@@ -1,10 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { dossier } from "@/data/dossier";
+import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
 
-const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
@@ -12,7 +11,8 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  * A ring you drag around: angle maps to position in the set, the
  * center shows where you are. Navigation as an instrument.
  */
-export default function CompassPage() {
+function CompassPageInner() {
+  const { shots, ratio } = useLabShots();
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState(false);
   const dial = useRef(false);
@@ -36,7 +36,7 @@ export default function CompassPage() {
         className="block w-[min(78vw,520px)] cursor-zoom-in overflow-hidden rounded-2xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+        <img key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none block w-full object-cover" style={{ aspectRatio: ratio }} />
       </button>
       <div
         role="slider"
@@ -70,5 +70,13 @@ export default function CompassPage() {
       </div>
       {open && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setOpen(false)} />}
     </main>
+  );
+}
+
+export default function CompassPage() {
+  return (
+    <LabSetProvider>
+      <CompassPageInner />
+    </LabSetProvider>
   );
 }

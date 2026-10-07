@@ -34,6 +34,72 @@ const EXPLORATIONS: Exploration[] = [
     title: "Workbench",
     embed: "https://nacre-quake-50137672.figma.site/",
   },
+  {
+    slug: "x-coverflow",
+    exhibit: "Exploration 03",
+    title: "Coverflow",
+    embed: "/shots/lab/coverflow?set=coverflow",
+  },
+  {
+    slug: "x-velocity",
+    exhibit: "Exploration 04",
+    title: "Velocity skew",
+    embed: "/shots/lab/velocity?set=velocity",
+  },
+  {
+    slug: "x-index",
+    exhibit: "Exploration 05",
+    title: "Numeric index",
+    embed: "/shots/lab/index-preview?set=index",
+  },
+  {
+    slug: "x-accordion",
+    exhibit: "Exploration 06",
+    title: "Expanding accordion",
+    embed: "/shots/lab/accordion?set=accordion",
+  },
+  {
+    slug: "x-waterfall",
+    exhibit: "Exploration 07",
+    title: "Waterfall",
+    embed: "/shots/lab/waterfall?set=waterfall",
+  },
+  {
+    slug: "x-rivers",
+    exhibit: "Exploration 08",
+    title: "Rivers",
+    embed: "/shots/lab/rivers?set=rivers",
+  },
+  {
+    slug: "x-cover",
+    exhibit: "Exploration 09",
+    title: "Cover + mosaic",
+    embed: "/shots/lab/cover?set=cover",
+  },
+  {
+    slug: "x-matt-jinn",
+    exhibit: "Exploration 10",
+    title: "Matt Jinn study",
+    embed: "/shots/lab/mattjinn?set=matt-jinn",
+  },
+  {
+    slug: "x-compass",
+    exhibit: "Exploration 11",
+    title: "Compass dial",
+    embed: "/shots/lab/compass?set=compass",
+  },
+  {
+    slug: "x-progress",
+    exhibit: "Exploration 12",
+    title: "Progress rail",
+    embed: "/shots/lab/progressrail?set=progressrail",
+  },
+  {
+    slug: "x-triangle",
+    exhibit: "Exploration 13",
+    title: "Triangle",
+    embed: "/shots/lab/triangle?set=triangle",
+  },
 ];
 
 /**

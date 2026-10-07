@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { dossier } from "@/data/dossier";
+import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
 
-const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
@@ -12,7 +11,8 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  * One hero holds the stage; the mosaic below feeds it. Tap anything
  * small to promote it. The wall is a stage with understudies.
  */
-export default function CoverPage() {
+function CoverPageInner() {
+  const { shots } = useLabShots();
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState(false);
 
@@ -52,5 +52,13 @@ export default function CoverPage() {
       </p>
       {open && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setOpen(false)} />}
     </main>
+  );
+}
+
+export default function CoverPage() {
+  return (
+    <LabSetProvider>
+      <CoverPageInner />
+    </LabSetProvider>
   );
 }

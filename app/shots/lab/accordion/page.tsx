@@ -1,10 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { dossier } from "@/data/dossier";
+import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
 
-const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
@@ -12,7 +11,8 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  * A scrubable filmstrip: collapsed slices bloom open under the cursor.
  * Tap expands on touch; tapping the open frame goes fullscreen.
  */
-export default function AccordionPage() {
+function AccordionPageInner() {
+  const { shots } = useLabShots();
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState(false);
   const stripRef = useRef<HTMLDivElement>(null);
@@ -90,5 +90,13 @@ export default function AccordionPage() {
       </p>
       {open && <LabViewer shots={shots} at={at} onAt={go} onClose={() => setOpen(false)} />}
     </main>
+  );
+}
+
+export default function AccordionPage() {
+  return (
+    <LabSetProvider>
+      <AccordionPageInner />
+    </LabSetProvider>
   );
 }
