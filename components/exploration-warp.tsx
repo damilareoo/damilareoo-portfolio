@@ -203,7 +203,6 @@ export function ExplorationWarp({ shots }: { shots: LabShots[] }) {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", size);
       canvas.removeEventListener("pointermove", move);
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
   }, [shots]);
 

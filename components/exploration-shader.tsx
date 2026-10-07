@@ -103,9 +103,8 @@ export function ExplorationShader() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", size);
       canvas.removeEventListener("pointermove", onMove);
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
   }, []);
 
-  return <canvas ref={ref} aria-label="Animated shader field" className="block h-full w-full rounded-xl" />;
+  return <canvas ref={ref} aria-label="Animated shader field" className="block h-80 w-full rounded-xl" />;
 }
