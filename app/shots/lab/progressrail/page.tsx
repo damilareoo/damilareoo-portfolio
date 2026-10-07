@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { dossier } from "@/data/dossier";
+import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
 
-const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
@@ -12,7 +11,8 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  * A hairline spine down the left; the wall scrolls beside it while a
  * thumb marks your depth. Tap the spine to jump anywhere.
  */
-export default function ProgressrailPage() {
+function ProgressrailPageInner() {
+  const { shots, ratio } = useLabShots();
   const [at, setAt] = useState<number | null>(null);
   const [depth, setDepth] = useState(0);
 
@@ -80,7 +80,7 @@ export default function ProgressrailPage() {
                 className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+                <img src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block w-full object-cover" style={{ aspectRatio: ratio }} />
               </button>
             ))}
           </div>
@@ -88,5 +88,13 @@ export default function ProgressrailPage() {
       </div>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
     </main>
+  );
+}
+
+export default function ProgressrailPage() {
+  return (
+    <LabSetProvider>
+      <ProgressrailPageInner />
+    </LabSetProvider>
   );
 }

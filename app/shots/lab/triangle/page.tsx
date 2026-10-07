@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { dossier } from "@/data/dossier";
+import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
 
-const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
@@ -12,7 +11,8 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  * Rows of 1-2-3-4-5-6 widening down the page, centered like a
  * pyramid. Monumental order for 64 frames.
  */
-export default function TrianglePage() {
+function TrianglePageInner() {
+  const { shots, ratio } = useLabShots();
   const [at, setAt] = useState<number | null>(null);
 
   const rows: number[][] = [];
@@ -42,7 +42,7 @@ export default function TrianglePage() {
                 className="min-w-0 flex-1 cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+                <img src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block w-full object-cover" style={{ aspectRatio: ratio }} />
               </button>
             ))}
           </div>
@@ -50,5 +50,13 @@ export default function TrianglePage() {
       </div>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
     </main>
+  );
+}
+
+export default function TrianglePage() {
+  return (
+    <LabSetProvider>
+      <TrianglePageInner />
+    </LabSetProvider>
   );
 }

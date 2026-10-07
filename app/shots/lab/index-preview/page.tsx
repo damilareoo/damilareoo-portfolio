@@ -1,17 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { dossier } from "@/data/dossier";
+import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
 
-const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
  * Lab 01 — numeric index + preview (TWOMUCH, de-labeled).
  * Rows are pure numbers; the frame follows the active row. No words.
  */
-export default function IndexPreviewPage() {
+function IndexPreviewPageInner() {
+  const { shots, ratio } = useLabShots();
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState(false);
 
@@ -75,7 +75,7 @@ export default function IndexPreviewPage() {
               className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img key={current.src} src={current.src} alt={current.alt} draggable={false} className="block aspect-video w-full object-cover" />
+              <img key={current.src} src={current.src} alt={current.alt} draggable={false} className="block w-full object-cover" style={{ aspectRatio: ratio }} />
             </button>
             <p className="mt-3 text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">
               {pad(at)} / {shots.length}
@@ -85,5 +85,13 @@ export default function IndexPreviewPage() {
       </div>
       {open && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setOpen(false)} />}
     </main>
+  );
+}
+
+export default function IndexPreviewPage() {
+  return (
+    <LabSetProvider>
+      <IndexPreviewPageInner />
+    </LabSetProvider>
   );
 }

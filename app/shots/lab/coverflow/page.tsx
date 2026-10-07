@@ -1,10 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { dossier } from "@/data/dossier";
+import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
 
-const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
@@ -12,7 +11,8 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  * The classic, done straight: center frame front and large, neighbors
  * receding with mirror sheen. Arrows, swipe, or tap a neighbor.
  */
-export default function CoverflowPage() {
+function CoverflowPageInner() {
+  const { shots, ratio } = useLabShots();
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState(false);
   const [dir, setDir] = useState<1 | -1>(1);
@@ -92,7 +92,8 @@ export default function CoverflowPage() {
                 alt={live ? shots[i].alt : ""}
                 aria-hidden={!live}
                 draggable={false}
-                className="block aspect-video w-full rounded-xl object-cover ring-1 ring-white/15"
+                className="block w-full rounded-xl object-cover ring-1 ring-white/15"
+                style={{ aspectRatio: ratio }}
               />
               {!live && (
                 <span
@@ -110,5 +111,13 @@ export default function CoverflowPage() {
       </p>
       {open && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setOpen(false)} dark={true} />}
     </main>
+  );
+}
+
+export default function CoverflowPage() {
+  return (
+    <LabSetProvider>
+      <CoverflowPageInner />
+    </LabSetProvider>
   );
 }

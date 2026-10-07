@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { dossier } from "@/data/dossier";
+import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
 
-const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
@@ -12,7 +11,8 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  * Tiles shear with scroll speed and snap straight at rest, like a VU
  * meter. Fast scrolling smears the wall; stopping crisps it.
  */
-export default function VelocityPage() {
+function VelocityPageInner() {
+  const { shots, ratio } = useLabShots();
   const [at, setAt] = useState<number | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -67,5 +67,13 @@ export default function VelocityPage() {
       </div>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
     </main>
+  );
+}
+
+export default function VelocityPage() {
+  return (
+    <LabSetProvider>
+      <VelocityPageInner />
+    </LabSetProvider>
   );
 }
