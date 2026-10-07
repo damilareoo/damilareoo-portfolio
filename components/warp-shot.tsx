@@ -62,6 +62,7 @@ export function WarpShot({ src, alt, eager, index, square }: { src: string; alt:
         src={src}
         alt={alt}
         loading={eager ? undefined : "lazy"}
+        decoding="async"
         sizes="(max-width: 600px) 50vw, 280px"
         draggable={false}
         className={`h-full w-full object-cover will-change-transform ${square ? "aspect-square" : ""}`}

@@ -82,7 +82,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
               key={s.src}
               type="button"
               layout={!reduced}
-              transition={{ type: "spring", stiffness: 210, damping: 28, delay: reduced ? 0 : Math.min(pos * 0.008, 0.4) }}
+              transition={{ type: "tween", duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: reduced ? 0 : Math.min(pos * 0.01, 0.35) }}
               onClick={() => setFocus(pos)}
               aria-label={`Open ${s.alt}`}
               data-tone="tap"
