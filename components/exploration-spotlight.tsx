@@ -13,6 +13,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  */
 export function ExplorationSpotlight({ shots }: { shots: LabShots[] }) {
   const [at, setAt] = useState<number | null>(null);
+  const [pinned, setPinned] = useState<Set<number>>(new Set());
   const wallRef = useRef<HTMLDivElement>(null);
   const target = useRef({ x: -9999, y: -9999 });
   const raf = useRef(0);
@@ -55,9 +56,14 @@ export function ExplorationSpotlight({ shots }: { shots: LabShots[] }) {
           <button
             key={s.src}
             type="button"
-            onClick={() => setAt(i)}
-            aria-label={`Open frame ${pad(i)}`}
-            className="block h-full w-full cursor-pointer overflow-hidden rounded-lg"
+            onClick={() => {
+              if (pinned.has(i)) setAt(i);
+              else setPinned((p) => new Set(p).add(i));
+            }}
+            aria-label={pinned.has(i) ? `Open frame ${pad(i)} fullscreen` : `Light up frame ${pad(i)}`}
+            className={`block h-full w-full cursor-pointer overflow-hidden rounded-lg transition-all duration-500 motion-reduce:transition-none ${
+              pinned.has(i) ? "brightness-100" : ""
+            }`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" />
