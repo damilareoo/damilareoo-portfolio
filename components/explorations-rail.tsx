@@ -2,10 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ALBUM_SET, EXPLORATION_SETS } from "@/data/exploration-sets";
-import { ExplorationIndex } from "./exploration-index";
-import { ExplorationMorph } from "./exploration-morph";
 import { ExplorationSpotlight } from "./exploration-spotlight";
-import { ExplorationCoverflow } from "./exploration-coverflow";
+import { AlbumsPlayground } from "./exploration-albums";
 
 type Exploration =
   | {
@@ -37,10 +35,8 @@ const EXPLORATIONS: Exploration[] = [
 
 /** Inline interaction studies — labeled exhibits, unlabeled images. */
 const LIVE = [
-  { slug: "x-index", exhibit: "Exploration 02", title: "Numeric index", kind: "index", set: "index" },
-  { slug: "x-morph", exhibit: "Exploration 03", title: "Index ⇄ grid", kind: "morph", set: "cover" },
   { slug: "x-spotlight", exhibit: "Exploration 04", title: "Spotlight", kind: "spotlight", set: "rivers" },
-  { slug: "x-flow", exhibit: "Exploration 05", title: "Coverflow", kind: "flow", set: "" },
+  { slug: "x-albums", exhibit: "Exploration 05", title: "Album studies", kind: "albums", set: "" },
 ] as const;
 
 /**
@@ -158,8 +154,8 @@ export function ExplorationsRail() {
             </div>
           </article>
         ))}
-        {LIVE.map((e, j) => {
-          const shots = e.kind === "flow" ? ALBUM_SET.shots : ((e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? []);
+        {LIVE.map((e) => {
+          const shots = e.kind === "albums" ? ALBUM_SET.shots : ((e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? []);
           return (
             <article
               key={e.slug}
@@ -167,13 +163,11 @@ export function ExplorationsRail() {
             >
               <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-widest text-[#55534f]">
                 <span>{e.exhibit}</span>
-                <span aria-hidden>[{String(EXPLORATIONS.length + j + 1).padStart(2, "0")}]</span>
+                <span aria-hidden>[{e.exhibit.replace("Exploration ", "")}]</span>
               </div>
               <div className="mt-3">
-                {e.kind === "index" && <ExplorationIndex shots={shots} />}
-                {e.kind === "morph" && <ExplorationMorph shots={shots} />}
                 {e.kind === "spotlight" && <ExplorationSpotlight shots={shots} />}
-                {e.kind === "flow" && <ExplorationCoverflow shots={shots} />}
+                {e.kind === "albums" && <AlbumsPlayground shots={shots} />}
               </div>
               <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
                 <span className="truncate">{e.title}</span>
