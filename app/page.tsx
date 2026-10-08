@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DFooter } from "@/components/dfooter";
 import { DNav } from "@/components/dnav";
 import { ExplorationsRail } from "@/components/explorations-rail";
+import { ShotPeek } from "@/components/shot-peek";
 
 export const metadata: Metadata = {
   title: { absolute: "Damilare Osofisan — Product Designer" },
@@ -93,7 +94,7 @@ export default function Home() {
           <p className="mt-4 text-pretty font-sans text-sm leading-relaxed text-[#626262] dark:text-[#a8a8a8]">
             <Link href="/about" className="link-sheen">about</Link>
             {" / "}
-            <Link href="/shots" className="link-sheen">shots</Link>
+            <ShotPeek />
             {" / "}
             <a
               href="https://x.com/damilareoo"
