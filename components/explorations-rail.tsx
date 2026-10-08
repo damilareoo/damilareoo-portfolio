@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ALBUM_SET, EXPLORATION_SETS } from "@/data/exploration-sets";
 import { ExplorationSpotlight } from "./exploration-spotlight";
-import { AlbumsPlayground } from "./exploration-albums";
+import { ExplorationOrbit } from "./exploration-orbit";
 
 type Exploration =
   | {
@@ -36,7 +36,7 @@ const EXPLORATIONS: Exploration[] = [
 /** Inline interaction studies — labeled exhibits, unlabeled images. */
 const LIVE = [
   { slug: "x-spotlight", exhibit: "Exploration 04", title: "Spotlight", kind: "spotlight", set: "rivers" },
-  { slug: "x-albums", exhibit: "Exploration 05", title: "Album studies", kind: "albums", set: "" },
+  { slug: "x-orbit", exhibit: "Exploration 05", title: "Orbit", kind: "orbit", set: "" },
 ] as const;
 
 /**
@@ -155,7 +155,7 @@ export function ExplorationsRail() {
           </article>
         ))}
         {LIVE.map((e) => {
-          const shots = e.kind === "albums" ? ALBUM_SET.shots : ((e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? []);
+          const shots = e.kind === "orbit" ? ALBUM_SET.shots : ((e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? []);
           return (
             <article
               key={e.slug}
@@ -167,7 +167,7 @@ export function ExplorationsRail() {
               </div>
               <div className="mt-3">
                 {e.kind === "spotlight" && <ExplorationSpotlight shots={shots} />}
-                {e.kind === "albums" && <AlbumsPlayground shots={shots} />}
+                {e.kind === "orbit" && <ExplorationOrbit shots={shots} />}
               </div>
               <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
                 <span className="truncate">{e.title}</span>
