@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ALBUM_SET, EXPLORATION_SETS } from "@/data/exploration-sets";
-import { ExplorationSpotlight } from "./exploration-spotlight";
 import { ExplorationOrbit } from "./exploration-orbit";
 
 type Exploration =
@@ -35,8 +34,7 @@ const EXPLORATIONS: Exploration[] = [
 
 /** Inline interaction studies — labeled exhibits, unlabeled images. */
 const LIVE = [
-  { slug: "x-spotlight", exhibit: "Exploration 04", title: "Spotlight", kind: "spotlight", set: "rivers" },
-  { slug: "x-orbit", exhibit: "Exploration 05", title: "Orbit", kind: "orbit", set: "" },
+  { slug: "x-orbit", exhibit: "Exploration 02", title: "Orbit", kind: "orbit", set: "" },
 ] as const;
 
 /**
@@ -166,7 +164,6 @@ export function ExplorationsRail() {
                 <span aria-hidden>[{e.exhibit.replace("Exploration ", "")}]</span>
               </div>
               <div className="mt-3">
-                {e.kind === "spotlight" && <ExplorationSpotlight shots={shots} />}
                 {e.kind === "orbit" && <ExplorationOrbit shots={shots} />}
               </div>
               <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
