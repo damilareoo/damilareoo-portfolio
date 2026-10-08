@@ -27,7 +27,7 @@ export function DNav() {
             Damilare Osofisan
           </Link>
         </div>
-        <div className="flex shrink-0 flex-wrap items-center">
+        <div className="flex shrink-0 items-center gap-2">
           {LINKS.map((l) => (
             <Link
               key={l.href}
@@ -40,8 +40,8 @@ export function DNav() {
               {l.label}
             </Link>
           ))}
-          <span aria-hidden className="mx-1.5 h-4 w-px bg-[#171717]/10 dark:bg-white/15" />
-          <span className="flex items-center gap-1">
+          <span aria-hidden className="mx-1 h-4 w-px bg-[#171717]/10 dark:bg-white/15" />
+          <span className="flex items-center gap-0">
             <ThemeButton />
             <FloorControls />
           </span>
