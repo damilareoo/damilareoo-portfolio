@@ -385,6 +385,32 @@ body {
     animation: flow-sheen 5.5s ease-in-out infinite alternate;
   }
 
+  /* Album studies — see the keyframes below. Durations live on the
+     animations; the drift's own period rides inline per tile. */
+  .tile-in {
+    animation: tile-in 700ms ease both;
+  }
+
+  .kb-drift {
+    animation: kb-drift 11s ease-in-out infinite alternate;
+  }
+
+  .chart-cover {
+    animation: chart-cover 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .chart-num {
+    animation: chart-num 550ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .spin-in {
+    animation: spin-in 1200ms ease both;
+  }
+
+  .spin-breathe {
+    animation: spin-breathe 12s ease-in-out infinite alternate;
+  }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -572,6 +598,69 @@ body {
   }
   to {
     background-position: -20% 0;
+  }
+}
+
+/* Album studies: tiles fade as the wall turns over, and drift on a
+   slow zoom meanwhile. The chart cover dissolves in with a breath of
+   scale while its numeral rises; the spinning cover fades between
+   picks and breathes throughout. All motion-led, so the blanket
+   reduced-motion rule parks every one of them. */
+@keyframes tile-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes kb-drift {
+  from {
+    transform: scale(1) translate(0, 0);
+  }
+  to {
+    transform: scale(1.12) translate(-1.5%, 1.5%);
+  }
+}
+
+@keyframes chart-cover {
+  from {
+    opacity: 0;
+    transform: scale(1.07);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes chart-num {
+  from {
+    opacity: 0;
+    transform: translateY(38%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes spin-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin-breathe {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.055);
   }
 }
 
@@ -958,7 +1047,13 @@ body {
   }
 
   .flow-dwell,
-  .flow-sheen {
+  .flow-sheen,
+  .tile-in,
+  .kb-drift,
+  .chart-cover,
+  .chart-num,
+  .spin-in,
+  .spin-breathe {
     animation: none;
   }
 }
