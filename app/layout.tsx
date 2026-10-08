@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
+import { Analytics } from "@vercel/analytics/next";
 import { StrayCap } from "@/components/stray-cap";
 import { EasterEgg } from "@/components/easter-egg";
 import { SoundBind } from "@/components/sound";
@@ -82,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SoundBind />
           <CoinFavicon />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
