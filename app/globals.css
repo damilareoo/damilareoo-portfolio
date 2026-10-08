@@ -363,6 +363,28 @@ body {
     animation: shot-in 450ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
+  /* Coverflow dwell bar: fills once per step, then the step restarts it.
+     Rendered only when motion is allowed; the blanket reduced-motion
+     rule below would otherwise snap it full instantly. */
+  .flow-dwell {
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: flow-dwell linear forwards;
+  }
+
+  /* A slow light sweep across the focused cover — invitation, not UI. */
+  .flow-sheen {
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.16) 46%,
+      rgba(255, 255, 255, 0.02) 54%,
+      transparent 70%
+    );
+    background-size: 280% 100%;
+    animation: flow-sheen 5.5s ease-in-out infinite alternate;
+  }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -532,6 +554,24 @@ body {
   }
   to {
     background-position: 100% 0;
+  }
+}
+
+@keyframes flow-dwell {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes flow-sheen {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -20% 0;
   }
 }
 
@@ -914,6 +954,11 @@ body {
   }
 
   .frost-hint {
+    animation: none;
+  }
+
+  .flow-dwell,
+  .flow-sheen {
     animation: none;
   }
 }
