@@ -5,7 +5,7 @@ import { ALBUM_SET, EXPLORATION_SETS } from "@/data/exploration-sets";
 import { ExplorationIndex } from "./exploration-index";
 import { ExplorationMorph } from "./exploration-morph";
 import { ExplorationSpotlight } from "./exploration-spotlight";
-import { ExplorationCrate } from "./exploration-crate";
+import { ExplorationShelf } from "./exploration-shelf";
 
 type Exploration =
   | {
@@ -40,7 +40,7 @@ const LIVE = [
   { slug: "x-index", exhibit: "Exploration 02", title: "Numeric index", kind: "index", set: "index" },
   { slug: "x-morph", exhibit: "Exploration 03", title: "Index ⇄ grid", kind: "morph", set: "cover" },
   { slug: "x-spotlight", exhibit: "Exploration 04", title: "Spotlight", kind: "spotlight", set: "rivers" },
-  { slug: "x-crate", exhibit: "Exploration 05", title: "Crate dig", kind: "crate", set: "" },
+  { slug: "x-crate", exhibit: "Exploration 05", title: "Record shelf", kind: "shelf", set: "" },
 ] as const;
 
 /**
@@ -159,7 +159,7 @@ export function ExplorationsRail() {
           </article>
         ))}
         {LIVE.map((e, j) => {
-          const shots = e.kind === "crate" ? ALBUM_SET.shots : ((e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? []);
+          const shots = e.kind === "shelf" ? ALBUM_SET.shots : ((e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? []);
           return (
             <article
               key={e.slug}
@@ -173,7 +173,7 @@ export function ExplorationsRail() {
                 {e.kind === "index" && <ExplorationIndex shots={shots} />}
                 {e.kind === "morph" && <ExplorationMorph shots={shots} />}
                 {e.kind === "spotlight" && <ExplorationSpotlight shots={shots} />}
-                {e.kind === "crate" && <ExplorationCrate shots={shots} />}
+                {e.kind === "shelf" && <ExplorationShelf shots={shots} />}
               </div>
               <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
                 <span className="truncate">{e.title}</span>
