@@ -78,11 +78,11 @@ export function FloorControls() {
   );
 
   if (!on) {
-    return <span aria-hidden className="flex min-h-11 items-center gap-1" />;
+    return <span aria-hidden className="flex min-h-11 items-center gap-2" />;
   }
 
   return (
-    <span className="flex items-center gap-1">
+    <span className="flex items-center gap-2">
       <IconButton
         label={muted ? "Unmute interface sounds" : "Mute interface sounds"}
         pressed={!muted}
