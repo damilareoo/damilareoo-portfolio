@@ -997,6 +997,203 @@ body {
   }
 }
 
+/* The shots peek — a little live window below the word (the hero sits
+   right under the sticky nav, so an upward pop slides behind it).
+   Same hover-only choreography as vinyl: elsewhere this layer never
+   displays. The outer handles the rise; the window handles the tilt,
+   so the two never fight. */
+.shot-pop {
+  display: none;
+}
+
+@media (hover: hover) {
+  .shot-pop {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 264px;
+    max-width: 72vw;
+    margin-top: 14px;
+    padding-bottom: 12px;
+    transform: translateX(-50%) translateY(-8px) scale(0.92);
+    transform-origin: top center;
+    filter: blur(4px);
+    opacity: 0;
+    transition:
+      opacity 260ms ease,
+      transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+      filter 260ms ease;
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  .group\/vinyl:hover .shot-pop,
+  .group\/vinyl:focus-within .shot-pop {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+    filter: blur(0);
+  }
+
+  .shot-peek-window {
+    display: block;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #fff;
+    outline: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.08),
+      0 12px 32px rgba(0, 0, 0, 0.22),
+      0 32px 64px rgba(0, 0, 0, 0.18);
+    transform: perspective(700px) rotateX(calc((var(--ty, 0)) * 5deg)) rotateY(calc((var(--tx, 0)) * 7deg));
+    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .dark .shot-peek-window {
+    background: #1e1e1e;
+    outline-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .shot-peek-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .shot-peek-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .shot-peek-dots i {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.14);
+  }
+
+  .dark .shot-peek-dots i {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .shot-peek-title {
+    flex: 1;
+    font-family: var(--font-suisse-mono), ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8c8d8c;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .shot-peek-live {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.14);
+    transition: background 220ms ease;
+  }
+
+  .shot-peek-live[data-on] {
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+  }
+
+  .shot-peek-stage {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    background: #ececea;
+    overflow: hidden;
+  }
+
+  .dark .shot-peek-stage {
+    background: #2a2a2a;
+  }
+
+  .shot-peek-stage img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.07);
+    transition:
+      opacity 480ms ease,
+      transform 1400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .shot-peek-stage img[data-active] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .shot-peek-stage img:first-child {
+    position: relative;
+  }
+
+  /* Keep a still parked behind the cycle so the window never flashes
+     empty on slow networks: the first study, dimmed until the active
+     one dissolves over it. */
+  .shot-peek-stage img:first-child:not([data-active]) {
+    opacity: 0.999;
+    transform: scale(1);
+  }
+
+  .shot-peek-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .shot-peek-cap {
+    font-family: var(--font-suisse-mono), ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #626262;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dark .shot-peek-cap {
+    color: #a8a8a8;
+  }
+
+  .shot-peek-progress {
+    display: flex;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+
+  .shot-peek-progress i {
+    width: 10px;
+    height: 2px;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.14);
+    transition: background 220ms ease;
+  }
+
+  .dark .shot-peek-progress i {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .shot-peek-progress i[data-on] {
+    background: #171717;
+  }
+
+  .dark .shot-peek-progress i[data-on] {
+    background: #f2f2f2;
+  }
+}
+
 /* The frost hint breathes once in a while — an invitation, not a button.
    Pure CSS so it plays with no JS; reduced motion holds it still. */
 @keyframes frost-hint {
