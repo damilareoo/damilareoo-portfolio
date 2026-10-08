@@ -20,7 +20,7 @@ const VAL: [file: string, v: number][] = [
   ["2104.png", 0.565], ["2107.png", 0.745], ["2114.png", 0.269], ["2115.png", 0.331],
   ["2116.png", 0.516], ["2121.png", 0.898], ["2124.png", 0.867], ["2125.png", 0.537],
   ["2127.png", 0.507], ["2129.png", 0.647], ["2131.png", 0.76], ["96.png", 0.642],
-  ["chessever-rookie-rook.png", 0.715], ["frame-2087329441.png", 0.97],
+  ["chessever-rookie-rook.png", 0.715],
   ["frame-2147237416.png", 0.58], ["frame-2147237418.png", 0.511],
   ["frame-2147255600.png", 0.474], ["frame-2147255601.png", 0.561],
   ["frame-34.png", 0.113], ["intempus-1.png", 0.868], ["intempus-2.png", 0.954],

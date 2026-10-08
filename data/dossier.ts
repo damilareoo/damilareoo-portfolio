@@ -173,7 +173,6 @@ export const dossier = {
     { src: "/dossier/shots/frame-2147237416.png", alt: "Sequence study 1", caption: "sequence — study 01." },
     { src: "/dossier/shots/frame-2147237418.png", alt: "Sequence study 2", caption: "sequence — study 02." },
     { src: "/dossier/shots/frame-2147255601.png", alt: "Sequence study 3", caption: "sequence — study 03." },
-    { src: "/dossier/shots/frame-2087329441.png", alt: "Sequence study 4", caption: "sequence — study 04." },
     { src: "/dossier/shots/sequence.png", alt: "Sequence study 5", caption: "sequence — study 05." },
     { src: "/dossier/shots/zlink.png", alt: "Zlink study", caption: "zlink — study." },
     { src: "/dossier/shots/96.png", alt: "Pintours study 1", caption: "pintours — study 01." },

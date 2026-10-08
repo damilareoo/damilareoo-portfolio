@@ -35,7 +35,7 @@ const PRINTS: Record<string, { h: number; s: number }> = {
   "2127.png": { h: 0.2207, s: 0.016 }, "2129.png": { h: 0.5772, s: 0.061 },
   "2131.png": { h: 0.5548, s: 0.321 }, "96.png": { h: 0.0861, s: 0.01 },
   "chessever-rookie-rook.png": { h: 0.406, s: 0.007 },
-  "frame-2087329441.png": { h: 0.0, s: 0.0 }, "frame-2147237416.png": { h: 0.1506, s: 0.019 },
+  "frame-2147237416.png": { h: 0.1506, s: 0.019 },
   "frame-2147237418.png": { h: 0.8256, s: 0.002 }, "frame-2147255600.png": { h: 0.0, s: 0.0 },
   "frame-2147255601.png": { h: 0.117, s: 0.016 }, "frame-34.png": { h: 0.538, s: 0.141 },
   "intempus-1.png": { h: 0.0995, s: 0.038 }, "intempus-2.png": { h: 0.0233, s: 0.175 },

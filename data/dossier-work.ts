@@ -451,12 +451,6 @@ export const workCases: WorkCase[] = [
         note: "The partnership slot — new users only, with a quick hide, so it never fights Play Online.",
       },
       {
-        src: "/dossier/work/endgame/endgame-404.jpg",
-        alt: "404 page with a playable board",
-        caption: "404",
-        note: "A dead end that deals you back in — Black to move.",
-      },
-      {
         src: "/dossier/work/endgame/endgame-clubs.jpg",
         alt: "Endgame Clubs on mobile in light and dark",
         caption: "Clubs on the app",

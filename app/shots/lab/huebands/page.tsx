@@ -20,7 +20,7 @@ const SAT: [file: string, s: number][] = [
   ["2104.png", 0.017], ["2107.png", 0.073], ["2114.png", 0.413], ["2115.png", 0.317],
   ["2116.png", 0.137], ["2121.png", 0.0], ["2124.png", 0.005], ["2125.png", 0.018],
   ["2127.png", 0.016], ["2129.png", 0.061], ["2131.png", 0.321], ["96.png", 0.01],
-  ["chessever-rookie-rook.png", 0.007], ["frame-2087329441.png", 0.0],
+  ["chessever-rookie-rook.png", 0.007],
   ["frame-2147237416.png", 0.019], ["frame-2147237418.png", 0.002],
   ["frame-2147255600.png", 0.0], ["frame-2147255601.png", 0.016],
   ["frame-34.png", 0.141], ["intempus-1.png", 0.038], ["intempus-2.png", 0.175],
