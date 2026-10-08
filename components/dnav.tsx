@@ -22,7 +22,7 @@ export function DNav() {
           <Coin />
           <Link
             href="/"
-            className="truncate rounded-md py-1.5 font-sans text-sm text-[#171717] dark:text-[#f2f2f2] link-sheen"
+            className="truncate rounded-md py-1.5 font-sans text-sm text-[#171717] dark:text-[#f2f2f2]"
           >
             Damilare Osofisan
           </Link>
