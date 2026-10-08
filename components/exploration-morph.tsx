@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { LabViewer } from "./lab-viewer";
 import { useReducedMotion } from "@/lib/motion";
 import type { LabShots } from "./lab-set";
 
@@ -10,11 +9,12 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
  * Exploration: index ⇄ grid morph (Codrops menu-to-grid).
- * One toggle glides everything between rows and tiles.
+ * One toggle glides everything between rows and tiles. Concepts
+ * don't open — the morph is the whole interaction.
  */
 export function ExplorationMorph({ shots }: { shots: LabShots[] }) {
   const [view, setView] = useState<"index" | "grid">("grid");
-  const [at, setAt] = useState<number | null>(null);
+  const [at, setAt] = useState(0);
   const reduced = useReducedMotion();
 
   return (
@@ -48,11 +48,12 @@ export function ExplorationMorph({ shots }: { shots: LabShots[] }) {
             layout={!reduced}
             transition={{ type: "spring", stiffness: 260, damping: 30 }}
             onClick={() => setAt(i)}
-            aria-label={`Open frame ${pad(i)}`}
+            aria-label={`Preview frame ${pad(i)}`}
+            aria-current={i === at}
             className={
               view === "index"
                 ? "flex w-full cursor-pointer items-center gap-3 border-b border-[#e5e5e5] py-1.5 text-left dark:border-white/10"
-                : "block w-full cursor-zoom-in overflow-hidden rounded-lg bg-white text-left ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+                : "block w-full cursor-pointer overflow-hidden rounded-lg bg-white text-left ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
             }
           >
             {view === "index" ? (
@@ -68,7 +69,6 @@ export function ExplorationMorph({ shots }: { shots: LabShots[] }) {
           </motion.button>
         ))}
       </motion.div>
-      {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
     </div>
   );
 }

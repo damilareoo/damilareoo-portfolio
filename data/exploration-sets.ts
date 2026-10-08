@@ -42,3 +42,28 @@ export const EXPLORATION_SETS: Record<string, ExplorationSet> = {
   progressrail: set("progressrail", "16 / 10", "are.na — fruteria image archive"),
   triangle: set("triangle", "4 / 5", "are.na — fashion / lookbook, lookbook inspiration"),
 };
+
+const ALBUMS = [
+  { file: "skepta-konnichiwa", label: "Skepta — Konnichiwa" },
+  { file: "9ice-tradition", label: "9ice — Tradition" },
+  { file: "skepta-ignorance", label: "Skepta — Ignorance Is Bliss" },
+  { file: "huncho-huncholini", label: "M Huncho — Huncholini the 1st" },
+  { file: "nines-crop-circle", label: "Nines — Crop Circle 3" },
+  { file: "wizkid-superstar", label: "Wizkid — Superstar" },
+  { file: "burna-outside", label: "Burna Boy — Outside" },
+  { file: "jhus-conspiracy", label: "J Hus — Big Conspiracy" },
+  { file: "santi-mandy", label: "Santi — Mandy and the Jungle" },
+  { file: "metro-capes", label: "Metro Boomin — Not All Heroes Wear Capes" },
+  { file: "skepta-blacklisted", label: "Skepta — Blacklisted" },
+];
+
+/** Eleven covers in the owner's order, artwork via Deezer + Cover Art Archive. */
+export const ALBUM_SET: ExplorationSet = {
+  dir: "albums",
+  ratio: "1 / 1",
+  credit: "cover art — the labels",
+  shots: ALBUMS.map((a, i) => ({
+    src: `/dossier/explorations/albums/${String(i + 1).padStart(2, "0")}.jpg`,
+    alt: `${a.label} — cover`,
+  })),
+};
