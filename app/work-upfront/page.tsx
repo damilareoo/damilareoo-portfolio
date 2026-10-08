@@ -3,20 +3,21 @@ import Link from "next/link";
 import { DFooter } from "@/components/dfooter";
 import { DNav } from "@/components/dnav";
 import { ExplorationsRail } from "@/components/explorations-rail";
+import { ShotsWall } from "@/components/shots-wall";
+import { dossier } from "@/data/dossier";
 
+/**
+ * DRAFT — not linked from anywhere, noindex. Rough idea only: what if
+ * the homepage led with all the shots? Same header minus the library
+ * line, then the unmodified wall, then work. Judge the rhythm here
+ * before touching the real homepage.
+ */
 export const metadata: Metadata = {
-  title: { absolute: "Damilare Osofisan — Product Designer" },
-  description:
-    "Damilare Osofisan — product designer building 0–1 products. Currently building Hitman's Library. Previously Endgame.ai, ChessEver, HEX.",
-  openGraph: {
-    type: "website",
-    siteName: "Damilare Osofisan",
-  },
-  twitter: {
-    card: "summary_large_image",
-  },
+  title: "DRAFT — work upfront",
+  robots: { index: false, follow: false },
 };
 
+// Draft mirror of the homepage WORK list.
 const WORK = [
   {
     slug: "hitmans-library",
@@ -52,12 +53,12 @@ const WORK = [
   },
 ];
 
-export default function Home() {
+export default function WorkUpfrontDraft() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <DNav />
       <div id="top" className="mx-auto w-full max-w-[600px] scroll-mt-20 px-5 pb-10">
-        {/* ── header ── */}
+        {/* ── header (library line removed) ── */}
         <header className="mt-6">
           <p className="font-sans text-sm font-medium text-[#171717] dark:text-[#f2f2f2]">I like figuring things out.</p>
           <p className="mt-4 text-pretty font-sans text-sm leading-relaxed">
@@ -90,6 +91,7 @@ export default function Home() {
             </a>
             .
           </p>
+
           <p className="mt-4 text-pretty font-sans text-sm leading-relaxed text-[#626262] dark:text-[#a8a8a8]">
             <Link href="/about" className="link-sheen">about</Link>
             {" / "}
@@ -122,7 +124,12 @@ export default function Home() {
           </p>
         </header>
 
-        {/* ── work ── */}
+        {/* ── the experiment: all shots, right up top ── */}
+        <section aria-label="Shots upfront" className="mt-12">
+          <ShotsWall shots={dossier.shots} />
+        </section>
+
+        {/* ── work, pushed below ── */}
         <section aria-label="Work" id="work" className="mt-12 scroll-mt-20">
           <h2 className="font-sans text-sm font-medium">Work</h2>
           <div className="mt-3 space-y-8">
