@@ -1,5 +1,5 @@
 import { ClockTile, MusicTile, StepsTile, WeatherTile } from "./instruments";
-import { FloorControls } from "./floor-controls";
+import { BackToTop } from "./back-to-top";
 
 const SOCIALS = [
   { label: "x", href: "https://x.com/damilareoo" },
@@ -43,6 +43,9 @@ export function DFloor() {
             {s.label}
           </a>
         ))}
+        <span className="ml-auto inline-flex">
+          <BackToTop />
+        </span>
       </p>
     </div>
   );
