@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { EXPLORATION_SETS } from "@/data/exploration-sets";
+import { ALBUM_SET, EXPLORATION_SETS } from "@/data/exploration-sets";
 import { ExplorationIndex } from "./exploration-index";
 import { ExplorationMorph } from "./exploration-morph";
 import { ExplorationSpotlight } from "./exploration-spotlight";
+import { ExplorationCrate } from "./exploration-crate";
 
 type Exploration =
   | {
@@ -39,15 +40,7 @@ const LIVE = [
   { slug: "x-index", exhibit: "Exploration 02", title: "Numeric index", kind: "index", set: "index" },
   { slug: "x-morph", exhibit: "Exploration 03", title: "Index ⇄ grid", kind: "morph", set: "cover" },
   { slug: "x-spotlight", exhibit: "Exploration 04", title: "Spotlight", kind: "spotlight", set: "rivers" },
-  {
-    slug: "pixel-soccer",
-    exhibit: "Exploration 05",
-    title: "Pixel Soccer",
-    kind: "embed",
-    set: "",
-    embed: "https://pixel-soccer.vercel.app/",
-    tall: true,
-  },
+  { slug: "x-crate", exhibit: "Exploration 05", title: "Crate dig", kind: "crate", set: "" },
 ] as const;
 
 /**
@@ -166,7 +159,7 @@ export function ExplorationsRail() {
           </article>
         ))}
         {LIVE.map((e, j) => {
-          const shots = (e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? [];
+          const shots = e.kind === "crate" ? ALBUM_SET.shots : ((e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? []);
           return (
             <article
               key={e.slug}
@@ -177,39 +170,16 @@ export function ExplorationsRail() {
                 <span aria-hidden>[{String(EXPLORATIONS.length + j + 1).padStart(2, "0")}]</span>
               </div>
               <div className="mt-3">
-                {e.kind === "embed" && "embed" in e ? (
-                  <iframe
-                    src={e.embed}
-                    title={`${e.title} — playable game`}
-                    loading="lazy"
-                    allow="gamepad; fullscreen; autoplay"
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
-                    className={`w-full border-0 bg-[#0d0d1a] rounded-xl ${"tall" in e && e.tall ? "h-[560px]" : "h-80"}`}
-                  />
-                ) : (
-                  <>
-                    {e.kind === "index" && <ExplorationIndex shots={shots} />}
-                    {e.kind === "morph" && <ExplorationMorph shots={shots} />}
-                    {e.kind === "spotlight" && <ExplorationSpotlight shots={shots} />}
-                  </>
-                )}
+                {e.kind === "index" && <ExplorationIndex shots={shots} />}
+                {e.kind === "morph" && <ExplorationMorph shots={shots} />}
+                {e.kind === "spotlight" && <ExplorationSpotlight shots={shots} />}
+                {e.kind === "crate" && <ExplorationCrate shots={shots} />}
               </div>
               <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
                 <span className="truncate">{e.title}</span>
-                {e.kind === "embed" && "embed" in e ? (
-                  <a
-                    href={e.embed}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0 underline decoration-[#b9b9b6] underline-offset-2"
-                  >
-                    Open live ↗
-                  </a>
-                ) : (
-                  <span aria-hidden className="shrink-0">
-                    Interaction concept
-                  </span>
-                )}
+                <span aria-hidden className="shrink-0">
+                  Interaction concept
+                </span>
               </div>
             </article>
           );

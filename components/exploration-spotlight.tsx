@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LabViewer } from "./lab-viewer";
 import type { LabShots } from "./lab-set";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -9,10 +8,10 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
 /**
  * Exploration: spotlight develop (Evervault mask technique).
  * Dark wall; a lerped spotlight trails the cursor and develops
- * whatever it passes over. Tap for fullscreen.
+ * whatever it passes over. Tap pins a frame lit; tap again to
+ * park it back. Concepts don't open.
  */
 export function ExplorationSpotlight({ shots }: { shots: LabShots[] }) {
-  const [at, setAt] = useState<number | null>(null);
   const [pinned, setPinned] = useState<Set<number>>(new Set());
   const wallRef = useRef<HTMLDivElement>(null);
   const target = useRef({ x: -9999, y: -9999 });
@@ -57,10 +56,15 @@ export function ExplorationSpotlight({ shots }: { shots: LabShots[] }) {
             key={s.src}
             type="button"
             onClick={() => {
-              if (pinned.has(i)) setAt(i);
-              else setPinned((p) => new Set(p).add(i));
+              setPinned((p) => {
+                const next = new Set(p);
+                if (next.has(i)) next.delete(i);
+                else next.add(i);
+                return next;
+              });
             }}
-            aria-label={pinned.has(i) ? `Open frame ${pad(i)} fullscreen` : `Light up frame ${pad(i)}`}
+            aria-label={pinned.has(i) ? `Park frame ${pad(i)} back` : `Light up frame ${pad(i)}`}
+            aria-pressed={pinned.has(i)}
             className={`block h-full w-full cursor-pointer overflow-hidden rounded-lg transition-all duration-500 motion-reduce:transition-none ${
               pinned.has(i) ? "brightness-100" : ""
             }`}
@@ -85,7 +89,6 @@ export function ExplorationSpotlight({ shots }: { shots: LabShots[] }) {
           ))}
         </div>
       </div>
-      {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} dark={true} />}
     </div>
   );
 }
