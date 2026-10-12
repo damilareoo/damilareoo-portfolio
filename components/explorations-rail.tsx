@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type Exploration =
   | {
       slug: string;
@@ -70,7 +72,9 @@ export function ExplorationsRail() {
               )}
             </div>
             <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
-              <span className="truncate">{e.title}</span>
+              <Link href={`/explorations/${e.slug}`} className="truncate underline decoration-[#b9b9b6] underline-offset-2">
+                {e.title}
+              </Link>
               {e.embed ? (
                 <a
                   href={e.embed}
