@@ -62,14 +62,14 @@ describe("now-playing", () => {
       }),
     );
     const body = await (await GET()).json();
-    expect(body).toEqual({ isPlaying: false });
+    expect(body).toEqual({ isPlaying: false, reason: "nothing-found" });
   });
 
   it("rests without credentials and never calls Spotify", async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
     const body = await (await GET()).json();
-    expect(body).toEqual({ isPlaying: false });
+    expect(body).toEqual({ isPlaying: false, reason: "no-credentials" });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });

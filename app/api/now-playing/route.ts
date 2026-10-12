@@ -38,12 +38,12 @@ export async function GET() {
       !process.env.SPOTIFY_CLIENT_SECRET ||
       !process.env.SPOTIFY_REFRESH_TOKEN
     ) {
-      return NextResponse.json({ isPlaying: false }, { headers: NO_CACHE });
+      return NextResponse.json({ isPlaying: false, reason: "no-credentials" }, { headers: NO_CACHE });
     }
 
     const { access_token } = await getAccessToken();
     if (!access_token) {
-      return NextResponse.json({ isPlaying: false }, { headers: NO_CACHE });
+      return NextResponse.json({ isPlaying: false, reason: "token-failed" }, { headers: NO_CACHE });
     }
 
     const res = await fetch(NOW_PLAYING_URL, {
@@ -76,29 +76,30 @@ export async function GET() {
       headers: { Authorization: `Bearer ${access_token}` },
       cache: "no-store",
     });
-    if (recent.ok) {
-      const data = await recent.json();
-      const last = data?.items?.[0];
-      if (last?.track) {
-        return NextResponse.json(
-          {
-            isPlaying: false,
-            lastPlayed: true,
-            playedAt: last.played_at ?? null,
-            title: last.track.name,
-            artist: last.track.artists.map((a: { name: string }) => a.name).join(", "),
-            songUrl: last.track.external_urls.spotify,
-            albumArt: last.track.album.images[0]?.url ?? null,
-            progress: 0,
-            duration: last.track.duration_ms,
-          },
-          { headers: NO_CACHE },
-        );
-      }
+    if (!recent.ok) {
+      return NextResponse.json({ isPlaying: false, reason: "recent-failed" }, { headers: NO_CACHE });
+    }
+    const data = await recent.json();
+    const last = data?.items?.[0];
+    if (last?.track) {
+      return NextResponse.json(
+        {
+          isPlaying: false,
+          lastPlayed: true,
+          playedAt: last.played_at ?? null,
+          title: last.track.name,
+          artist: last.track.artists.map((a: { name: string }) => a.name).join(", "),
+          songUrl: last.track.external_urls.spotify,
+          albumArt: last.track.album.images[0]?.url ?? null,
+          progress: 0,
+          duration: last.track.duration_ms,
+        },
+        { headers: NO_CACHE },
+      );
     }
 
-    return NextResponse.json({ isPlaying: false }, { headers: NO_CACHE });
+    return NextResponse.json({ isPlaying: false, reason: "nothing-found" }, { headers: NO_CACHE });
   } catch {
-    return NextResponse.json({ isPlaying: false }, { headers: NO_CACHE });
+    return NextResponse.json({ isPlaying: false, reason: "fetch-failed" }, { headers: NO_CACHE });
   }
 }

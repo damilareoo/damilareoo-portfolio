@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PEDO_CANVASES, ROUTE_PTS, RUN_BASE_KM, RUN_PACE, TILE_GLYPHS, canvasForDay, fmtSteps, inkFloor, kcalForKm, runTimeForKm } from "@/components/instruments";
+import { PEDO_CANVASES, ROUTE_PTS, RUN_BASE_KM, RUN_PACE, TILE_GLYPHS, canvasForDay, canvasForTheme, fmtSteps, inkFloor, kcalForKm, runTimeForKm } from "@/components/instruments";
 
 /**
  * The pedometer tile's rotation: five sampled share canvases, one a day,
@@ -84,5 +84,15 @@ describe("the unlit floor", () => {
   it("matches the poster exports at 0.08", () => {
     expect(inkFloor("#ffffff", 0.08)).toBe("rgba(255,255,255,0.08)");
     expect(inkFloor("#0a0a0a", 0.08)).toBe("rgba(10,10,10,0.08)");
+  });
+});
+
+describe("the theme-bound canvas", () => {
+  it("wears black on light, white on dark — nothing else", () => {
+    expect(canvasForTheme("dark").name).toBe("bone");
+    expect(canvasForTheme("light").name).toBe("onyx");
+    expect(canvasForTheme(undefined).name).toBe("onyx");
+    expect(canvasForTheme("dark").bg).toBe("#ffffff");
+    expect(canvasForTheme("light").bg).toBe("#0b0b0d");
   });
 });

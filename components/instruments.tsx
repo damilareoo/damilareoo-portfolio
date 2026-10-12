@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useTheme } from "next-themes";
 import { coinSound, tapSound } from "./sound";
 
 /* ── shared ─────────────────────────────────────────────── */
@@ -628,6 +629,14 @@ export const PEDO_CANVASES = [
   { name: "dusk", bg: "#3c2b35", ink: "#fefefe", dim: "rgba(254,254,254,0.12)", hot: "#E11A1B", chip: "#FFFFFF", onChip: "#232838" },
 ];
 
+/** The tile wears one canvas, bound to the page theme: black on light,
+    white on dark. No rotation — contrast is the whole point. */
+export function canvasForTheme(theme: string | undefined) {
+  return theme === "dark"
+    ? PEDO_CANVASES.find((c) => c.name === "bone") ?? PEDO_CANVASES[0]
+    : (PEDO_CANVASES.find((c) => c.name === "onyx") ?? PEDO_CANVASES[0]);
+}
+
 /** One canvas a day, rotating — stable per calendar day, no storage. */
 export function canvasForDay(dayIndex: number) {
   return PEDO_CANVASES[((dayIndex % PEDO_CANVASES.length) + PEDO_CANVASES.length) % PEDO_CANVASES.length];
@@ -727,9 +736,15 @@ const MONO = "ui-monospace, SFMono-Regular, Menlo, monospace";
 export function StepsTile() {
   const runnerRef = useRef<SVGCircleElement>(null);
   const [data, setData] = useState<StepsReading>(null);
-  const [dayIdx] = useState(() => Math.floor(Date.now() / 86400000));
-  const [canvasIdx, setCanvasIdx] = useState<number | null>(null);
-  const pal = canvasForDay(canvasIdx ?? dayIdx);
+  /* Theme-bound canvas, mount-gated like the nav toggle so server and
+     first paint agree (light default) before the stored theme lands. */
+  const { resolvedTheme } = useTheme();
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setOn(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  const pal = canvasForTheme(on ? resolvedTheme : undefined);
 
   useEffect(() => {
     let dead = false;
@@ -796,12 +811,10 @@ export function StepsTile() {
     <Tile
       label={
         data
-          ? `Run ${data.date}: ${fmtKm(data.km)} kilometres in ${time}, ${kcal} kilocalories, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres, on the ${pal.name} canvas. Tap to change canvas.`
+          ? `Run ${data.date}: ${fmtKm(data.km)} kilometres in ${time}, ${kcal} kilocalories, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres, on the ${pal.name} canvas.`
           : "Steps not reported"
       }
       value={data ? `${fmtKm(data.km)} km · ${fmtSteps(data.steps)}` : "—"}
-      onTap={() => setCanvasIdx((i) => ((i ?? dayIdx) + 1) % PEDO_CANVASES.length)}
-      tapLabel={data ? `Run on the ${pal.name} canvas. Tap to change canvas.` : "Steps not reported"}
       faceStyle={{ background: pal.bg }}
     >
       <svg viewBox={`0 0 ${FACE} ${FACE}`} aria-hidden className="block h-full w-full">
