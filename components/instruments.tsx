@@ -71,6 +71,19 @@ function Tile({
   );
 }
 
+/** Mount-guarded dark flag — server and first paint agree on light,
+    the stored theme lands a frame later. Shared by every tile that
+    flips its face with the page. */
+function useDark(): boolean {
+  const { resolvedTheme } = useTheme();
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setOn(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return on && resolvedTheme === "dark";
+}
+
 /* ── clock ──────────────────────────────────────────────── */
 
 const INDEX = Array.from({ length: 12 }, (_, hour) => {
@@ -87,6 +100,11 @@ const INDEX = Array.from({ length: 12 }, (_, hour) => {
 export function ClockTile() {
   const [now, setNow] = useState("--:--:--");
   const [hands, setHands] = useState({ h: 0, m: 0, s: 0 });
+  /* White face on dark pages, black face on light ones — the footer
+     flips as one, led by the run widget. */
+  const dark = useDark();
+  const face = dark ? "#FFFFFF" : "#141414";
+  const ink = dark ? "#0A0A0A" : "#FFFFFF";
 
   useEffect(() => {
     const tick = () => {
@@ -106,14 +124,14 @@ export function ClockTile() {
   return (
     <Tile label="Local time" value={now}>
       <svg viewBox="0 0 100 100" role="img" aria-label="Local time" className="block h-full w-full">
-        <circle cx="50" cy="50" r="50" fill="#141414" />
+        <circle cx="50" cy="50" r="50" fill={face} />
         {INDEX.map((mk, i) => (
-          <circle key={i} cx={mk.cx} cy={mk.cy} r={mk.r} fill="#fff" opacity={mk.o} />
+          <circle key={i} cx={mk.cx} cy={mk.cy} r={mk.r} fill={ink} opacity={mk.o} />
         ))}
-        <line x1="50" y1="50" x2="50" y2="33" stroke="#fff" strokeWidth="6.5" strokeLinecap="round" opacity="0.72" transform={`rotate(${hands.h} 50 50)`} />
-        <line x1="50" y1="50" x2="50" y2="14" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" transform={`rotate(${hands.m} 50 50)`} />
-        <line x1="50" y1="60" x2="50" y2="11" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" opacity="0.55" transform={`rotate(${hands.s} 50 50)`} />
-        <circle cx="50" cy="50" r="1.6" fill="#141414" />
+        <line x1="50" y1="50" x2="50" y2="33" stroke={ink} strokeWidth="6.5" strokeLinecap="round" opacity="0.72" transform={`rotate(${hands.h} 50 50)`} />
+        <line x1="50" y1="50" x2="50" y2="14" stroke={ink} strokeWidth="3.4" strokeLinecap="round" transform={`rotate(${hands.m} 50 50)`} />
+        <line x1="50" y1="60" x2="50" y2="11" stroke={ink} strokeWidth="1.4" strokeLinecap="round" opacity="0.55" transform={`rotate(${hands.s} 50 50)`} />
+        <circle cx="50" cy="50" r="1.6" fill={face} />
       </svg>
     </Tile>
   );
@@ -276,6 +294,12 @@ export function DotsTile() {
   const [isNewBest, setIsNewBest] = useState(false);
   const flashTimer = useRef(0);
 
+  /* White face on dark pages: the game dots flip to ink with it. */
+  const dark = useDark();
+  const dotBase = dark ? "rgba(10,10,10,0.10)" : "rgba(255,255,255,0.10)";
+  const dotLit = dark ? "rgba(10,10,10,0.9)" : "rgba(255,255,255,0.95)";
+  const dotRing = dark ? "rgba(10,10,10,0.55)" : "rgba(255,255,255,0.55)";
+
   /* latest-* mirrors let timeouts read fresh state without re-arming
      chains that drift. */
   const latest = useRef({ phase: phase as DotPhase, score, combo, mole });
@@ -295,23 +319,23 @@ export function DotsTile() {
     if (!s) return;
     paintDots(s.ctx, s.S, DOTS_N, (x, y) => {
       const i = y * DOTS_N + x;
-      if (phase === "play" && i === mole) return "rgba(255,255,255,0.95)";
+      if (phase === "play" && i === mole) return dotLit;
       if (i === flash) return "#D92222";
-      if (phase === "idle" && i === 12) return blink ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.10)";
-      return "rgba(255,255,255,0.10)";
+      if (phase === "idle" && i === 12) return blink ? dotLit : dotBase;
+      return dotBase;
     });
     if (phase !== "idle") {
       const pitch = s.S / DOTS_N;
       const cx = (cursor % DOTS_N) + 0.5;
       const cy = Math.floor(cursor / DOTS_N) + 0.5;
-      s.ctx.strokeStyle = "rgba(255,255,255,0.55)";
+      s.ctx.strokeStyle = dotRing;
       s.ctx.lineWidth = 2;
       s.ctx.beginPath();
       s.ctx.arc(cx * pitch, cy * pitch, pitch * 0.42, 0, Math.PI * 2);
       s.ctx.stroke();
     }
     return () => window.clearTimeout(flashTimer.current);
-  }, [phase, mole, flash, cursor, blink]);
+  }, [phase, mole, flash, cursor, blink, dotBase, dotLit, dotRing]);
 
   const gameOver = (finalScore: number) => {
     setPhase("over");
@@ -445,6 +469,7 @@ export function DotsTile() {
     <Tile
       label={`Reaction dots. ${phase === "play" ? `Score ${score}, best ${best}.` : phase === "over" ? `Game over, ${score}${isNewBestNow ? ", a new best" : ""}.` : best > 0 ? `Best ${best}.` : ""} Arrows move, Enter whacks.`}
       value={value}
+      faceStyle={dark ? { background: "#FFFFFF" } : undefined}
     >
       <div
         role="button"
@@ -477,6 +502,7 @@ type Track = {
 export function MusicTile() {
   const [track, setTrack] = useState<Track | null>(null);
   const [artOk, setArtOk] = useState(true);
+  const dark = useDark();
 
   useEffect(() => {
     let dead = false;
@@ -511,6 +537,7 @@ export function MusicTile() {
     <Tile
       label={playing ? `Now playing: ${track!.title} by ${track!.artist}` : lastPlayed ? `Last played: ${track!.title} by ${track!.artist}` : "Nothing playing"}
       value={value}
+      faceStyle={dark ? { background: "#FFFFFF" } : undefined}
     >
       <div className="relative h-full w-full">
         {/* Spinning record, after Tobi's vinyl cards: the disc turns only
@@ -687,15 +714,8 @@ const MONO = "ui-monospace, SFMono-Regular, Menlo, monospace";
 export function StepsTile() {
   const runnerRef = useRef<SVGCircleElement>(null);
   const [data, setData] = useState<StepsReading>(null);
-  /* Theme-bound canvas, mount-gated like the nav toggle so server and
-     first paint agree (light default) before the stored theme lands. */
-  const { resolvedTheme } = useTheme();
-  const [on, setOn] = useState(false);
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setOn(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
-  const pal = canvasForTheme(on ? resolvedTheme : undefined);
+  /* Theme-bound canvas: black tile on light pages, white on dark. */
+  const pal = canvasForTheme(useDark() ? "dark" : undefined);
 
   useEffect(() => {
     let dead = false;
