@@ -773,8 +773,8 @@ export function StepsTile() {
     const t0 = performance.now();
     const loop = (now: number) => {
       const [nx, ny] = ROUTE_PTS[Math.floor(((now - t0) / 45) % ROUTE_PTS.length)];
-      el.setAttribute("cx", String(ROUTE_X + nx * ROUTE_W));
-      el.setAttribute("cy", String(ROUTE_Y + ny * ROUTE_H));
+      el.setAttribute("cx", String(ROUTE_TX + nx * 360 * ROUTE_SC));
+      el.setAttribute("cy", String(ROUTE_TY + ny * 250 * ROUTE_SC));
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
