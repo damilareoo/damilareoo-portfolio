@@ -26,7 +26,7 @@ function WaterfallPageInner() {
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
-      <p className="px-5 pt-6 font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 19 — waterfall</p>
+      <p className="px-5 pt-6 font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 19 — waterfall</p>
       <div className="grid min-h-0 flex-1 grid-cols-3 gap-4 overflow-hidden px-5 py-4">
         {SPECS.map((col) => {
           const items = shots.filter((_, i) => i % 3 === col.mod);
@@ -68,7 +68,7 @@ function WaterfallPageInner() {
           );
         })}
       </div>
-      <p className="pb-6 text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">{shots.length} frames</p>
+      <p className="pb-6 text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">{shots.length} frames</p>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
       <style>{`@keyframes fall { from { transform: translateY(0); } to { transform: translateY(-50%); } }`}</style>
     </main>

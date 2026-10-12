@@ -49,7 +49,7 @@ export default function LightdarkPage() {
     <main>
       <section className="bg-[#fafafa] text-[#171717]">
         <div className="mx-auto w-full max-w-[1120px] px-5 pb-16 pt-8">
-          <p className="font-mono text-xs text-[#767676]">lab 73 — light / dark · day shift</p>
+          <p className="font-mono text-xs text-[#595959]">lab 73 — light / dark · day shift</p>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {halves.light.map((i) => (
               <button key={shots[i].src} type="button" onClick={() => setAt(i)} aria-label={`Open frame ${pad(i)}: ${shots[i].alt}`} className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0]">

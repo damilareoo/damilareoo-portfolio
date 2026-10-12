@@ -77,7 +77,7 @@ export default async function WorkCasePage({
         <div className="pt-8">
           <nav
             aria-label="Breadcrumb"
-            className="flex items-center gap-2 text-2xs tracking-wide text-[#767676] dark:text-[#8a8a8a]"
+            className="flex items-center gap-2 text-2xs tracking-wide text-[#595959] dark:text-[#8a8a8a]"
           >
             <Link href="/" className="link-sheen">
               Home
@@ -95,12 +95,12 @@ export default async function WorkCasePage({
           <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
             {c.year && (
               <div>
-                <dt className="text-2xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">Year</dt>
+                <dt className="text-2xs tracking-wide text-[#595959] dark:text-[#8a8a8a]">Year</dt>
                 <dd className="mt-1 font-sans text-sm text-[#171717] dark:text-[#f2f2f2]">{c.year}</dd>
               </div>
             )}
             <div>
-              <dt className="text-2xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">Role</dt>
+              <dt className="text-2xs tracking-wide text-[#595959] dark:text-[#8a8a8a]">Role</dt>
               <dd className="mt-1 font-sans text-sm text-[#171717] dark:text-[#f2f2f2]">{c.role}</dd>
             </div>
           </dl>
@@ -271,7 +271,7 @@ export default async function WorkCasePage({
                 className={`aspect-video w-full ${COVERS[w.slug]?.fit === "contain" ? "object-contain" : "object-cover"} transition-transform duration-500 group-hover:scale-[1.02]`}
               />
               <span className="block p-3">
-                <span className="block text-2xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">{label}</span>
+                <span className="block text-2xs tracking-wide text-[#595959] dark:text-[#8a8a8a]">{label}</span>
                 <span className="mt-1 block font-sans text-sm font-medium link-sheen">{w.name}</span>
               </span>
             </Link>

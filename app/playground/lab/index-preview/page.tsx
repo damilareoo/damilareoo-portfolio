@@ -43,7 +43,7 @@ function IndexPreviewPageInner() {
 
   return (
     <main className="mx-auto w-full max-w-[1120px] px-5 py-8">
-      <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 01 — numeric index + preview</p>
+      <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 01 — numeric index + preview</p>
       <div className="mt-6 grid gap-8 md:grid-cols-[180px_1fr]">
         <ol className="order-2 max-h-[70vh] overflow-y-auto md:order-1">
           {shots.map((s, i) => (
@@ -58,7 +58,7 @@ function IndexPreviewPageInner() {
                 }}
                 aria-label={`Open frame ${pad(i)}: ${s.alt}`}
                 className={`block w-full cursor-pointer px-3 py-1 text-left font-mono text-sm transition-colors ${
-                  i === at ? "bg-[#171717] text-white dark:bg-white dark:text-[#171717]" : "text-[#767676] hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
+                  i === at ? "bg-[#171717] text-white dark:bg-white dark:text-[#171717]" : "text-[#595959] hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
                 }`}
               >
                 {pad(i)}
@@ -77,7 +77,7 @@ function IndexPreviewPageInner() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img key={current.src} src={current.src} alt={current.alt} draggable={false} className="block w-full object-cover" style={{ aspectRatio: ratio }} />
             </button>
-            <p className="mt-3 text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">
+            <p className="mt-3 text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">
               {pad(at)} / {shots.length}
             </p>
           </div>

@@ -46,7 +46,7 @@ export default function LoupePage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 28 — loupe</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 28 — loupe</p>
         <div ref={gridRef} className="relative mt-6">
           <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-8">
             {shots.map((s, i) => (
@@ -71,7 +71,7 @@ export default function LoupePage() {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={shots[lens.i].src} alt="" aria-hidden draggable={false} className="block aspect-video w-full object-cover" />
-              <p className="px-3 py-2 text-center font-mono text-[11px] text-[#767676] dark:text-[#8a8a8a]">
+              <p className="px-3 py-2 text-center font-mono text-[11px] text-[#595959] dark:text-[#8a8a8a]">
                 {pad(lens.i)} / {shots.length}
               </p>
             </div>

@@ -30,7 +30,7 @@ export function DFooter() {
 export function DFloor() {
   return (
     <div className="mt-6 border-t border-[#e5e5e5] pt-3 dark:border-[#2b2b2b]">
-      <p className="flex flex-wrap items-center gap-x-4 font-sans text-2xs text-[#767676] dark:text-[#8a8a8a]">
+      <p className="flex flex-wrap items-center gap-x-4 font-sans text-2xs text-[#595959] dark:text-[#8a8a8a]">
         <span>© {new Date().getFullYear()} Damilare Osofisan</span>
         {SOCIALS.map((s) => (
           <a

@@ -30,7 +30,7 @@ export default function PilesPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] space-y-8 px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 71 — project piles</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 71 — project piles</p>
         {piles.map((pile, p) => {
           const open = spread === p;
           return (
@@ -55,7 +55,7 @@ export default function PilesPage() {
                     style={{ transform: `rotate(${(k - 1.5) * 7}deg) translateX(${(k - 1.5) * 8}px)`, zIndex: k }}
                   />
                 ))}
-                <span aria-hidden className="absolute -bottom-5 left-0 font-mono text-[11px] tabular-nums text-[#767676] dark:text-[#8a8a8a]">
+                <span aria-hidden className="absolute -bottom-5 left-0 font-mono text-[11px] tabular-nums text-[#595959] dark:text-[#8a8a8a]">
                   {pad(p)} — {pile.length}
                 </span>
               </button>

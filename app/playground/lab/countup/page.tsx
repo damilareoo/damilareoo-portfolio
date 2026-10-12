@@ -31,7 +31,7 @@ export default function CountupPage() {
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8">
         <div className="sticky top-0 z-10 -mx-5 flex items-baseline justify-between bg-[#fafafa]/90 px-5 py-3 backdrop-blur-md dark:bg-[#131313]/90">
-          <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 84 — count-up</p>
+          <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 84 — count-up</p>
           <p aria-hidden className="font-mono text-3xl tabular-nums">{pad(Math.min(n, shots.length - 1))}</p>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">

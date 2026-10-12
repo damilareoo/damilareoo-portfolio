@@ -47,7 +47,7 @@ function AccordionPageInner() {
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
-      <p className="px-5 pt-6 font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 05 — expanding accordion</p>
+      <p className="px-5 pt-6 font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 05 — expanding accordion</p>
       <div className="flex min-h-0 flex-1 items-center">
         <div ref={stripRef} className="flex h-[72vh] w-full items-stretch gap-2 overflow-x-auto px-5 pb-2">
           {shots.map((s, i) => {
@@ -85,7 +85,7 @@ function AccordionPageInner() {
           })}
         </div>
       </div>
-      <p className="pb-6 text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">
+      <p className="pb-6 text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">
         {pad(at)} / {shots.length}
       </p>
       {open && <LabViewer shots={shots} at={at} onAt={go} onClose={() => setOpen(false)} />}

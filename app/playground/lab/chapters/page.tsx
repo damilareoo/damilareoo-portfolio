@@ -32,7 +32,7 @@ export default function ChaptersPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] space-y-12 px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 10 — chapter rails</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 10 — chapter rails</p>
         {chapters.map((c) => (
           <section key={c.n} aria-label={`Chapter ${pad(c.n - 1)}`}>
             <p aria-hidden className="select-none font-mono text-5xl font-bold leading-none text-[#171717]/10 dark:text-white/10">

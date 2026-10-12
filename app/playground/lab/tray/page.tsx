@@ -24,7 +24,7 @@ export default function TrayPage() {
   return (
     <main className="bg-[#fafafa] pb-28 text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] px-5 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 93 — visited tray</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 93 — visited tray</p>
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           {shots.map((s, i) => (
             <button

@@ -63,13 +63,13 @@ export default function StackPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[960px] px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 06 — sticky stack</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 06 — sticky stack</p>
         <div className="mt-6 space-y-5">
           {shots.map((s, i) => (
             <StackCard key={s.src} src={s.src} alt={s.alt} i={i} onOpen={() => setAt(i)} />
           ))}
         </div>
-        <p className="mt-10 text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">{shots.length} frames</p>
+        <p className="mt-10 text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">{shots.length} frames</p>
       </div>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
     </main>

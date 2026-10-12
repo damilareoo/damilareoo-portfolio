@@ -21,7 +21,7 @@ export default function MorphPage() {
 
   return (
     <main className="mx-auto w-full max-w-[1120px] px-5 py-8">
-      <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 02 — index ⇄ grid morph</p>
+      <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 02 — index ⇄ grid morph</p>
 
       <div className="mt-6 flex justify-center">
         <div className="flex items-center gap-1 rounded-full bg-white/85 p-1 ring-1 ring-[#e5e5e5] backdrop-blur-md dark:bg-[#1e1e1e]/85 dark:ring-white/10">
@@ -32,7 +32,7 @@ export default function MorphPage() {
               onClick={() => setView(v)}
               aria-pressed={view === v}
               className={`cursor-pointer rounded-full px-4 py-2 font-mono text-xs transition-colors ${
-                view === v ? "bg-[#171717] text-white dark:bg-white dark:text-[#171717]" : "text-[#767676] hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
+                view === v ? "bg-[#171717] text-white dark:bg-white dark:text-[#171717]" : "text-[#595959] hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
               }`}
             >
               {v === "index" ? "01–64" : "▦"}
@@ -62,7 +62,7 @@ export default function MorphPage() {
           >
             {view === "index" ? (
               <>
-                <span className="font-mono text-sm text-[#767676] dark:text-[#8a8a8a]">{pad(i)}</span>
+                <span className="font-mono text-sm text-[#595959] dark:text-[#8a8a8a]">{pad(i)}</span>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="h-10 w-16 rounded object-cover" />
               </>

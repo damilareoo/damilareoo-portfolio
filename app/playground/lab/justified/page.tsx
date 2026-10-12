@@ -34,7 +34,7 @@ export default function JustifiedPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1280px] px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 21 — justified bands</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 21 — justified bands</p>
         <div className="mt-6 space-y-1">
           {rows.map((row, r) => (
             <div key={r} className="flex gap-1">

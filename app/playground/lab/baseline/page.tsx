@@ -17,7 +17,7 @@ export default function BaselinePage() {
 
   return (
     <main className="flex h-dvh flex-col justify-end overflow-hidden bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
-      <p className="px-5 pb-4 font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 67 — baseline row</p>
+      <p className="px-5 pb-4 font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 67 — baseline row</p>
       <div className="flex w-full items-end gap-2 overflow-x-auto px-5 pb-2">
         {shots.map((s, i) => (
           <button
@@ -34,7 +34,7 @@ export default function BaselinePage() {
         ))}
       </div>
       <div aria-hidden className="h-px w-full bg-[#171717] dark:bg-white" />
-      <p className="py-4 text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">{shots.length} frames</p>
+      <p className="py-4 text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">{shots.length} frames</p>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
     </main>
   );

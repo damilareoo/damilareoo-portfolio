@@ -39,8 +39,8 @@ export default function DealinPage() {
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8">
         <div className="flex items-baseline justify-between">
-          <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 74 — deal-in</p>
-          <p aria-hidden className="font-mono text-xs tabular-nums text-[#767676] dark:text-[#8a8a8a]">
+          <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 74 — deal-in</p>
+          <p aria-hidden className="font-mono text-xs tabular-nums text-[#595959] dark:text-[#8a8a8a]">
             {pad(Math.min(dealt, shots.length) - 1)} / {shots.length}
           </p>
         </div>

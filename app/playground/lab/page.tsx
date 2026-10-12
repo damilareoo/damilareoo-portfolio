@@ -113,7 +113,7 @@ const PROTOS = [
 export default function ShotsLabPage() {
   return (
     <main className="mx-auto w-full max-w-[720px] px-5 py-16">
-      <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">playground / lab</p>
+      <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">playground / lab</p>
       <h1 className="mt-2 text-2xl font-bold tracking-tight">four ways to browse 66 frames</h1>
       <ol className="mt-8 space-y-3">
         {PROTOS.map((p) => (
@@ -122,17 +122,17 @@ export default function ShotsLabPage() {
               href={p.href}
               className="group flex items-baseline gap-4 rounded-xl p-4 ring-1 ring-[#e5e5e5] transition-colors hover:bg-white dark:ring-white/10 dark:hover:bg-[#1e1e1e]"
             >
-              <span className="font-mono text-sm text-[#767676] dark:text-[#8a8a8a]">{p.n}</span>
+              <span className="font-mono text-sm text-[#595959] dark:text-[#8a8a8a]">{p.n}</span>
               <span>
                 <span className="block text-base font-medium">{p.name}</span>
-                <span className="block text-sm text-[#767676] dark:text-[#8a8a8a]">{p.note}</span>
+                <span className="block text-sm text-[#595959] dark:text-[#8a8a8a]">{p.note}</span>
               </span>
             </Link>
           </li>
         ))}
       </ol>
       <p className="mt-8">
-        <Link href="/playground" className="text-sm text-[#767676] underline dark:text-[#8a8a8a]">← back to playground</Link>
+        <Link href="/playground" className="text-sm text-[#595959] underline dark:text-[#8a8a8a]">← back to playground</Link>
       </p>
     </main>
   );

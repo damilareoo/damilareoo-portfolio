@@ -40,10 +40,10 @@ export default function TwinPage() {
 
   return (
     <main className="flex h-dvh flex-col justify-center gap-8 overflow-hidden bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
-      <p className="px-5 font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 23 — twin rails</p>
+      <p className="px-5 font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 23 — twin rails</p>
       {rail(TOP, false)}
       {rail(BOTTOM, true)}
-      <p className="text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">{shots.length} frames</p>
+      <p className="text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">{shots.length} frames</p>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
     </main>
   );

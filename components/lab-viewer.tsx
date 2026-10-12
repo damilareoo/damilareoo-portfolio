@@ -66,7 +66,7 @@ export function LabViewer({
           className="max-h-[74vh] w-auto max-w-[92vw] rounded-xl object-contain ring-1 ring-[#e0e0e0] drop-shadow-[0_24px_48px_rgba(0,0,0,0.24)] dark:ring-[#2b2b2b]"
         />
         <figcaption className="mt-4 flex items-center gap-3">
-          <span className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">
+          <span className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">
             {String(at + 1).padStart(2, "0")} / {shots.length}
           </span>
           <span className="flex items-center gap-1 rounded-full bg-white/85 p-1 ring-1 ring-[#e5e5e5] backdrop-blur-md dark:bg-[#1e1e1e]/85 dark:ring-white/10">

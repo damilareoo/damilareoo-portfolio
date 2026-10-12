@@ -34,7 +34,7 @@ export default function CascadePage() {
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8">
         <div className="flex items-center justify-between">
-          <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 27 — shuffle cascade</p>
+          <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 27 — shuffle cascade</p>
           <button
             type="button"
             onClick={toss}

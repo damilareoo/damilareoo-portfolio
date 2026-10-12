@@ -72,7 +72,7 @@ export function CaseRail({ labels }: { labels: string[] }) {
     >
       <p
         aria-hidden
-        className="mb-1 font-sans text-2xs tabular-nums text-[#767676] dark:text-[#8a8a8a]"
+        className="mb-1 font-sans text-2xs tabular-nums text-[#595959] dark:text-[#8a8a8a]"
       >
         {pad(active + 1)}/{pad(count)}
       </p>
@@ -99,7 +99,7 @@ export function CaseRail({ labels }: { labels: string[] }) {
             </span>
             <span
               aria-hidden
-              className={`pointer-events-none absolute left-full ml-3 whitespace-nowrap font-sans text-2xs text-[#767676] transition-opacity dark:text-[#8a8a8a] ${
+              className={`pointer-events-none absolute left-full ml-3 whitespace-nowrap font-sans text-2xs text-[#595959] transition-opacity dark:text-[#8a8a8a] ${
                 i === active ? "opacity-100" : "opacity-0 group-hover/rail:opacity-100"
               }`}
             >
@@ -121,7 +121,7 @@ export function CaseRail({ labels }: { labels: string[] }) {
               ?.scrollIntoView({ behavior: "smooth", block: "start" });
           }}
           aria-label={`Previous frame — ${labels[(active - 1 + count) % count]}`}
-          className="grid min-h-9 min-w-9 cursor-pointer place-items-center rounded-full text-[#767676] transition-colors hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
+          className="grid min-h-9 min-w-9 cursor-pointer place-items-center rounded-full text-[#595959] transition-colors hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
         >
           <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M10 3 5 8l5 5" />
@@ -129,7 +129,7 @@ export function CaseRail({ labels }: { labels: string[] }) {
         </button>
         <span
           aria-hidden
-          className="font-sans text-2xs tabular-nums text-[#767676] dark:text-[#8a8a8a]"
+          className="font-sans text-2xs tabular-nums text-[#595959] dark:text-[#8a8a8a]"
         >
           {pad(active + 1)}/{pad(count)}
         </span>
@@ -149,7 +149,7 @@ export function CaseRail({ labels }: { labels: string[] }) {
               ?.scrollIntoView({ behavior: "smooth", block: "start" });
           }}
           aria-label={`Next frame — ${labels[(active + 1) % count]}`}
-          className="grid min-h-9 min-w-9 cursor-pointer place-items-center rounded-full text-[#767676] transition-colors hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
+          className="grid min-h-9 min-w-9 cursor-pointer place-items-center rounded-full text-[#595959] transition-colors hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
         >
           <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 3l5 5-5 5" />

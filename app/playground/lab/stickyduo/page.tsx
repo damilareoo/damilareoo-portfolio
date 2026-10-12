@@ -21,7 +21,7 @@ export default function StickyduoPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1000px] px-5 pb-32 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 89 — sticky duo</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 89 — sticky duo</p>
         <div className="mt-6 space-y-[14dvh]">
           {pairs.map((pair, p) => (
             <div key={p} className="sticky space-y-4" style={{ top: 96 }}>

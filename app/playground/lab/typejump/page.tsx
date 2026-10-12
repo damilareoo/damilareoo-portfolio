@@ -42,7 +42,7 @@ export default function TypejumpPage() {
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8">
         <div className="flex items-baseline justify-between">
-          <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 42 — type-to-jump</p>
+          <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 42 — type-to-jump</p>
           <p aria-hidden className="font-mono text-2xl tabular-nums text-[#171717] dark:text-white">{buf || "––"}</p>
         </div>
         <div className="mt-6 grid grid-cols-4 gap-1.5 sm:grid-cols-8">

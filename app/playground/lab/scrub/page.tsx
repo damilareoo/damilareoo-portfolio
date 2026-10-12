@@ -59,7 +59,7 @@ export default function ScrubPage() {
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
-      <p className="px-5 pt-6 font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 08 — scrub rail</p>
+      <p className="px-5 pt-6 font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 08 — scrub rail</p>
       <div className="flex min-h-0 flex-1 items-center">
         <div
           ref={railRef}
@@ -93,7 +93,7 @@ export default function ScrubPage() {
           <div className="h-px flex-1 bg-[#e5e5e5] dark:bg-white/10" aria-hidden>
             <div className="h-px bg-[#171717] dark:bg-white" style={{ width: `${((at + 1) / shots.length) * 100}%` }} />
           </div>
-          <span className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">
+          <span className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">
             {pad(at)} / {shots.length}
           </span>
         </div>

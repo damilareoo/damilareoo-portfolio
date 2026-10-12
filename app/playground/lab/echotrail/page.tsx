@@ -26,7 +26,7 @@ export default function EchotrailPage() {
       onPointerMove={(e) => setPos({ x: e.clientX, y: e.clientY })}
     >
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 60 — echo trail</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 60 — echo trail</p>
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           {shots.map((s, i) => (
             <button

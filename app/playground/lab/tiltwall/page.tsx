@@ -25,7 +25,7 @@ export default function TiltwallPage() {
       }}
     >
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8" style={{ perspective: 1600 }}>
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 58 — tilt wall</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 58 — tilt wall</p>
         <div
           className="mt-6 grid grid-cols-2 gap-3 transition-transform duration-200 ease-out motion-reduce:transition-none sm:grid-cols-3 sm:gap-4"
           style={{ transform: `rotateX(${(-tilt.y * 7).toFixed(2)}deg) rotateY(${(tilt.x * 9).toFixed(2)}deg)`, transformStyle: "preserve-3d" }}

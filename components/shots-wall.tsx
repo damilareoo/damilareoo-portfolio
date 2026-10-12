@@ -108,7 +108,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
 
   return (
     <div className="pt-8">
-      <p className="text-xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">[Playground]</p>
+      <p className="text-xs tracking-wide text-[#595959] dark:text-[#8a8a8a]">[Playground]</p>
 
       <div className="mt-6 grid grid-cols-2 grid-flow-dense gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
         {ordered.map((s, i) => (

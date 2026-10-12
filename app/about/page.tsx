@@ -16,7 +16,7 @@ export default function AboutPage() {
       <WayBack />
       <div id="top" className="mx-auto w-full max-w-[600px] scroll-mt-20 px-5 pb-10">
         <div className="pt-8">
-          <p className="text-xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">[About]</p>
+          <p className="text-xs tracking-wide text-[#595959] dark:text-[#8a8a8a]">[About]</p>
           <h1 className="sr-only">About Damilare Osofisan</h1>
         </div>
 

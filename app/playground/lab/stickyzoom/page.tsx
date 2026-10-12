@@ -42,7 +42,7 @@ export default function StickyzoomPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1000px] space-y-[12dvh] px-5 py-16">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 50 — sticky zoom</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 50 — sticky zoom</p>
         {shots.map((s, i) => (
           <div key={s.src} data-z className="will-change-transform">
             <button
@@ -56,7 +56,7 @@ export default function StickyzoomPage() {
             </button>
           </div>
         ))}
-        <p className="pb-10 text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">
+        <p className="pb-10 text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">
           {pad(shots.length - 1)} / {shots.length}
         </p>
       </div>

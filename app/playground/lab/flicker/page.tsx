@@ -93,7 +93,7 @@ export default function FlickerPage() {
       onPointerUp={onUp}
       onPointerCancel={onUp}
     >
-      <p className="px-5 pt-6 font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 03 — rapid flicker</p>
+      <p className="px-5 pt-6 font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 03 — rapid flicker</p>
       <div className="flex min-h-0 flex-1 items-center justify-center px-5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -111,7 +111,7 @@ export default function FlickerPage() {
             <div className="h-px bg-[#171717] transition-[width] dark:bg-white" style={{ width: `${((at + 1) / shots.length) * 100}%` }} />
           </div>
           <button type="button" onClick={() => step(1)} aria-label="Next frame" className="cursor-pointer rounded-full p-2 ring-1 ring-[#e5e5e5] dark:ring-white/10">→</button>
-          <span className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">
+          <span className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">
             {pad(at)} / {shots.length}
           </span>
         </div>

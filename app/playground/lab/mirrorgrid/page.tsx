@@ -35,7 +35,7 @@ export default function MirrorgridPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1400px] px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 97 — mirror grid</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 97 — mirror grid</p>
         <div className="mt-6 flex items-start gap-3">
           {grid(false)}
           <span aria-hidden className="w-px self-stretch bg-[#171717]/15 dark:bg-white/15" />

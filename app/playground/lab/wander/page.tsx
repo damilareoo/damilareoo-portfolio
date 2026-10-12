@@ -34,7 +34,7 @@ export default function WanderPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 40 — wandering light</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 40 — wandering light</p>
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
           {shots.map((s, i) => {
             const on = i === lit;

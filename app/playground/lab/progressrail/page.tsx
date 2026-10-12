@@ -64,12 +64,12 @@ function ProgressrailPageInner() {
             className="absolute left-1/2 h-8 w-8 -translate-x-1/2 rounded-full bg-[#171717] font-mono text-[9px] tabular-nums text-white dark:bg-white dark:text-[#171717]"
             style={{ top: `calc(${depth * 100}% - 16px)` }}
           />
-          <span aria-hidden className="absolute -bottom-8 left-1/2 -translate-x-1/2 font-mono text-[10px] tabular-nums text-[#767676] dark:text-[#8a8a8a]">
+          <span aria-hidden className="absolute -bottom-8 left-1/2 -translate-x-1/2 font-mono text-[10px] tabular-nums text-[#595959] dark:text-[#8a8a8a]">
             {pad(Math.min(Math.floor(depth * shots.length), shots.length - 1))}
           </span>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 48 — progress rail</p>
+          <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 48 — progress rail</p>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
             {shots.map((s, i) => (
               <button

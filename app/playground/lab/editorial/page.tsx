@@ -78,7 +78,7 @@ export default function EditorialPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] space-y-16 px-5 pb-24 pt-8 sm:space-y-24">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 07 — editorial rhythm</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 07 — editorial rhythm</p>
         {rows.map((row, r) => (
           <Reveal key={r}>
             {row.kind === "hero" && <Frame src={shots[row.idx[0]].src} alt={shots[row.idx[0]].alt} onOpen={() => setAt(row.idx[0])} />}
@@ -108,7 +108,7 @@ export default function EditorialPage() {
             )}
           </Reveal>
         ))}
-        <p className="text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">{shots.length} frames</p>
+        <p className="text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">{shots.length} frames</p>
       </div>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
     </main>

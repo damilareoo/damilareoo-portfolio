@@ -62,6 +62,7 @@ export default function Home() {
       <div id="top" className="mx-auto w-full max-w-[600px] scroll-mt-20 px-5 pb-10">
         {/* ── header ── */}
         <header className="mt-6">
+          <h1 className="sr-only">Damilare Osofisan — Product Designer</h1>
           <p className="font-sans text-sm font-medium text-[#171717] dark:text-[#f2f2f2]">I like figuring things out.</p>
           <p className="mt-4 text-pretty font-sans text-sm leading-normal">
             I design and build digital products across web and mobile.

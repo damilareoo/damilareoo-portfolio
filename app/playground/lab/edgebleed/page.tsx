@@ -17,7 +17,7 @@ export default function EdgebleedPage() {
 
   return (
     <main className="flex h-dvh flex-col justify-center overflow-hidden bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
-      <p className="px-5 pb-4 font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 87 — edge bleed</p>
+      <p className="px-5 pb-4 font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 87 — edge bleed</p>
       <div className="flex w-full snap-x snap-mandatory items-center gap-5 overflow-x-auto px-[8vw]">
         {shots.map((s, i) => (
           <button
@@ -32,7 +32,7 @@ export default function EdgebleedPage() {
           </button>
         ))}
       </div>
-      <p className="pt-4 text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">
+      <p className="pt-4 text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">
         {pad(0)} – {pad(shots.length - 1)}
       </p>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}

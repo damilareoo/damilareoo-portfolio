@@ -84,7 +84,7 @@ export default function SorttogglePage() {
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] px-5 pb-24 pt-8">
         <div className="flex items-center justify-between">
-          <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 75 — sort toggle</p>
+          <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 75 — sort toggle</p>
           <div className="flex items-center gap-1 rounded-full bg-white/85 p-1 ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e]/85 dark:ring-white/10">
             {(["projects", "hue", "random"] as Mode[]).map((m, k) => (
               <button
@@ -94,7 +94,7 @@ export default function SorttogglePage() {
                 aria-pressed={mode === m}
                 aria-label={`Sort ${k + 1} of 3`}
                 className={`cursor-pointer rounded-full px-3 py-1.5 font-mono text-xs transition-colors ${
-                  mode === m ? "bg-[#171717] text-white dark:bg-white dark:text-[#171717]" : "text-[#767676] hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
+                  mode === m ? "bg-[#171717] text-white dark:bg-white dark:text-[#171717]" : "text-[#595959] hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
                 }`}
               >
                 {["Ⅰ", "Ⅱ", "Ⅲ"][k]}

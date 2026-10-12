@@ -18,7 +18,7 @@ export default function ScalecontrastPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] space-y-14 px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 88 — scale contrast</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 88 — scale contrast</p>
         {shots.map((s, i) =>
           i % 2 === 0 ? (
             <button

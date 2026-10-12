@@ -18,7 +18,7 @@ export default function LoopcolPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[720px] px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 90 — loop column</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 90 — loop column</p>
         <div className="mt-6 space-y-4">
           {[...shots, ...shots.slice(0, 8)].map((s, k) => {
             const i = k % shots.length;
@@ -36,7 +36,7 @@ export default function LoopcolPage() {
             );
           })}
         </div>
-        <p className="mt-8 text-center font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">↻ {shots.length}</p>
+        <p className="mt-8 text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">↻ {shots.length}</p>
       </div>
       {at !== null && <LabViewer shots={shots} at={at} onAt={setAt} onClose={() => setAt(null)} />}
     </main>

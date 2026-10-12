@@ -52,7 +52,7 @@ export default function SlotsPage() {
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
-      <p className="px-5 pt-6 font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 29 — slots</p>
+      <p className="px-5 pt-6 font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 29 — slots</p>
       <div className="mx-auto grid w-full max-w-[1120px] flex-1 grid-cols-3 content-center gap-3 px-5">
         {[0, 1, 2].map((c) => (
           <button

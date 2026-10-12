@@ -53,7 +53,7 @@ export default function HuebandsPage() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
       <div className="mx-auto w-full max-w-[1120px] space-y-10 px-5 pb-24 pt-8">
-        <p className="font-mono text-xs text-[#767676] dark:text-[#8a8a8a]">lab 72 — hue bands</p>
+        <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">lab 72 — hue bands</p>
         {bands.map((band, b) => (
           <div key={b} className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             {band.map((i) => (
