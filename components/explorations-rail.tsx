@@ -1,7 +1,3 @@
-"use client";
-
-import { useCallback, useEffect, useRef, useState } from "react";
-
 type Exploration =
   | {
       slug: string;
@@ -31,69 +27,16 @@ const EXPLORATIONS: Exploration[] = [
 ];
 
 /**
- * Explorations rail — native horizontal swipe with arrow buttons that
- * scroll by exactly one card. The arrows are transport, not replacement:
- * touch, trackpad and keyboard swipe all still work.
+ * Explorations rail — one card for now, so no arrows: the transport
+ * returns when a second exploration lands. Native swipe still works.
  */
 export function ExplorationsRail() {
-  const railRef = useRef<HTMLDivElement>(null);
-  const [atStart, setAtStart] = useState(true);
-  const [atEnd, setAtEnd] = useState(false);
-
-  const syncEdges = useCallback(() => {
-    const rail = railRef.current;
-    if (!rail) return;
-    setAtStart(rail.scrollLeft <= 4);
-    setAtEnd(rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4);
-  }, []);
-
-  useEffect(() => {
-    syncEdges();
-    window.addEventListener("resize", syncEdges);
-    return () => window.removeEventListener("resize", syncEdges);
-  }, [syncEdges]);
-
-  const step = useCallback((dir: 1 | -1) => {
-    const rail = railRef.current;
-    if (!rail) return;
-    const card = rail.querySelector("article");
-    const w = card ? card.getBoundingClientRect().width + 16 : rail.clientWidth * 0.85;
-    rail.scrollBy({ left: dir * w, behavior: "smooth" });
-  }, []);
-
-  const arrow =
-    "flex h-7 w-7 items-center justify-center rounded-full font-sans text-sm ring-1 transition-colors disabled:opacity-30 disabled:pointer-events-none text-[#626262] ring-[#e0e0e0] hover:text-[#171717] hover:ring-[#c9c9c9] dark:text-[#a8a8a8] dark:ring-[#2e2e2e] dark:hover:text-[#f2f2f2] dark:hover:ring-[#4a4a4a]";
-
   return (
     <section aria-label="Explorations" className="mt-12">
       <div className="flex items-center justify-between">
         <h2 className="font-sans text-sm font-medium">[Explorations]</h2>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => step(-1)}
-            disabled={atStart}
-            aria-label="Previous exploration"
-            className={arrow}
-          >
-            ←
-          </button>
-          <button
-            type="button"
-            onClick={() => step(1)}
-            disabled={atEnd}
-            aria-label="Next exploration"
-            className={arrow}
-          >
-            →
-          </button>
-        </div>
       </div>
-      <div
-        ref={railRef}
-        onScroll={syncEdges}
-        className="mt-3 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
+      <div className="mt-3 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {EXPLORATIONS.map((e, i) => (
           <article
             key={e.slug}
