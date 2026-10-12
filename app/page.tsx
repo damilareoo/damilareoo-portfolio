@@ -47,7 +47,7 @@ const WORK = [
     slug: "sylvan",
     title: "Sylvan",
     sub: "Revenue intelligence for modern teams",
-    img: "/dossier/work/sylvan/sylvan-cover.jpg",
+    img: "/dossier/work/sylvan/sylvan-cover.gif",
     alt: "Sylvan signal marks",
     still: true,
   },
