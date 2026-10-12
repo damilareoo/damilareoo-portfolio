@@ -8,6 +8,15 @@ import { CaseRail } from "@/components/case-rail";
 import { WayBack } from "@/components/way-back";
 import { findCase, workCases } from "@/data/dossier-work";
 
+/** Home-row covers, reused so the next-project cards show the same face
+    as the front page. */
+const COVERS: Record<string, { src: string; alt: string }> = {
+  "hitmans-library": { src: "/dossier/work/hitman/hitman-title.jpg", alt: "Hitman's Library cover" },
+  endgame: { src: "/dossier/work/endgame/endgame-og.png", alt: "Endgame cover" },
+  chessever: { src: "/dossier/work/chessever/17-lockup.jpg", alt: "ChessEver cover" },
+  sylvan: { src: "/dossier/work/sylvan/sylvan-logo-full.jpg", alt: "Sylvan cover" },
+};
+
 export function generateStaticParams() {
   return workCases.map((c) => ({ slug: c.slug }));
 }
@@ -79,7 +88,7 @@ export default async function WorkCasePage({
             </span>
           </nav>
           <h1 className="mt-2 text-balance font-sans text-lg font-medium leading-snug">{c.name}</h1>
-          <p className="mt-3 text-pretty font-sans text-sm leading-relaxed text-[#626262] dark:text-[#a8a8a8]">
+          <p className="mt-3 text-pretty font-sans text-sm leading-normal text-[#626262] dark:text-[#a8a8a8]">
             {c.oneLiner}
           </p>
 
@@ -101,7 +110,7 @@ export default async function WorkCasePage({
               {c.summary.map((p, i) => (
                 <p
                   key={i}
-                  className="text-pretty font-sans text-sm leading-relaxed text-[#424242] dark:text-[#b8b8b8]"
+                  className="text-pretty font-sans text-sm leading-normal text-[#424242] dark:text-[#b8b8b8]"
                 >
                   {p}
                 </p>
@@ -118,11 +127,11 @@ export default async function WorkCasePage({
           {first.map((g) => (
             <figure key={g.src} id="frame-1" data-frame={0} className="scroll-mt-24">
               {g.note && (
-                <p className="mx-auto mb-3 w-full max-w-[560px] font-sans text-sm leading-relaxed text-[#424242] dark:text-[#b8b8b8]">
+                <p className="mx-auto mb-3 w-full max-w-[560px] font-sans text-sm leading-normal text-[#424242] dark:text-[#b8b8b8]">
                   {g.note}
                 </p>
               )}
-              <div className={g.motion ? "relative overflow-hidden rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]" : g.tall ? "mx-auto max-w-[400px] rounded-lg bg-white p-3 ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]" : undefined}>
+              <div className={g.motion ? "relative overflow-hidden ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]" : g.tall ? "mx-auto max-w-[400px] bg-white p-3 ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]" : undefined}>
               {g.kind === "video" ? (
                 <video
                   src={g.src}
@@ -135,8 +144,8 @@ export default async function WorkCasePage({
                   aria-label={g.alt}
                   className={
                     g.tall
-                      ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "rounded" : "rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
-                      : `w-full ${g.motion ? "" : "rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
+                      ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
+                      : `w-full ${g.motion ? "" : "ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
                   }
                 />
               ) : (
@@ -147,8 +156,8 @@ export default async function WorkCasePage({
                   loading="lazy"
                   className={
                     g.tall
-                      ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "rounded" : "rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
-                      : `w-full ${g.motion ? "" : "rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
+                      ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
+                      : `w-full ${g.motion ? "" : "ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
                   }
                 />
               )}
@@ -165,7 +174,7 @@ export default async function WorkCasePage({
                   <h2 className="font-sans text-sm font-medium text-[#171717] dark:text-[#f2f2f2]">
                     {s.k}
                   </h2>
-                  <p className="mt-2 text-pretty font-sans text-sm leading-relaxed text-[#424242] dark:text-[#b8b8b8]">
+                  <p className="mt-2 text-pretty font-sans text-sm leading-normal text-[#424242] dark:text-[#b8b8b8]">
                     {s.v}
                   </p>
                 </div>
@@ -182,11 +191,11 @@ export default async function WorkCasePage({
                 className="scroll-mt-24"
               >
                 {g.note && (
-                  <p className="mx-auto mb-3 w-full max-w-[560px] font-sans text-sm leading-relaxed text-[#424242] dark:text-[#b8b8b8]">
+                  <p className="mx-auto mb-3 w-full max-w-[560px] font-sans text-sm leading-normal text-[#424242] dark:text-[#b8b8b8]">
                     {g.note}
                   </p>
                 )}
-                <div className={g.motion ? "relative overflow-hidden rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]" : g.tall ? "mx-auto max-w-[400px] rounded-lg bg-white p-3 ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]" : undefined}>
+                <div className={g.motion ? "relative overflow-hidden ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]" : g.tall ? "mx-auto max-w-[400px] bg-white p-3 ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]" : undefined}>
                 {g.kind === "video" ? (
                   <video
                     src={g.src}
@@ -199,8 +208,8 @@ export default async function WorkCasePage({
                     aria-label={g.alt}
                     className={
                       g.tall
-                        ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "rounded" : "rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
-                        : `w-full ${g.motion ? "" : "rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
+                        ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
+                        : `w-full ${g.motion ? "" : "ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
                     }
                   />
                 ) : (
@@ -211,8 +220,8 @@ export default async function WorkCasePage({
                     loading="lazy"
                     className={
                       g.tall
-                        ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "rounded" : "rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
-                        : `w-full ${g.motion ? "" : "rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
+                        ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
+                        : `w-full ${g.motion ? "" : "ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b]"}`
                     }
                   />
                 )}
@@ -228,27 +237,44 @@ export default async function WorkCasePage({
               <div
                 key={`slot-${i}`}
                 aria-hidden
-                className="mx-auto aspect-[16/10] w-full max-w-[600px] rounded-lg bg-[#171717]/[0.03] ring-1 ring-[#e5e5e5] dark:bg-white/[0.04] dark:ring-[#2b2b2b]"
+                className="mx-auto aspect-[16/10] w-full max-w-[600px] bg-[#171717]/[0.03] ring-1 ring-[#e5e5e5] dark:bg-white/[0.04] dark:ring-[#2b2b2b]"
               />
             ))}
         </div>
       </div>
       <div className="mx-auto w-full max-w-[600px] px-5 pb-10">
         <div>
-          <p className="mt-2 text-pretty font-sans text-sm leading-relaxed text-[#626262] dark:text-[#a8a8a8]">
+          <p className="mt-2 text-pretty font-sans text-sm leading-normal text-[#626262] dark:text-[#a8a8a8]">
             Credits — {c.credits}.
           </p>
         </div>
-        {/* prev / next */}
-        <nav aria-label="More work" className="mt-12 flex items-start justify-between gap-4">
-          <Link href={`/work/${prev.slug}`} className="group">
-            <span className="block text-2xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">Previous</span>
-            <span className="mt-1 block font-sans text-sm link-sheen">{prev.name}</span>
-          </Link>
-          <Link href={`/work/${next.slug}`} className="group text-right">
-            <span className="block text-2xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">Next</span>
-            <span className="mt-1 block font-sans text-sm link-sheen">{next.name}</span>
-          </Link>
+        {/* prev / next — visual cards, so the next project sells itself */}
+        <nav aria-label="More work" className="mt-12 grid grid-cols-2 gap-3">
+          {(
+            [
+              { c: prev, label: "Previous" },
+              { c: next, label: "Next" },
+            ] as const
+          ).map(({ c: w, label }) => (
+            <Link
+              key={label}
+              href={`/work/${w.slug}`}
+              aria-label={`${label}: ${w.name}`}
+              className="group block overflow-hidden rounded-xl ring-1 ring-[#e5e5e5] transition-colors hover:ring-[#c9c9c9] dark:ring-[#2b2b2b] dark:hover:ring-[#4a4a4a]"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={COVERS[w.slug]?.src ?? w.logo}
+                alt=""
+                loading="lazy"
+                className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+              <span className="block p-3">
+                <span className="block text-2xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">{label}</span>
+                <span className="mt-1 block font-sans text-sm font-medium link-sheen">{w.name}</span>
+              </span>
+            </Link>
+          ))}
         </nav>
 
         <DFloor />

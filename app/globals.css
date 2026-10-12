@@ -175,6 +175,40 @@
   --font-mono: var(--font-suisse-mono), ui-monospace, monospace;
 }
 
+/* Size-specific tracking, after Apple's Human Interface Guidelines: small
+   text is set looser and large text tighter, following the same curve as
+   SF's tracking tables (+19/1000 em at 9pt down through 0 at 12pt and
+   negative past 13pt). SF's exact thousandths belong to SF's own spacing
+   and do not transplant onto BDO Grotesk, so these are the curve's
+   direction and order of magnitude, not its figures — micro-labels open up,
+   body closes slightly, headlines close a breath more.
+
+   Sizes are untouched: this only pairs each step with its spacing.
+
+   Layered under components on purpose, so an explicit tracking-* utility
+   on the element — the uppercase kickers, the rail labels — always wins
+   over the step default instead of fighting it. */
+@layer components {
+  .text-2xs {
+    letter-spacing: 0.02em;
+  }
+  .text-xs {
+    letter-spacing: 0.01em;
+  }
+  .text-sm {
+    letter-spacing: -0.005em;
+  }
+  .text-base {
+    letter-spacing: -0.01em;
+  }
+  .text-lg {
+    letter-spacing: -0.01em;
+  }
+  .text-xl {
+    letter-spacing: -0.015em;
+  }
+}
+
 html {
   background: var(--bg);
   /* No root font size is declared on purpose. The dial used to multiply one
@@ -915,6 +949,15 @@ body {
   display: none;
 }
 
+/* The word is a button now (tap-to-open on touch), so it resets to text —
+   everywhere, not just where hover is missing. */
+.peek-word {
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
 @media (hover: hover) {
   .vinyl-pop {
     display: block;
@@ -933,7 +976,8 @@ body {
     z-index: 30;
   }
 
-  .group\/vinyl:hover .vinyl-pop {
+  .group\/vinyl:hover .vinyl-pop,
+  .group\/vinyl:focus-within .vinyl-pop {
     opacity: 1;
     transform: translateX(-50%) translateY(0) scale(1);
   }
@@ -979,11 +1023,91 @@ body {
     outline: 1px solid rgba(0, 0, 0, 0.2);
   }
 
-  .group\/vinyl:hover .vinyl-disc {
+  .group\/vinyl:hover .vinyl-disc,
+  .group\/vinyl:focus-within .vinyl-disc {
     left: 44px;
   }
 
   .badge-crest {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 76px;
+    height: 76px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.3));
+  }
+}
+
+/* Touch readers — no hover, so the invitation must be visible and the
+   popover must answer to tap. Peek words wear a dotted underline where
+   hover is missing; a tap toggles the same popover open, parked still
+   (the disc never spins without hover). Taps pass through the open
+   popover back to the word, so a second tap closes it. */
+@media (hover: none) {
+  .peek-word {
+    text-decoration: underline dotted;
+    text-decoration-color: currentColor;
+    text-underline-offset: 3px;
+  }
+
+  .group\/vinyl[data-open] .vinyl-pop {
+    display: block;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    width: 132px;
+    height: 96px;
+    margin-bottom: 10px;
+    transform: translateX(-50%);
+    z-index: 30;
+    pointer-events: none;
+  }
+
+  .group\/vinyl[data-open] .vinyl-sleeve {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 96px;
+    height: 96px;
+    border-radius: 6px;
+    background-size: cover;
+    background-position: center;
+    z-index: 2;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    outline: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .group\/vinyl[data-open] .vinyl-disc {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 80px;
+    height: 80px;
+    border-radius: 9999px;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    animation: none;
+  }
+
+  .group\/vinyl[data-open] .vinyl-disc::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    transform: translate(-50%, -50%);
+    background: #fafafa;
+    outline: 1px solid rgba(0, 0, 0, 0.2);
+  }
+
+  .group\/vinyl[data-open] .badge-crest {
     position: absolute;
     left: 50%;
     top: 0;

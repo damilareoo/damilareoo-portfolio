@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { coinSound, tapSound } from "./sound";
 
 /* ── shared ─────────────────────────────────────────────── */
 
-function lagosParts() {
+function localParts() {
   const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Africa/Lagos",
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
@@ -16,9 +16,8 @@ function lagosParts() {
   return { h: get("hour") % 12, m: get("minute"), s: get("second") };
 }
 
-function lagosDigits() {
+function localDigits() {
   return new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Africa/Lagos",
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
@@ -32,15 +31,20 @@ function Tile({
   children,
   onTap,
   tapLabel,
+  faceStyle,
 }: {
   label: string;
   value: string;
   children: React.ReactNode;
   onTap?: () => void;
   tapLabel?: string;
+  faceStyle?: CSSProperties;
 }) {
   const face = (
-    <div className="aspect-square w-full overflow-hidden rounded-xl bg-[#141414] ring-1 ring-transparent transition-transform duration-200 hover:-translate-y-0.5 dark:bg-[#1e1e1e] dark:ring-white/10">
+    <div
+      style={faceStyle}
+      className="aspect-square w-full overflow-hidden rounded-xl bg-[#141414] ring-1 ring-transparent transition-transform duration-200 hover:-translate-y-0.5 dark:bg-[#1e1e1e] dark:ring-white/10"
+    >
       {children}
     </div>
   );
@@ -85,13 +89,13 @@ export function ClockTile() {
 
   useEffect(() => {
     const tick = () => {
-      const { h, m, s } = lagosParts();
+      const { h, m, s } = localParts();
       setHands({
         h: ((h + m / 60) * 30) % 360,
         m: (m * 6) % 360,
         s: (s * 6) % 360,
       });
-      setNow(lagosDigits());
+      setNow(localDigits());
     };
     tick();
     const id = setInterval(tick, 1000);
@@ -99,8 +103,8 @@ export function ClockTile() {
   }, []);
 
   return (
-    <Tile label="Lagos time" value={now}>
-      <svg viewBox="0 0 100 100" role="img" aria-label="Lagos time" className="block h-full w-full">
+    <Tile label="Local time" value={now}>
+      <svg viewBox="0 0 100 100" role="img" aria-label="Local time" className="block h-full w-full">
         <circle cx="50" cy="50" r="50" fill="#141414" />
         {INDEX.map((mk, i) => (
           <circle key={i} cx={mk.cx} cy={mk.cy} r={mk.r} fill="#fff" opacity={mk.o} />
@@ -221,12 +225,248 @@ export function WeatherTile() {
   );
 }
 
+/* ── dots: reaction game ──────────────────────────────── */
+
+const DOTS_N = 5;
+const BEST_KEY = "damilareoo-dots-best";
+
+/** The ramp: a fresh mole every ~950ms, down to a 320ms floor. */
+export function speedFor(kills: number): number {
+  return Math.max(320, 950 - kills * 45);
+}
+
+/** A new mole that is never the old mole. Randomness takes an injectable
+    die so tests can load it. */
+export function nextMole(prev: number | null, n = DOTS_N, rand: () => number = Math.random): number {
+  const m = Math.floor(rand() * n * n);
+  if (m === prev) return (m + 1) % (n * n);
+  return m;
+}
+
+type DotPhase = "idle" | "play" | "over";
+
+/** The caption never truncates mid-thought: every branch fits a 171px
+    tile in 12px mono. */
+export function dotsCaption(phase: DotPhase, score: number, best: number, isNewBest: boolean): string {
+  if (phase === "play") return `score ${score} · best ${Math.max(best, score)}`;
+  if (phase === "over") return isNewBest ? `new best ${score} — retry` : `${score} — retry`;
+  return best > 0 ? `best ${best} — play` : "tap to play";
+}
+
+export function DotsTile() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const [phase, setPhase] = useState<DotPhase>("idle");
+  const [score, setScore] = useState(0);
+  const [combo, setCombo] = useState(0);
+  const [mole, setMole] = useState<number | null>(null);
+  const [flash, setFlash] = useState<number | null>(null);
+  const [cursor, setCursor] = useState(12);
+  const [blink, setBlink] = useState(true);
+  const [best, setBest] = useState<number>(() => {
+    try {
+      return Number(localStorage.getItem(BEST_KEY) ?? 0) || 0;
+    } catch {
+      /* server render or private mode — the session best stands */
+      return 0;
+    }
+  });
+  const bestRef = useRef(0);
+  const bestStartRef = useRef(0);
+  const [isNewBest, setIsNewBest] = useState(false);
+  const flashTimer = useRef(0);
+
+  /* latest-* mirrors let timeouts read fresh state without re-arming
+     chains that drift. */
+  const latest = useRef({ phase: phase as DotPhase, score, combo, mole });
+  useEffect(() => {
+    latest.current = { phase, score, combo, mole };
+    if (bestRef.current === 0) bestRef.current = best;
+  });
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => setBlink((b) => !b), 700);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const s = setupCanvas(ref);
+    if (!s) return;
+    paintDots(s.ctx, s.S, DOTS_N, (x, y) => {
+      const i = y * DOTS_N + x;
+      if (phase === "play" && i === mole) return "rgba(255,255,255,0.95)";
+      if (i === flash) return "#D92222";
+      if (phase === "idle" && i === 12) return blink ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.10)";
+      return "rgba(255,255,255,0.10)";
+    });
+    if (phase !== "idle") {
+      const pitch = s.S / DOTS_N;
+      const cx = (cursor % DOTS_N) + 0.5;
+      const cy = Math.floor(cursor / DOTS_N) + 0.5;
+      s.ctx.strokeStyle = "rgba(255,255,255,0.55)";
+      s.ctx.lineWidth = 2;
+      s.ctx.beginPath();
+      s.ctx.arc(cx * pitch, cy * pitch, pitch * 0.42, 0, Math.PI * 2);
+      s.ctx.stroke();
+    }
+    return () => window.clearTimeout(flashTimer.current);
+  }, [phase, mole, flash, cursor, blink]);
+
+  const gameOver = (finalScore: number) => {
+    setPhase("over");
+    setMole(null);
+    setCombo(0);
+    setIsNewBest(finalScore > bestStartRef.current);
+    if (finalScore > bestRef.current) {
+      bestRef.current = finalScore;
+      setBest(finalScore);
+      try {
+        localStorage.setItem(BEST_KEY, String(finalScore));
+      } catch {
+        /* private mode */
+      }
+      [0.5, 0.75, 1].forEach((b, k) => window.setTimeout(() => coinSound(b), k * 110));
+    } else {
+      coinSound(0.15);
+    }
+  };
+
+  const registerMiss = () => {
+    const st = latest.current;
+    if (st.phase !== "play") return;
+    missesRef.current += 1;
+    setCombo(0);
+    setFlash(st.mole);
+    window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setFlash(null), 220);
+    tapSound();
+    if (missesRef.current >= 3) gameOver(st.score);
+  };
+  const missesRef = useRef(0);
+
+  const start = () => {
+    missesRef.current = 0;
+    bestStartRef.current = bestRef.current;
+    setIsNewBest(false);
+    setScore(0);
+    setCombo(0);
+    setFlash(null);
+    setMole(nextMole(null));
+    setPhase("play");
+    coinSound(0.4);
+  };
+
+  /* The round clock: every mole gets one interval. A hit re-arms it fresh
+     off the new mole, so the ramp is always fair. */
+  useEffect(() => {
+    if (phase !== "play") return;
+    const id = window.setTimeout(() => {
+      const st = latest.current;
+      if (st.phase !== "play" || st.mole === null) return;
+      const nm = (missesRef.current += 1);
+      setCombo(0);
+      setFlash(st.mole);
+      window.clearTimeout(flashTimer.current);
+      flashTimer.current = window.setTimeout(() => setFlash(null), 220);
+      tapSound();
+      if (nm >= 3) gameOver(st.score);
+      else setMole(nextMole(st.mole));
+    }, speedFor(latest.current.score));
+    return () => window.clearTimeout(id);
+  }, [phase, mole, score]);
+
+  const whack = (i: number) => {
+    const st = latest.current;
+    if (st.phase !== "play") {
+      start();
+      return;
+    }
+    setCursor(i);
+    if (i === st.mole) {
+      const c = st.combo + 1;
+      const ns = st.score + 1;
+      setCombo(c);
+      setScore(ns);
+      setMole(nextMole(st.mole));
+      if (ns > bestRef.current) {
+        // passing the best mid-run: the record ticks up with you, at pitch
+        bestRef.current = ns;
+        setBest(ns);
+        try {
+          localStorage.setItem(BEST_KEY, String(ns));
+        } catch {
+          /* private mode */
+        }
+        coinSound(Math.min(1, 0.35 + c * 0.06));
+        window.setTimeout(() => coinSound(1), 90);
+      } else {
+        coinSound(Math.min(1, 0.35 + c * 0.06));
+      }
+    } else {
+      registerMiss();
+    }
+  };
+
+  const onPointer = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = Math.min(DOTS_N - 1, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * DOTS_N)));
+    const y = Math.min(DOTS_N - 1, Math.max(0, Math.floor(((e.clientY - r.top) / r.height) * DOTS_N)));
+    whack(y * DOTS_N + x);
+  };
+
+  const onKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const moves: Record<string, [number, number]> = {
+      ArrowLeft: [-1, 0],
+      ArrowRight: [1, 0],
+      ArrowUp: [0, -1],
+      ArrowDown: [0, 1],
+    };
+    const move = moves[e.key];
+    if (move) {
+      e.preventDefault();
+      const cx = Math.min(DOTS_N - 1, Math.max(0, (cursor % DOTS_N) + move[0]));
+      const cy = Math.min(DOTS_N - 1, Math.max(0, Math.floor(cursor / DOTS_N) + move[1]));
+      setCursor(cy * DOTS_N + cx);
+      return;
+    }
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      whack(cursor);
+    }
+  };
+
+  const isNewBestNow = phase === "over" && isNewBest;
+  const value = dotsCaption(phase, score, best, isNewBestNow);
+
+  return (
+    <Tile
+      label={`Reaction dots. ${phase === "play" ? `Score ${score}, best ${best}.` : phase === "over" ? `Game over, ${score}${isNewBestNow ? ", a new best" : ""}.` : best > 0 ? `Best ${best}.` : ""} Arrows move, Enter whacks.`}
+      value={value}
+    >
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Reaction dots game — ${value}. Arrows move the cursor, Enter whacks.`}
+        onPointerDown={onPointer}
+        onKeyDown={onKey}
+        className="h-full w-full cursor-pointer outline-none"
+      >
+        <canvas ref={ref} aria-hidden className="pointer-events-none h-full w-full" />
+      </div>
+    </Tile>
+  );
+}
+
 /* ── music: halftone disc ───────────────────────────────── */
 
 const GRID = 48;
 
 type Track = {
   isPlaying: boolean;
+  lastPlayed?: boolean;
+  playedAt?: string | null;
   title?: string;
   artist?: string;
   songUrl?: string;
@@ -263,7 +503,7 @@ export function MusicTile() {
   useEffect(() => {
     const s = setupCanvas(ref);
     if (!s) return;
-    const art = track?.isPlaying ? track.albumArt : undefined;
+    const art = track?.albumArt ?? undefined;
 
     const rest = () =>
       paintDots(s.ctx, s.S, GRID, (x, y) => {
@@ -326,11 +566,12 @@ export function MusicTile() {
   }, [track]);
 
   const playing = Boolean(track?.isPlaying && track.title);
-  const value = track === null ? "—" : playing ? `${track.title}` : "Silent";
+  const lastPlayed = Boolean(!playing && track?.title);
+  const value = track === null ? "—" : track.title ? `${track.title}` : "Silent";
 
   return (
     <Tile
-      label={playing ? `Now playing: ${track!.title} by ${track!.artist}` : "Nothing playing"}
+      label={playing ? `Now playing: ${track!.title} by ${track!.artist}` : lastPlayed ? `Last played: ${track!.title} by ${track!.artist}` : "Nothing playing"}
       value={value}
     >
       <div className="relative h-full w-full">
@@ -365,140 +606,130 @@ export function MusicTile() {
   );
 }
 
-/* ── steps: morphing dot-matrix kilometres ────────────── */
+/* ── steps: run-trace tile ──────────────────────────────── */
 
-const DIGITS: Record<string, string[]> = {
-  "0": ["111", "101", "101", "101", "111"],
-  "1": ["010", "110", "010", "010", "111"],
-  "2": ["111", "001", "111", "100", "111"],
-  "3": ["111", "001", "111", "001", "111"],
-  "4": ["101", "101", "111", "001", "001"],
-  "5": ["111", "100", "111", "001", "111"],
-  "6": ["111", "100", "111", "101", "111"],
-  "7": ["111", "001", "001", "010", "010"],
-  "8": ["111", "101", "111", "101", "111"],
-  "9": ["111", "101", "111", "001", "111"],
-  ".": ["0", "0", "0", "0", "1"],
-};
-
-const DOT_CELL = 24;
-/* Widest reading the tile ever holds ("00.00"), so the units column
-   never wanders while the decimals tick. Steps digits run bigger than
-   the shared field — the tile is the number. */
-const MAX_COLS = 3 + 3 + 1 + 3 + 3 + 4;
-const STEPS_CELL = 19;
-
-type Dot = { col: number; row: number; x: number; y: number };
-
-function layoutDots(text: string, S: number, cy: number): Dot[] {
-  const cell = S / STEPS_CELL;
-  const x0 = S / 2 - (MAX_COLS * cell) / 2;
-  const dots: Dot[] = [];
-  let col = 0;
-  for (const ch of text.split("")) {
-    const g = DIGITS[ch] ?? DIGITS["0"];
-    for (let r = 0; r < g.length; r++) {
-      for (let c = 0; c < g[r].length; c++) {
-        if (g[r][c] === "1") {
-          dots.push({
-            col: col + c,
-            row: r,
-            x: x0 + (col + c + 0.5) * cell,
-            y: cy + (r - 2.5) * cell,
-          });
-        }
-      }
-    }
-    col += g[0].length + 1;
-  }
-  return dots;
-}
-
-const dotKey = (d: Dot) => `${d.col}:${d.row}:${Math.round(d.y)}`;
-
-/**
- * The morph — dots the new reading needs grow in left to right, dots
- * it drops shrink away first. Shared dots never blink, so a 5.11 →
- * 5.12 change moves one dot instead of repainting the digit.
- */
-function morphDots(
-  ctx: CanvasRenderingContext2D,
-  S: number,
-  from: Dot[],
-  to: Dot[],
-  color: string,
-  chrome: () => void,
-) {
-  const cell = S / STEPS_CELL;
-  const fromKeys = new Set(from.map(dotKey));
-  const toMap = new Map(to.map((d) => [dotKey(d), d]));
-  const leaving = from.filter((d) => !toMap.has(dotKey(d)));
-  const entering = to.filter((d) => !fromKeys.has(dotKey(d)));
-  const staying = to.filter((d) => fromKeys.has(dotKey(d)));
-  const calm =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const t0 = performance.now();
-
-  if (calm) {
-    paintDots(ctx, S, 0, () => null);
-    ctx.fillStyle = color;
-    for (const d of to) {
-      ctx.beginPath();
-      ctx.arc(d.x, d.y, cell * 0.34, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    chrome();
-    return () => {};
-  }
-
-  let raf = 0;
-  const paint = (now: number) => {
-    const t = now - t0;
-    ctx.clearRect(0, 0, S, S);
-    ctx.fillStyle = color;
-    for (const d of staying) {
-      ctx.beginPath();
-      ctx.arc(d.x, d.y, cell * 0.34, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    for (const d of leaving) {
-      const k = Math.max(0, 1 - t / 180);
-      if (k <= 0) continue;
-      ctx.beginPath();
-      ctx.arc(d.x, d.y, cell * 0.34 * k, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    let live = t < 180;
-    for (const d of entering) {
-      const k = Math.min(1, Math.max(0, (t - 120 - d.col * 14) / 260));
-      if (k <= 0) {
-        live = true;
-        continue;
-      }
-      if (k < 1) live = true;
-      ctx.beginPath();
-      ctx.arc(d.x, d.y, cell * 0.34 * k, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    if (live) {
-      raf = requestAnimationFrame(paint);
-    }
-    chrome();
-  };
-  raf = requestAnimationFrame(paint);
-  return () => cancelAnimationFrame(raf);
+/** Step counts stay inside the tile caption: four digits plain, beyond
+    that whole thousands. */
+export function fmtSteps(n: number): string {
+  const v = Math.max(0, Math.floor(n));
+  if (v < 10000) return String(v);
+  return `${Math.min(999, Math.round(v / 1000))}k`;
 }
 
 type StepsReading = { km: number; averageKm: number; steps: number; date: string } | null;
 
+/* The five share canvases, measured off the poster exports — the tile wears
+   one a day, rotating, exactly the poster rotation on the live concept. */
+export const PEDO_CANVASES = [
+  { name: "onyx", bg: "#0b0b0d", ink: "#ffffff", dim: "rgba(255,255,255,0.10)", hot: "#E11A1B", chip: "#FFFFFF", onChip: "#0B0B0D" },
+  { name: "bone", bg: "#ffffff", ink: "#0a0a0a", dim: "rgba(10,10,10,0.10)", hot: "#E11A1B", chip: "#0A0A0A", onChip: "#FFFFFF" },
+  { name: "signal", bg: "#e11b1c", ink: "#ffffff", dim: "rgba(255,255,255,0.16)", hot: "#ffffff", chip: "#FFFFFF", onChip: "#E11A1B" },
+  { name: "volt", bg: "#ffd60a", ink: "#0a0a0a", dim: "rgba(10,10,10,0.12)", hot: "#E11A1B", chip: "#0A0A0A", onChip: "#FFD60A" },
+  { name: "dusk", bg: "#3c2b35", ink: "#fefefe", dim: "rgba(254,254,254,0.12)", hot: "#E11A1B", chip: "#FFFFFF", onChip: "#232838" },
+];
+
+/** One canvas a day, rotating — stable per calendar day, no storage. */
+export function canvasForDay(dayIndex: number) {
+  return PEDO_CANVASES[((dayIndex % PEDO_CANVASES.length) + PEDO_CANVASES.length) % PEDO_CANVASES.length];
+}
+
+/** The run route itself, sampled off the concept's shared path
+    (lib/route.ts in the nothing-pedometer repo — one path, every
+    renderer): 70 dots every ~9 units along its 626-unit length,
+    normalized to the 360×250 viewBox. First point is the start (44, 200);
+    the privacy point sits at (96, 200). */
+export const ROUTE_PTS: Array<[number, number]> = [
+  [0.1222, 0.8], [0.1235, 0.7641], [0.1271, 0.7285], [0.1336, 0.6938], [0.1434, 0.6607],
+  [0.1566, 0.6302], [0.1732, 0.6033], [0.1928, 0.581], [0.2147, 0.5639], [0.2384, 0.5524],
+  [0.263, 0.5464], [0.288, 0.5455], [0.3128, 0.5494], [0.3375, 0.5554], [0.3624, 0.5542],
+  [0.386, 0.5432], [0.4071, 0.524], [0.426, 0.5004], [0.4441, 0.4755], [0.4627, 0.4516],
+  [0.4829, 0.4304], [0.5051, 0.4138], [0.5288, 0.4029], [0.5536, 0.3977], [0.5785, 0.398],
+  [0.6031, 0.4041], [0.6269, 0.4153], [0.6497, 0.4299], [0.6721, 0.4459], [0.6948, 0.4611],
+  [0.7182, 0.4734], [0.7426, 0.481], [0.7676, 0.4828], [0.7925, 0.4794], [0.8174, 0.4781],
+  [0.8418, 0.4854], [0.8633, 0.5031], [0.879, 0.531], [0.8869, 0.5649], [0.8877, 0.6008],
+  [0.8828, 0.636], [0.8732, 0.6692], [0.8595, 0.6991], [0.8415, 0.7241], [0.8205, 0.7434],
+  [0.7978, 0.7585], [0.7748, 0.7725], [0.7527, 0.7894], [0.7346, 0.8139], [0.7231, 0.8458],
+  [0.7067, 0.8727], [0.6854, 0.8915], [0.6618, 0.9032], [0.6371, 0.9082], [0.6122, 0.9068],
+  [0.5879, 0.8984], [0.5652, 0.9085], [0.5418, 0.9211], [0.5177, 0.9306], [0.4931, 0.937],
+  [0.4682, 0.9404], [0.4432, 0.9408], [0.4183, 0.9382], [0.3936, 0.9326], [0.3694, 0.9234],
+  [0.3462, 0.9103], [0.3244, 0.8928], [0.3038, 0.8724], [0.2846, 0.8493], [0.2698, 0.8206],
+];
+
 const fmtKm = (n: number) => n.toFixed(2);
 
+/* Run figures scale off the curated sample (32:14 over 5.2 km, 268 kcal,
+   6'12''/KM) — the day's live kilometres drive time and energy so the tile
+   always reconciles with the day that contains it. */
+export const RUN_BASE_KM = 5.2;
+const RUN_BASE_SEC = 32 * 60 + 14;
+const RUN_BASE_KCAL = 268;
+export const RUN_PACE = "6'12''";
+
+export function runTimeForKm(km: number): string {
+  const total = Math.max(0, (RUN_BASE_SEC * km) / RUN_BASE_KM);
+  let m = Math.floor(total / 60);
+  let s = Math.round(total % 60);
+  if (s === 60) {
+    m += 1;
+    s = 0;
+  }
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+export function kcalForKm(km: number): number {
+  return Math.max(0, Math.round((RUN_BASE_KCAL * km) / RUN_BASE_KM));
+}
+
+/** 5×7 dot-matrix numerals — the concept's own letterforms
+    (nothing-pedometer dot-matrix), digits and point only. */
+export const TILE_GLYPHS: Record<string, string[]> = {
+  "0": ["01110", "10001", "10011", "10101", "11001", "10001", "01110"],
+  "1": ["00100", "01100", "00100", "00100", "00100", "00100", "01110"],
+  "2": ["01110", "10001", "00001", "00010", "00100", "01000", "11111"],
+  "3": ["11111", "00010", "00100", "00010", "00001", "10001", "01110"],
+  "4": ["00010", "00110", "01010", "10010", "11111", "00010", "00010"],
+  "5": ["11111", "10000", "11110", "00001", "00001", "10001", "01110"],
+  "6": ["00110", "01000", "10000", "11110", "10001", "10001", "01110"],
+  "7": ["11111", "00001", "00010", "00100", "01000", "01000", "01000"],
+  "8": ["01110", "10001", "10001", "01110", "10001", "10001", "01110"],
+  "9": ["01110", "10001", "10001", "01111", "00001", "00010", "01100"],
+  ".": ["00000", "00000", "00000", "00000", "00000", "00110", "00110"],
+};
+
+/** Ink held at a fixed floor — the poster's unlit matrix (0.08), measured
+    off the exports, not the text-dim token. */
+export function inkFloor(hex: string, alpha: number): string {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+}
+
+/* Mini-poster geometry (300×300 face), measured off the adequate-size
+   exports: matrix 17 columns at pitch 9.5, KILOMETRES caps under it,
+   route band with endpoints at 0.8 height, stats baseline at 288. */
+const FACE = 300;
+const MX_PITCH = 9.5;
+const MX_COLS = 17;
+const MX_X = (FACE - MX_COLS * MX_PITCH) / 2;
+const MX_Y = 13;
+const MX_DOT = 3.2;
+const KILO_Y = 103;
+/* Route in poster coordinates: translate(50,125.3) scale(0.5556) over the
+   360×250 viewBox — the adequate exports are 0.485 crops of the poster,
+   so this lands dots, endpoints, and air exactly where they sit there. */
+const ROUTE_TX = 50;
+const ROUTE_TY = 125.3;
+const ROUTE_SC = 0.5556;
+const ROUTE_DOT = 0.83;
+const ROUTE_END = 3.9;
+const STATS_Y = 284;
+const MONO = "ui-monospace, SFMono-Regular, Menlo, monospace";
+
 export function StepsTile() {
-  const ref = useRef<HTMLCanvasElement>(null);
+  const runnerRef = useRef<SVGCircleElement>(null);
   const [data, setData] = useState<StepsReading>(null);
-  const [page, setPage] = useState(0);
-  const shownRef = useRef<Dot[] | null>(null);
+  const [dayIdx] = useState(() => Math.floor(Date.now() / 86400000));
+  const [canvasIdx, setCanvasIdx] = useState<number | null>(null);
+  const pal = canvasForDay(canvasIdx ?? dayIdx);
 
   useEffect(() => {
     let dead = false;
@@ -526,76 +757,82 @@ export function StepsTile() {
     };
   }, []);
 
+  /* Travelling dot: written straight to the DOM so the loop never
+     re-renders. Parked (hidden) with no data or under reduced motion. */
   useEffect(() => {
-    const s = setupCanvas(ref);
-    if (!s) return;
-    const { ctx, S } = s;
-    if (!data) {
-      // unreported: the field at rest
-      shownRef.current = null;
-      paintDots(ctx, S, DOT.cols, () => "rgba(255,255,255,0.10)");
+    const el = runnerRef.current;
+    if (!el || !data) {
       return;
     }
-    const regions =
-      page === 0
-        ? [{ text: fmtKm(data.km), cy: S / 2 }]
-        : [
-            { text: fmtKm(data.km), cy: S * 0.28 },
-            { text: fmtKm(data.averageKm), cy: S * 0.72 },
-          ];
-    const next = regions.flatMap((r) => layoutDots(r.text, S, r.cy));
-    const from = shownRef.current ?? [];
-    shownRef.current = next;
-    const cancel = morphDots(ctx, S, from, next, "rgba(255,255,255,0.95)", () => {
-      // chrome — repainted every frame because the morph clears the canvas.
-      // The pager borrows the poster's rule: red means you-are-here, so the
-      // today dot burns red while it is the page underfoot, nowhere else.
-      const pager: Array<[number, string, number]> = [
-        [S / 2 - 7, page === 0 ? "#D71920" : "rgba(255,255,255,0.9)", page === 0 ? 1 : 0.25],
-        [S / 2 + 7, "rgba(255,255,255,0.9)", page === 1 ? 1 : 0.25],
-      ];
-      for (const [x, c, a] of pager) {
-        ctx.globalAlpha = a;
-        ctx.fillStyle = c;
-        ctx.beginPath();
-        ctx.arc(x, S - 16, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-      if (page === 0) {
-        // the poster's unit line, letterspaced mono under the numerals
-        ctx.fillStyle = "rgba(255,255,255,0.55)";
-        ctx.font = `500 ${Math.max(10, S * 0.04)}px ui-monospace, "SF Mono", Menlo, monospace`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "alphabetic";
-        try {
-          (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "3px";
-        } catch {
-          /* older canvas — tracking falls back to the font itself */
-        }
-        ctx.fillText("KILOMETRES", S / 2, S * 0.74);
-        try {
-          (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = "0px";
-        } catch {
-          /* reset is best-effort; the canvas clears every frame anyway */
-        }
-      }
-    });
-    return cancel;
-  }, [data, page]);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.style.display = "none";
+      return;
+    }
+    el.style.display = "";
+    let raf = 0;
+    const t0 = performance.now();
+    const loop = (now: number) => {
+      const [nx, ny] = ROUTE_PTS[Math.floor(((now - t0) / 45) % ROUTE_PTS.length)];
+      el.setAttribute("cx", String(ROUTE_X + nx * ROUTE_W));
+      el.setAttribute("cy", String(ROUTE_Y + ny * ROUTE_H));
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [data, pal]);
+
+  /* The mini-poster: live kilometres as dot-matrix, the shared trace with
+     its endpoints, and figures scaled off the distance — the adequate-size
+     composition, exactly. No data yet: the same face, dimmed to zeros. */
+  const km = data?.km ?? 0;
+  const dist = km.toFixed(1);
+  const time = runTimeForKm(km);
+  const kcal = kcalForKm(km);
+  const live = Boolean(data);
+  const routeX = (nx: number) => ROUTE_TX + nx * 360 * ROUTE_SC;
+  const routeY = (ny: number) => ROUTE_TY + ny * 250 * ROUTE_SC;
 
   return (
     <Tile
       label={
         data
-          ? `Run ${data.date}: ${fmtKm(data.km)} kilometres, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres. Tap to turn the page.`
+          ? `Run ${data.date}: ${fmtKm(data.km)} kilometres in ${time}, ${kcal} kilocalories, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres, on the ${pal.name} canvas. Tap to change canvas.`
           : "Steps not reported"
       }
-      value={data ? `${fmtKm(data.km)} km` : "—"}
-      onTap={() => setPage((p) => (p + 1) % 2)}
-      tapLabel={data ? `Run, page ${page + 1} of 2. Tap to turn the page.` : "Steps not reported"}
+      value={data ? `${fmtKm(data.km)} km · ${fmtSteps(data.steps)}` : "—"}
+      onTap={() => setCanvasIdx((i) => ((i ?? dayIdx) + 1) % PEDO_CANVASES.length)}
+      tapLabel={data ? `Run on the ${pal.name} canvas. Tap to change canvas.` : "Steps not reported"}
+      faceStyle={{ background: pal.bg }}
     >
-      <canvas ref={ref} aria-hidden className="h-full w-full" />
+      <svg viewBox={`0 0 ${FACE} ${FACE}`} aria-hidden className="block h-full w-full">
+        {dist.split("").flatMap((ch, ci) =>
+          (TILE_GLYPHS[ch] ?? TILE_GLYPHS["0"]).flatMap((row, r) =>
+            row.split("").map((bit, c) => (
+              <circle
+                key={`${ci}-${r}-${c}`}
+                cx={MX_X + ci * 6 * MX_PITCH + c * MX_PITCH + MX_PITCH / 2}
+                cy={MX_Y + r * MX_PITCH + MX_PITCH / 2}
+                r={MX_DOT}
+                fill={bit === "1" && live ? pal.ink : inkFloor(pal.ink, 0.08)}
+              />
+            )),
+          ),
+        )}
+        <text x={FACE / 2} y={KILO_Y} textAnchor="middle" fontFamily={MONO} fontSize={10} letterSpacing={2.8} fill={live ? pal.ink : pal.dim}>
+          KILOMETRES
+        </text>
+        {ROUTE_PTS.map(([nx, ny], i) => (
+          <circle key={i} cx={routeX(nx)} cy={routeY(ny)} r={ROUTE_DOT} fill={live ? pal.ink : pal.dim} />
+        ))}
+        <circle cx={routeX(44 / 360)} cy={routeY(200 / 250)} r={ROUTE_END} fill={live ? pal.ink : pal.dim} />
+        <circle cx={routeX(96 / 360)} cy={routeY(200 / 250)} r={ROUTE_END} fill={live ? pal.hot : pal.dim} />
+        {live && <circle ref={runnerRef} cx={routeX(ROUTE_PTS[0][0])} cy={routeY(ROUTE_PTS[0][1])} r={4} fill={pal.ink} />}
+        <text x={FACE / 2} y={STATS_Y} textAnchor="middle" fontFamily={MONO} fontSize={11.5} fill={live ? pal.ink : pal.dim}>
+          <tspan>{time}</tspan>
+          <tspan dx={17}>{RUN_PACE}/KM</tspan>
+          <tspan dx={17}>{kcal} KCAL</tspan>
+        </text>
+      </svg>
     </Tile>
   );
 }

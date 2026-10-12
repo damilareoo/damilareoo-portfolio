@@ -436,6 +436,10 @@ export const workCases: WorkCase[] = [
         k: "How",
         v: "The product was already live, so the job was less about starting over and more about figuring out what needed to change. I worked through existing flows, tightened the experience and carried the product language across web and mobile while designing new features along the way.",
       },
+      {
+        k: "Hopea",
+        v: "Hopea, named for an Indian wood type — a custom chess piece with its own visual identity, on boards made to feel modern, playful, and approachable. CZAR is the geometric set; Hopea is the soft one.",
+      },
     ],
     gallery: [
       {
@@ -556,13 +560,13 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/endgame/endgame-pieces.jpg",
         alt: "CZAR piece set in two colorways",
         caption: "Piece sets",
-        note: "CZAR — a set drawn from scratch, in two colorways.",
+        note: "CZAR — the geometric set, drawn from scratch in two colorways.",
       },
       {
         src: "/dossier/work/endgame/endgame-pieces-1.jpg",
         alt: "Hopea piece set",
         caption: "Hopea",
-        note: "Hopea — the second colorway of the set.",
+        note: "Hopea — named for an Indian wood type; soft rounded pieces on modern, playful boards.",
       },
       {
         src: "/dossier/work/endgame/endgame-theme.mov",

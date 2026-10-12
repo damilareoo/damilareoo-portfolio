@@ -16,7 +16,7 @@ export default function AboutPage() {
       <WayBack />
       <div id="top" className="mx-auto w-full max-w-[600px] scroll-mt-20 px-5 pb-10">
         <div className="pt-8">
-          <p className="text-xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">About</p>
+          <p className="text-xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">[About]</p>
           <h1 className="sr-only">About Damilare Osofisan</h1>
         </div>
 
@@ -24,7 +24,7 @@ export default function AboutPage() {
           <PhotoDeck />
         </div>
 
-        <div className="mt-8 space-y-5 text-pretty font-sans text-sm leading-relaxed">
+        <div className="mt-8 space-y-5 text-pretty font-sans text-sm leading-normal">
           <p className="font-medium text-[#171717] dark:text-[#f2f2f2]">
             I&apos;m Damilare Osofisan.
           </p>

@@ -21,7 +21,7 @@ const TOTAL = dossier.shots.length;
  * + progress. Pure progressive enhancement — touch and no-JS readers keep
  * the plain sheened link, reduced motion keeps a single still.
  */
-export function ShotPeek({ word = "shots", href = "/shots" }: { word?: string; href?: string }) {
+export function ShotPeek({ word = "playground", href = "/playground" }: { word?: string; href?: string }) {
   const [index, setIndex] = useState(0);
   const [live, setLive] = useState(false);
   const wrapRef = useRef<HTMLSpanElement>(null);
@@ -78,7 +78,7 @@ export function ShotPeek({ word = "shots", href = "/shots" }: { word?: string; h
               <i />
               <i />
             </span>
-            <span className="shot-peek-title">shots — {TOTAL} studies</span>
+            <span className="shot-peek-title">playground — {TOTAL} studies</span>
             <span className="shot-peek-live" data-on={live || undefined} />
           </span>
           <span className="shot-peek-stage">

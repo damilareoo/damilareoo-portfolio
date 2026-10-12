@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { EXPLORATION_SETS } from "@/data/exploration-sets";
-import { ExplorationSpotlight } from "./exploration-spotlight";
 
 type Exploration =
   | {
@@ -31,11 +29,6 @@ const EXPLORATIONS: Exploration[] = [
     },
   },
 ];
-
-/** Inline interaction studies — labeled exhibits, unlabeled images. */
-const LIVE = [
-  { slug: "x-spotlight", exhibit: "Exploration 02", title: "Spotlight", kind: "spotlight", set: "rivers" },
-] as const;
 
 /**
  * Explorations rail — native horizontal swipe with arrow buttons that
@@ -74,7 +67,7 @@ export function ExplorationsRail() {
   return (
     <section aria-label="Explorations" className="mt-12">
       <div className="flex items-center justify-between">
-        <h2 className="font-sans text-sm font-medium">Explorations</h2>
+        <h2 className="font-sans text-sm font-medium">[Explorations]</h2>
         <div className="flex gap-2">
           <button
             type="button"
@@ -104,13 +97,13 @@ export function ExplorationsRail() {
         {EXPLORATIONS.map((e, i) => (
           <article
             key={e.slug}
-            className="w-[85%] shrink-0 snap-start rounded-2xl bg-[#e8e8e6] p-4 ring-1 ring-[#e0e0de]"
+            className="w-[85%] shrink-0 snap-start bg-[#e8e8e6] p-4 ring-1 ring-[#e0e0de]"
           >
             <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-widest text-[#55534f]">
               <span>{e.exhibit}</span>
               <span aria-hidden>[{String(i + 1).padStart(2, "0")}]</span>
             </div>
-            <div className="mt-3 h-80 overflow-hidden rounded-xl">
+            <div className="mt-3 h-64 overflow-hidden sm:h-80">
               {e.video ? (
                 <video
                   src={e.video.src}
@@ -121,7 +114,7 @@ export function ExplorationsRail() {
                   playsInline
                   preload="metadata"
                   aria-label={`${e.title} interaction concept film`}
-                  className="mx-auto h-full w-auto rounded-xl"
+                  className="mx-auto h-full w-full object-cover"
                 />
               ) : (
                 <iframe
@@ -129,7 +122,7 @@ export function ExplorationsRail() {
                   title={`${e.title} — live canvas`}
                   loading="lazy"
                   sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                  className="h-full w-full border-0 bg-white rounded-xl"
+                  className="h-full w-full border-0 bg-white"
                 />
               )}
             </div>
@@ -152,29 +145,6 @@ export function ExplorationsRail() {
             </div>
           </article>
         ))}
-        {LIVE.map((e) => {
-          const shots = (e.set ? EXPLORATION_SETS[e.set]?.shots : []) ?? [];
-          return (
-            <article
-              key={e.slug}
-              className="w-[85%] shrink-0 snap-start rounded-2xl bg-[#e8e8e6] p-4 ring-1 ring-[#e0e0de]"
-            >
-              <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-widest text-[#55534f]">
-                <span>{e.exhibit}</span>
-                <span aria-hidden>[{e.exhibit.replace("Exploration ", "")}]</span>
-              </div>
-              <div className="mt-3">
-                {e.kind === "spotlight" && <ExplorationSpotlight shots={shots} />}
-              </div>
-              <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
-                <span className="truncate">{e.title}</span>
-                <span aria-hidden className="shrink-0">
-                  Interaction concept
-                </span>
-              </div>
-            </article>
-          );
-        })}
       </div>
     </section>
   );

@@ -14,7 +14,7 @@ const GAP = 24;
 /**
  * Lab 85 — infinite canvas.
  * The set as a map: eighteen project territories on one plane. Drag
- * to travel, scroll to dive from all-64 down to a single frame.
+ * to travel, scroll to dive from all-66 down to a single frame.
  */
 export default function CanvasPage() {
   const [view, setView] = useState({ x: 0, y: 0, z: 0.5 });

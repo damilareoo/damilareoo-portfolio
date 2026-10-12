@@ -61,7 +61,7 @@ export default function Home() {
         {/* ── header ── */}
         <header className="mt-6">
           <p className="font-sans text-sm font-medium text-[#171717] dark:text-[#f2f2f2]">I like figuring things out.</p>
-          <p className="mt-4 text-pretty font-sans text-sm leading-relaxed">
+          <p className="mt-4 text-pretty font-sans text-sm leading-normal">
             I design and build digital products across web and mobile.
             I&apos;ve worked across product, brand and web at{" "}
             <a
@@ -91,7 +91,7 @@ export default function Home() {
             </a>
             .
           </p>
-          <p className="mt-4 text-pretty font-sans text-sm leading-relaxed text-[#626262] dark:text-[#a8a8a8]">
+          <p className="mt-4 text-pretty font-sans text-sm leading-normal text-[#626262] dark:text-[#a8a8a8]">
             <Link href="/about" className="link-sheen">about</Link>
             {" / "}
             <ShotPeek />
@@ -115,6 +115,15 @@ export default function Home() {
             </a>
             {" / "}
             <a
+              href="https://github.com/damilareoo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-sheen"
+            >
+              github
+            </a>
+            {" / "}
+            <a
               href="mailto:dosofisan7@gmail.com"
               className="link-sheen"
             >
@@ -125,14 +134,14 @@ export default function Home() {
 
         {/* ── work ── */}
         <section aria-label="Work" id="work" className="mt-12 scroll-mt-20">
-          <h2 className="font-sans text-sm font-medium">Work</h2>
+          <h2 className="font-sans text-sm font-medium">[Work]</h2>
           <div className="mt-3 space-y-8">
             {WORK.map((w) => (
               <div key={w.slug}>
                 <Link
                   href={`/work/${w.slug}`}
                   aria-label={`${w.title} — ${w.sub}`}
-                  className="group relative block overflow-hidden rounded-lg ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b] bg-[#0c1f1c]"
+                  className="group relative block overflow-hidden ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b] bg-[#0c1f1c]"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img

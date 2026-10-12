@@ -1,13 +1,29 @@
+"use client";
+
+import { useState } from "react";
+
 /**
  * A word that drops its vinyl. Hover (fine pointers only) pops a sleeve
- * above the word; the disc — the album art clipped round with a spindle
- * hole — slides out and spins while you stay. Pure CSS: touch and no-JS
- * readers keep plain sheened text, reduced motion keeps it parked.
+ * above the word; the disc slides out and spins while you stay. Touch
+ * readers get the same popover on tap instead — the word wears a dotted
+ * underline where there is no hover, so the invitation is visible, and a
+ * tap toggles it open. Desktop hover is untouched pure CSS.
  */
 export function Vinyl({ word, cover, sheen }: { word: string; cover: string; sheen: string }) {
+  const [open, setOpen] = useState(false);
   return (
-    <span className="group/vinyl relative inline-block">
-      <span className={`link-sheen ${sheen} cursor-pointer`}>{word}</span>
+    <span className="group/vinyl relative inline-block" data-open={open || undefined}>
+      <button
+        type="button"
+        onClick={() => {
+          if (window.matchMedia("(hover: none)").matches) setOpen((o) => !o);
+        }}
+        aria-expanded={open}
+        aria-label={`${word} — tap to preview`}
+        className={`link-sheen peek-word ${sheen} cursor-pointer`}
+      >
+        {word}
+      </button>
       <span aria-hidden className="vinyl-pop">
         <span className="vinyl-sleeve" style={{ backgroundImage: `url(${cover})` }} />
         <span className="vinyl-disc" style={{ backgroundImage: `url(${cover})` }} />
@@ -19,12 +35,23 @@ export function Vinyl({ word, cover, sheen }: { word: string; cover: string; she
 /**
  * A word that badges its club. Same hover popover choreography as vinyl,
  * but the crest sits still on a white card — no disc, no spin. Chelsea
- * for football.
+ * for football. Same tap-to-open contract on touch.
  */
 export function Badge({ word, cover }: { word: string; cover: string }) {
+  const [open, setOpen] = useState(false);
   return (
-    <span className="group/vinyl relative inline-block">
-      <span className="link-sheen sheen-chelsea cursor-pointer">{word}</span>
+    <span className="group/vinyl relative inline-block" data-open={open || undefined}>
+      <button
+        type="button"
+        onClick={() => {
+          if (window.matchMedia("(hover: none)").matches) setOpen((o) => !o);
+        }}
+        aria-expanded={open}
+        aria-label={`${word} — tap to preview`}
+        className="link-sheen peek-word sheen-chelsea cursor-pointer"
+      >
+        {word}
+      </button>
       <span aria-hidden className="vinyl-pop">
         <span className="badge-crest" style={{ backgroundImage: `url(${cover})` }} />
       </span>

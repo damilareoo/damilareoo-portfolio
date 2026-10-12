@@ -8,5 +8,5 @@ import { site } from "@/data/site";
  * resolves against us.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  return ["/", "/about", "/shots"].map((path) => ({ url: `${site.url}${path}` }));
+  return ["/", "/about", "/playground"].map((path) => ({ url: `${site.url}${path}` }));
 }

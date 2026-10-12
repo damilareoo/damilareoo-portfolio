@@ -10,7 +10,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
 /**
  * Lab 47 — pinned crossfade.
  * Scrollytelling, straight: the viewport pins while scroll dissolves
- * one frame into the next. A pudding-style stage for 64 frames.
+ * one frame into the next. A pudding-style stage for 66 frames.
  */
 export default function CrossfadePage() {
   const [at, setAt] = useState<number | null>(null);

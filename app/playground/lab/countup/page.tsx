@@ -9,7 +9,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /**
  * Lab 84 — count-up.
- * A counter runs 01→64 and the wall scrolls itself to match, one
+ * A counter runs 01→66 and the wall scrolls itself to match, one
  * frame landing per tick. The set counts itself off.
  */
 export default function CountupPage() {

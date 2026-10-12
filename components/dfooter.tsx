@@ -1,4 +1,4 @@
-import { ClockTile, MusicTile, StepsTile, WeatherTile } from "./instruments";
+import { ClockTile, DotsTile, MusicTile, StepsTile } from "./instruments";
 import { BackToTop } from "./back-to-top";
 
 const SOCIALS = [
@@ -13,9 +13,9 @@ const SOCIALS = [
 export function DFooter() {
   return (
     <footer className="mt-16">
-      <div className="grid grid-cols-4 gap-2 sm:gap-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
         <ClockTile />
-        <WeatherTile />
+        <DotsTile />
         <MusicTile />
         <StepsTile />
       </div>

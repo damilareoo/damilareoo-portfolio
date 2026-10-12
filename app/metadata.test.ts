@@ -9,7 +9,7 @@ describe("metadata", () => {
     // Three routes, and no others — §1 of the v3 spec. /work and /writing are
     // gone; a sitemap that still named them would send crawlers at 404s.
     const urls = sitemap().map((e) => new URL(e.url).pathname).sort();
-    expect(urls).toEqual(["/", "/about", "/shots"]);
+    expect(urls).toEqual(["/", "/about", "/playground"]);
   });
 
   it("keeps the artwork proxy out of the crawl — it is plumbing", () => {
@@ -45,7 +45,7 @@ describe("page titles", () => {
      "About — Damilare Osofisan — Damilare Osofisan" — which is the first thing a browser
      tab, a search result and a link unfurl show. This shipped once; the
      assertion is here so it cannot ship again. */
-  const routes = ["app/about/page.tsx", "app/shots/page.tsx", "app/not-found.tsx"];
+  const routes = ["app/about/page.tsx", "app/playground/page.tsx", "app/not-found.tsx"];
 
   it("never repeats the site name in a page title", () => {
     for (const route of routes) {

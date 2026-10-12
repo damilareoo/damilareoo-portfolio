@@ -10,7 +10,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
 /**
  * Lab 62 — flick toss.
  * Grab the fullscreen frame and throw it: release velocity decides
- * how many frames fly past. Touch-native physics for all 64.
+ * how many frames fly past. Touch-native physics for all 66.
  */
 export default function FlicktossPage() {
   const [at, setAt] = useState(0);

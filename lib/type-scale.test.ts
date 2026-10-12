@@ -19,7 +19,7 @@ const css = readFileSync(resolve(root, "app/globals.css"), "utf8");
 const GOVERNED = [
   "app/page.tsx",
   "app/about/page.tsx",
-  "app/shots/page.tsx",
+  "app/playground/page.tsx",
   "app/work/[slug]/page.tsx",
   "app/not-found.tsx",
   "components/dnav.tsx",
@@ -108,5 +108,25 @@ describe("the type scale", () => {
       }
     }
     expect(offenders).toEqual([]);
+  });
+
+  it("pairs every step with size-specific tracking, after Apple's curve", () => {
+    /* Apple's Human Interface Guidelines set small text looser and large
+       text tighter (+19/1000 em at 9pt through 0 at 12pt and negative past
+       13pt). The figures belong to San Francisco's spacing and do not
+       transplant, but the curve's direction holds for any cut: the two micro
+       steps open up, body sits near zero, headlines close. Sizes are asserted
+       above; this holds the spacing that rides with them. */
+    const tracking = (step: string): number => {
+      const match = css.match(new RegExp(`\\.text-${step}\\s*\\{[^}]*letter-spacing:\\s*([^;]+);`));
+      if (!match) throw new Error(`.text-${step} declares no letter-spacing`);
+      return parseFloat(match[1]);
+    };
+    expect(tracking("2xs")).toBeGreaterThan(0);
+    expect(tracking("xs")).toBeGreaterThan(0);
+    expect(tracking("2xs")).toBeGreaterThan(tracking("xs"));
+    for (const step of ["sm", "base", "lg", "xl"]) {
+      expect(tracking(step)).toBeLessThanOrEqual(0);
+    }
   });
 });
