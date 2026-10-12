@@ -30,6 +30,14 @@ const WORK = [
     bg: "#ececec",
   },
   {
+    slug: "sylvan",
+    title: "Sylvan",
+    sub: "Revenue intelligence for modern teams",
+    img: "/dossier/work/sylvan/sylvan-cover.gif",
+    alt: "Sylvan signal marks",
+    still: true,
+  },
+  {
     slug: "endgame",
     title: "Endgame",
     sub: "Product design — most recent role",
@@ -43,14 +51,6 @@ const WORK = [
     sub: "Live tournaments, players & standings",
     img: "/dossier/work/chessever/chessever-cover.gif",
     alt: "ChessEver rookie rook mark",
-    still: true,
-  },
-  {
-    slug: "sylvan",
-    title: "Sylvan",
-    sub: "Revenue intelligence for modern teams",
-    img: "/dossier/work/sylvan/sylvan-cover.gif",
-    alt: "Sylvan signal marks",
     still: true,
   },
 ];

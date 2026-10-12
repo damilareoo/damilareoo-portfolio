@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { WarpShot } from "./warp-shot";
 
-type Shot = { src: string; alt: string; caption?: string };
+type Shot = { src: string; alt: string; caption?: string; fit?: "contain" };
 
 /** Project groups with at least this many studies open the wall with a
     double-size lead tile — rhythm with an editorial reason, not decoration. */
@@ -121,7 +121,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
             className={`block w-full cursor-zoom-in overflow-hidden bg-[#ececea] text-left ring-1 ring-[#e0e0e0] dark:bg-[#2a2a2a] dark:ring-[#2b2b2b] ${leads[i] ? "col-span-2 row-span-2" : ""}`}
           >
             <span className={`pointer-events-none block w-full ${leads[i] ? "h-full" : "aspect-video"}`}>
-              <WarpShot src={s.src} alt={s.alt} eager={i < 8} index={i} />
+              <WarpShot src={s.src} alt={s.alt} eager={i < 8} index={i} fit={s.fit} />
             </span>
           </button>
         ))}

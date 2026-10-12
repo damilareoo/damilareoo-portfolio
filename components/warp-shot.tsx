@@ -14,7 +14,7 @@ import { useEffect, useRef } from "react";
  * Fine pointers only, still life under reduced motion, and with
  * no JS it renders the exact static tile it enhances.
  */
-export function WarpShot({ src, alt, eager, index, square }: { src: string; alt: string; eager?: boolean; index: number; square?: boolean }) {
+export function WarpShot({ src, alt, eager, index, square, fit }: { src: string; alt: string; eager?: boolean; index: number; square?: boolean; fit?: "contain" }) {
   const frameRef = useRef<HTMLElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const raf = useRef(0);
@@ -65,7 +65,7 @@ export function WarpShot({ src, alt, eager, index, square }: { src: string; alt:
         decoding="async"
         sizes="(max-width: 600px) 50vw, 280px"
         draggable={false}
-        className={`h-full w-full object-cover will-change-transform ${square ? "aspect-square" : ""}`}
+        className={`h-full w-full will-change-transform ${fit === "contain" ? "object-contain" : "object-cover"} ${square ? "aspect-square" : ""}`}
       />
     </figure>
   );
