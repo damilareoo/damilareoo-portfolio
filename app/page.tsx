@@ -23,9 +23,9 @@ const WORK = [
     slug: "hitmans-library",
     title: "Hitman's Library",
     sub: "A growing collection of web experiences",
-    img: "/dossier/work/hitman/hitman-title.jpg",
+    img: "/dossier/work/hitman/hitman-cover.gif",
     alt: "Hitman's Library shelf mark and wordmark",
-    tint: "hitman",
+    still: true,
   },
   {
     slug: "endgame",
@@ -39,17 +39,17 @@ const WORK = [
     slug: "chessever",
     title: "ChessEver",
     sub: "Live tournaments, players & standings",
-    img: "/dossier/work/chessever/17-lockup.jpg",
-    alt: "ChessEver mark and wordmark",
-    tint: "chessever",
+    img: "/dossier/work/chessever/chessever-cover.gif",
+    alt: "ChessEver rookie rook mark",
+    still: true,
   },
   {
     slug: "sylvan",
     title: "Sylvan",
     sub: "Revenue intelligence for modern teams",
-    img: "/dossier/work/sylvan/sylvan-logo-full.jpg",
-    alt: "Sylvan mark and wordmark",
-    tint: "sylvan",
+    img: "/dossier/work/sylvan/sylvan-cover.jpg",
+    alt: "Sylvan signal marks",
+    still: true,
   },
 ];
 
@@ -148,7 +148,7 @@ export default function Home() {
                     src={w.img}
                     alt={w.alt}
                     loading="lazy"
-                    className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    className={`aspect-[16/10] w-full object-cover ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
                   />
                   {"tint" in w && w.tint && (
                     <div
