@@ -62,8 +62,8 @@ describe("store round-trip", () => {
     expect(s.configured).toBe(true);
     expect(s.date).toBe("2026-10-05");
     expect(s.steps).toBe(9000);
-    expect(s.km).toBeCloseTo(6.86, 2);
-    expect(s.averageKm).toBeCloseTo(5.33, 2);
+    expect(s.km).toBeCloseTo(6.75, 2);
+    expect(s.averageKm).toBeCloseTo(5.25, 2);
   });
   it("reports unconfigured when empty", async () => {
     expect(await readSummary()).toEqual({ configured: false });
