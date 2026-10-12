@@ -460,9 +460,7 @@ export function DotsTile() {
   );
 }
 
-/* ── music: halftone disc ───────────────────────────────── */
-
-const GRID = 48;
+/* ── music: spinning record ───────────────────────────── */
 
 type Track = {
   isPlaying: boolean;
@@ -477,9 +475,8 @@ type Track = {
 };
 
 export function MusicTile() {
-  const ref = useRef<HTMLCanvasElement>(null);
-  const arcRef = useRef<SVGCircleElement>(null);
   const [track, setTrack] = useState<Track | null>(null);
+  const [artOk, setArtOk] = useState(true);
 
   useEffect(() => {
     let dead = false;
@@ -502,73 +499,13 @@ export function MusicTile() {
   }, []);
 
   useEffect(() => {
-    const s = setupCanvas(ref);
-    if (!s) return;
-    const art = track?.albumArt ?? undefined;
-
-    const rest = () =>
-      paintDots(s.ctx, s.S, GRID, (x, y) => {
-        const dx = x + 0.5 - GRID / 2;
-        const dy = y + 0.5 - GRID / 2;
-        return dx * dx + dy * dy <= (GRID / 2 - 1) * (GRID / 2 - 1)
-          ? "rgba(255,255,255,0.10)"
-          : null;
-      }, 0.4);
-
-    if (!art) {
-      rest();
-      if (arcRef.current) arcRef.current.style.opacity = "0";
-      return;
-    }
-
-    let dead = false;
-    const img = new window.Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      if (dead) return;
-      const off = document.createElement("canvas");
-      off.width = GRID;
-      off.height = GRID;
-      const octx = off.getContext("2d", { willReadFrequently: true });
-      if (!octx) return;
-      octx.imageSmoothingEnabled = true;
-      octx.imageSmoothingQuality = "high";
-      octx.drawImage(img, 0, 0, GRID, GRID);
-      try {
-        const data = octx.getImageData(0, 0, GRID, GRID).data;
-        paintDots(s.ctx, s.S, GRID, (x, y) => {
-          const dx = x + 0.5 - GRID / 2;
-          const dy = y + 0.5 - GRID / 2;
-          if (dx * dx + dy * dy > (GRID / 2 - 1) * (GRID / 2 - 1)) return null;
-          const i = (y * GRID + x) * 4;
-          return `rgb(${data[i]},${data[i + 1]},${data[i + 2]})`;
-        }, 0.42);
-      } catch {
-        rest();
-      }
-    };
-    img.onerror = rest;
-    img.src = `/api/now-playing/art?u=${encodeURIComponent(art)}`;
-    return () => {
-      dead = true;
-    };
-  }, [track?.albumArt, track?.isPlaying]);
-
-  useEffect(() => {
-    const arc = arcRef.current;
-    if (!arc) return;
-    const L = 2 * Math.PI * 47;
-    const done =
-      track?.isPlaying && track.duration && track.duration > 0
-        ? Math.min(1, (track.progress ?? 0) / track.duration)
-        : 0;
-    arc.style.strokeDashoffset = String(L * (1 - done));
-    arc.style.opacity = done * L >= 4 * 0.6 ? "1" : "0";
-  }, [track]);
+    setArtOk(true);
+  }, [track?.albumArt]);
 
   const playing = Boolean(track?.isPlaying && track.title);
   const lastPlayed = Boolean(!playing && track?.title);
-  const value = track === null ? "—" : track.title ? `${track.title}` : "Silent";
+  const value = track === null ? "—" : playing ? `now playing · ${track.title}` : lastPlayed ? `last played · ${track!.title}` : "Silent";
+  const art = track?.albumArt ?? null;
 
   return (
     <Tile
@@ -576,22 +513,36 @@ export function MusicTile() {
       value={value}
     >
       <div className="relative h-full w-full">
-        <canvas ref={ref} aria-hidden className="h-full w-full" />
-        <svg viewBox="0 0 100 100" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full text-white/40">
-          <circle
-            ref={arcRef}
-            cx="50"
-            cy="50"
-            r="47"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="0.6"
-            strokeLinecap="round"
-            strokeDasharray={2 * Math.PI * 47}
-            strokeDashoffset={2 * Math.PI * 47}
-            opacity={0}
-            transform="rotate(-90 50 50)"
-          />
+        {/* Spinning record, after Tobi's vinyl cards: the disc turns only
+            while the music plays; a paused record sits still. Grooves catch
+            a little light so the black reads on the tile ground. */}
+        <svg viewBox="0 0 100 100" role="img" aria-hidden className="block h-full w-full">
+          <circle cx="50" cy="50" r="50" fill="#141414" />
+          <g className={playing ? "vinyl-spin" : undefined}>
+            <circle cx="50" cy="50" r="46" fill="#060607" stroke="rgba(255,255,255,0.10)" strokeWidth="0.6" />
+            {[42, 38, 34, 30, 26].map((r) => (
+              <circle key={r} cx="50" cy="50" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
+            ))}
+            <path d="M 50 4 A 46 46 0 0 1 96 50" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="2.5" strokeLinecap="round" />
+            <clipPath id="vinyl-label">
+              <circle cx="50" cy="50" r="15" />
+            </clipPath>
+            <circle cx="50" cy="50" r="15" fill="#101013" />
+            {art && artOk && (
+              <image
+                href={`/api/now-playing/art?u=${encodeURIComponent(art)}`}
+                x="35"
+                y="35"
+                width="30"
+                height="30"
+                preserveAspectRatio="xMidYMid slice"
+                clipPath="url(#vinyl-label)"
+                onError={() => setArtOk(false)}
+              />
+            )}
+            <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="0.6" />
+            <circle cx="50" cy="50" r="1.7" fill="#000" stroke="rgba(255,255,255,0.35)" strokeWidth="0.5" />
+          </g>
         </svg>
         {playing && track!.songUrl && (
           <a

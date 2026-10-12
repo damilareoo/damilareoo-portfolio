@@ -392,9 +392,24 @@ body {
   }
 }
 
+/* The record turns only while the music plays — the class is applied
+   conditionally, so a paused record sits still. The reduced-motion
+   blanket above holds it for those who need stillness. */
+@keyframes vinyl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @layer utilities {
   .shot-in {
     animation: shot-in 450ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .vinyl-spin {
+    animation: vinyl-spin 5s linear infinite;
+    transform-box: fill-box;
+    transform-origin: center;
   }
 
   /* Coverflow dwell bar: fills once per step, then the step restarts it.
