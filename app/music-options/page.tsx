@@ -115,8 +115,7 @@ function CoverOption() {
 
 /** 03 — type-led: no artwork at all, the words carry it. Dot-matrix
     numerals for the position, mono micro for the state. */
-function TypeOption() {
-  return (
+function TypeOption() {  return (
     <div className="relative flex h-full w-full flex-col justify-between bg-[#0B0B0D] p-4">
       <div className="flex items-center justify-between">
         <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-white/55">{TRACK.status}</p>
@@ -143,6 +142,70 @@ function TypeOption() {
   );
 }
 
+/** 04 — picture disc, from the circular-art school: the cover cropped
+    round and huge, spinning like wax. No grooves, no label ring. */
+function DiscOption() {
+  return (
+    <div className="relative h-full w-full bg-black">
+      <svg viewBox="0 0 100 100" aria-hidden className="block h-full w-full">
+        <clipPath id="opt-disc">
+          <circle cx="50" cy="50" r="46" />
+        </clipPath>
+        <g className="vinyl-spin">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <image
+            href={TRACK.art}
+            x="4"
+            y="4"
+            width="92"
+            height="92"
+            preserveAspectRatio="xMidYMid slice"
+            clipPath="url(#opt-disc)"
+          />
+          <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.8" />
+          <circle cx="50" cy="50" r="2" fill="#000" stroke="rgba(255,255,255,0.5)" strokeWidth="0.6" />
+        </g>
+      </svg>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.85)" }}>
+        <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/75">{TRACK.status}</p>
+        <p className="mt-0.5 truncate font-sans text-[13px] font-medium text-white">
+          {TRACK.title} · {TRACK.artist}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/** 05 — sleeve notes, from the back-cover school: a library card.
+    Thumb, title, and three mono rows, all real data. */
+function SleeveOption() {
+  const rows: [string, string][] = [
+    ["artist", TRACK.artist],
+    ["length", "2:47"],
+    ["state", TRACK.status],
+  ];
+  return (
+    <div className="flex h-full w-full flex-col bg-[#F4F1EA] p-3.5">
+      <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-[#6b675c]">sleeve notes</p>
+      <div className="mt-2 flex items-center gap-2.5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={TRACK.art} alt="" draggable={false} className="h-14 w-14 shrink-0 rounded-md object-cover" />
+        <p className="text-balance font-sans text-[17px] font-medium leading-tight text-[#171717]">
+          {TRACK.title}
+        </p>
+      </div>
+      <div className="mt-auto border-t border-[#171717]/15 pt-2">
+        {rows.map(([k, v]) => (
+          <p key={k} className="flex items-baseline justify-between gap-2 font-mono text-[10px] tracking-[0.08em] text-[#171717]">
+            <span className="uppercase text-[#6b675c]">{k}</span>
+            <span className="truncate">{v}</span>
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function MusicOptions() {
   return (
     <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
@@ -161,6 +224,12 @@ export default function MusicOptions() {
           </Shell>
           <Shell n="03" name="type" note="No artwork. Words and a progress bar do all of it.">
             <TypeOption />
+          </Shell>
+          <Shell n="04" name="disc" note="Picture disc: the cover cropped round and huge, spinning.">
+            <DiscOption />
+          </Shell>
+          <Shell n="05" name="sleeve" note="Back-cover library card. Thumb, title, three true rows.">
+            <SleeveOption />
           </Shell>
         </div>
       </div>
