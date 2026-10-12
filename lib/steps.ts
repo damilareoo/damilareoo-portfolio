@@ -2,7 +2,10 @@ import { kv } from "@vercel/kv";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-export const STRIDE_M = Number(process.env.STEPS_STRIDE_M ?? 0.762) || 0.762;
+/** Average adult stride: the standard pedometer assumption behind every
+    step-to-distance readout — same constant as the nothing-pedometer
+    concept, so the tile and the concept can never disagree. */
+export const STRIDE_M = Number(process.env.STEPS_STRIDE_M ?? 0.75) || 0.75;
 
 /** Lagos calendar day — the site's clock, the widget's day boundary. */
 export function dayKey(d = new Date()): string {

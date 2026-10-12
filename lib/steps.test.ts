@@ -33,7 +33,7 @@ describe("dayKey", () => {
 
 describe("stepsToKm", () => {
   it("converts with the default stride", () => {
-    expect(stepsToKm(6719)).toBeCloseTo(5.12, 2);
+    expect(stepsToKm(6719)).toBeCloseTo(5.04, 2);
   });
 });
 
@@ -44,7 +44,7 @@ describe("normalizeReading", () => {
     expect(normalizeReading({ value: 42 })).toEqual({ steps: 42 });
   });
   it("takes kilometres directly", () => {
-    expect(normalizeReading({ km: 5.12 })).toEqual({ steps: 6719 });
+    expect(normalizeReading({ km: 5.12 })).toEqual({ steps: 6827 });
   });
   it("rejects emptiness", () => {
     expect(normalizeReading(null)).toBeNull();
