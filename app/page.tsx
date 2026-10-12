@@ -26,6 +26,8 @@ const WORK = [
     img: "/dossier/work/hitman/hitman-cover.gif",
     alt: "Hitman's Library shelf mark and wordmark",
     still: true,
+    fit: "contain",
+    bg: "#ececec",
   },
   {
     slug: "endgame",
@@ -148,7 +150,8 @@ export default function Home() {
                     src={w.img}
                     alt={w.alt}
                     loading="lazy"
-                    className={`aspect-[16/10] w-full object-cover ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
+                    style={"bg" in w && w.bg ? { background: w.bg as string } : undefined}
+                    className={`aspect-[16/10] w-full ${"fit" in w && w.fit === "contain" ? "object-contain" : "object-cover"} ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
                   />
                   {"tint" in w && w.tint && (
                     <div
