@@ -1,4 +1,4 @@
-import { kv } from "@vercel/kv";
+import { createClient } from "@vercel/kv";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
@@ -58,6 +58,22 @@ function hasKvStore(): boolean {
   return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 }
 
+/** Own client with fetch caching off. The default export lets Next.js
+    cache KV reads (`cache: "default"`), so the first — empty — read
+    replays forever while writes land fine. Reads must always hit the
+    store. */
+let _store: ReturnType<typeof createClient> | null = null;
+function store() {
+  if (!_store) {
+    _store = createClient({
+      url: process.env.KV_REST_API_URL ?? "",
+      token: process.env.KV_REST_API_TOKEN ?? "",
+      cache: "no-store",
+    });
+  }
+  return _store;
+}
+
 function filePath(): string {
   if (process.env.STEPS_FILE) return process.env.STEPS_FILE;
   if (process.env.VERCEL) return join("/tmp", "steps.json");
@@ -102,7 +118,7 @@ export async function saveDay(
 ): Promise<{ persisted: boolean }> {
   const entry: DayEntry = { steps, updatedAt: new Date().toISOString() };
   if (hasKvStore()) {
-    await kv.hset(KV_HASH, { [day]: JSON.stringify(entry) });
+    await store().hset(KV_HASH, { [day]: JSON.stringify(entry) });
     return { persisted: true };
   }
   const all = readFile();
@@ -112,7 +128,7 @@ export async function saveDay(
 
 export async function readDays(): Promise<Record<string, DayEntry>> {
   if (hasKvStore()) {
-    const raw = await kv.hgetall<Record<string, string>>(KV_HASH);
+    const raw = await store().hgetall<Record<string, string>>(KV_HASH);
     const out: Record<string, DayEntry> = {};
     if (raw) {
       for (const [k, v] of Object.entries(raw)) {
