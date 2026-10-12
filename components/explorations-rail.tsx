@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 type Exploration =
   | {
       slug: string;
@@ -42,7 +40,7 @@ export function ExplorationsRail() {
         {EXPLORATIONS.map((e, i) => (
           <article
             key={e.slug}
-            className="w-[85%] shrink-0 snap-start bg-[#e8e8e6] p-4 ring-1 ring-[#e0e0de]"
+            className="w-full shrink-0 snap-start bg-[#e8e8e6] p-4 ring-1 ring-[#e0e0de]"
           >
             <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-widest text-[#55534f]">
               <span>{e.exhibit}</span>
@@ -72,9 +70,7 @@ export function ExplorationsRail() {
               )}
             </div>
             <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-[#55534f]">
-              <Link href={`/explorations/${e.slug}`} className="truncate underline decoration-[#b9b9b6] underline-offset-2">
-                {e.title}
-              </Link>
+              <span className="truncate">{e.title}</span>
               {e.embed ? (
                 <a
                   href={e.embed}
