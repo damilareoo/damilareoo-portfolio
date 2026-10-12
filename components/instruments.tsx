@@ -530,8 +530,10 @@ export function MusicTile() {
 
   const playing = Boolean(track?.isPlaying && track.title);
   const lastPlayed = Boolean(!playing && track?.title);
-  const value = track === null ? "—" : playing ? `now playing · ${track.title}` : lastPlayed ? `last played · ${track!.title}` : "Silent";
+  const status = playing ? "now playing" : "last played";
+  const value = track === null ? "—" : track.title ? `${track.artist ?? status}` : "Silent";
   const art = track?.albumArt ?? null;
+  const artUrl = art && artOk ? `/api/now-playing/art?u=${encodeURIComponent(art)}` : null;
 
   return (
     <Tile
@@ -540,38 +542,76 @@ export function MusicTile() {
       faceStyle={dark ? { background: "#FFFFFF" } : undefined}
     >
       <div className="relative h-full w-full">
-        {/* Spinning record, after Tobi's vinyl cards: the disc turns only
-            while the music plays; a paused record sits still. Grooves catch
-            a little light so the black reads on the tile ground. */}
-        <svg viewBox="0 0 100 100" role="img" aria-hidden className="block h-full w-full">
-          <circle cx="50" cy="50" r="50" fill="#141414" />
-          <g className={playing ? "vinyl-spin" : undefined}>
-            <circle cx="50" cy="50" r="46" fill="#060607" stroke="rgba(255,255,255,0.10)" strokeWidth="0.6" />
-            {[42, 38, 34, 30, 26].map((r) => (
-              <circle key={r} cx="50" cy="50" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
-            ))}
-            <path d="M 50 4 A 46 46 0 0 1 96 50" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="2.5" strokeLinecap="round" />
-            <clipPath id="vinyl-label">
-              <circle cx="50" cy="50" r="15" />
-            </clipPath>
-            <circle cx="50" cy="50" r="15" fill="#101013" />
-            {art && artOk && (
+        {artUrl ? (
+          <>
+            {/* Cover-forward: full-bleed artwork, big title, record peeking
+                off the edge. Falls back to the bare record without art. */}
+            <svg viewBox="0 0 100 100" aria-hidden className="block h-full w-full">
+              <defs>
+                <linearGradient id="cover-scrim" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#000" stopOpacity="0.55" />
+                  <stop offset="28%" stopColor="#000" stopOpacity="0" />
+                  <stop offset="58%" stopColor="#000" stopOpacity="0" />
+                  <stop offset="100%" stopColor="#000" stopOpacity="0.8" />
+                </linearGradient>
+                <clipPath id="vinyl-peek-label">
+                  <circle cx="84" cy="64" r="8" />
+                </clipPath>
+              </defs>
               <image
-                href={`/api/now-playing/art?u=${encodeURIComponent(art)}`}
-                x="35"
-                y="35"
-                width="30"
-                height="30"
+                href={artUrl}
+                x="0"
+                y="0"
+                width="100"
+                height="100"
                 preserveAspectRatio="xMidYMid slice"
-                clipPath="url(#vinyl-label)"
                 onError={() => setArtOk(false)}
               />
-            )}
-            <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="0.6" />
-            <circle cx="50" cy="50" r="1.7" fill="#000" stroke="rgba(255,255,255,0.35)" strokeWidth="0.5" />
-          </g>
-        </svg>
-        {playing && track!.songUrl && (
+              <rect x="0" y="0" width="100" height="100" fill="url(#cover-scrim)" />
+              <g className={playing ? "vinyl-spin" : undefined}>
+                <circle cx="84" cy="64" r="24" fill="#060607" stroke="rgba(255,255,255,0.16)" strokeWidth="0.6" />
+                {[21, 18, 15, 12].map((r) => (
+                  <circle key={r} cx="84" cy="64" r={r} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="0.5" />
+                ))}
+                <circle cx="84" cy="64" r="8" fill="#101013" />
+                <image
+                  href={artUrl}
+                  x="76"
+                  y="56"
+                  width="16"
+                  height="16"
+                  preserveAspectRatio="xMidYMid slice"
+                  clipPath="url(#vinyl-peek-label)"
+                  onError={() => setArtOk(false)}
+                />
+                <circle cx="84" cy="64" r="8" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
+                <circle cx="84" cy="64" r="1.4" fill="#000" stroke="rgba(255,255,255,0.4)" strokeWidth="0.4" />
+              </g>
+            </svg>
+            <div className="pointer-events-none absolute inset-x-0 top-0 p-2.5" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.85)" }}>
+              <p className="font-mono text-2xs uppercase tracking-[0.2em] text-white/75">{status}</p>
+              <p className="mt-0.5 line-clamp-2 font-sans text-base font-medium leading-tight text-white">
+                {track!.title}
+              </p>
+            </div>
+          </>
+        ) : (
+          /* No artwork: the bare record waits. */
+          <svg viewBox="0 0 100 100" role="img" aria-hidden className="block h-full w-full">
+            <circle cx="50" cy="50" r="50" fill="#141414" />
+            <g className={playing ? "vinyl-spin" : undefined}>
+              <circle cx="50" cy="50" r="46" fill="#060607" stroke="rgba(255,255,255,0.10)" strokeWidth="0.6" />
+              {[42, 38, 34, 30, 26].map((r) => (
+                <circle key={r} cx="50" cy="50" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
+              ))}
+              <path d="M 50 4 A 46 46 0 0 1 96 50" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="50" cy="50" r="15" fill="#101013" />
+              <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="0.6" />
+              <circle cx="50" cy="50" r="1.7" fill="#000" stroke="rgba(255,255,255,0.35)" strokeWidth="0.5" />
+            </g>
+          </svg>
+        )}
+        {(playing || lastPlayed) && track!.songUrl && (
           <a
             href={track!.songUrl}
             target="_blank"
