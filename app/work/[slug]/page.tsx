@@ -10,11 +10,11 @@ import { findCase, workCases } from "@/data/dossier-work";
 
 /** Home-row covers, reused so the next-project cards show the same face
     as the front page. */
-const COVERS: Record<string, { src: string; alt: string }> = {
-  "hitmans-library": { src: "/dossier/work/hitman/hitman-title.jpg", alt: "Hitman's Library cover" },
+const COVERS: Record<string, { src: string; alt: string; fit?: "contain"; bg?: string }> = {
+  "hitmans-library": { src: "/dossier/work/hitman/hitman-cover.gif", alt: "Hitman's Library cover", fit: "contain", bg: "#ececec" },
   endgame: { src: "/dossier/work/endgame/endgame-og.png", alt: "Endgame cover" },
-  chessever: { src: "/dossier/work/chessever/17-lockup.jpg", alt: "ChessEver cover" },
-  sylvan: { src: "/dossier/work/sylvan/sylvan-logo-full.jpg", alt: "Sylvan cover" },
+  chessever: { src: "/dossier/work/chessever/chessever-cover.gif", alt: "ChessEver cover" },
+  sylvan: { src: "/dossier/work/sylvan/sylvan-cover.gif", alt: "Sylvan cover" },
 };
 
 export function generateStaticParams() {
@@ -267,7 +267,8 @@ export default async function WorkCasePage({
                 src={COVERS[w.slug]?.src ?? w.logo}
                 alt=""
                 loading="lazy"
-                className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                style={COVERS[w.slug]?.bg ? { background: COVERS[w.slug].bg } : undefined}
+                className={`aspect-video w-full ${COVERS[w.slug]?.fit === "contain" ? "object-contain" : "object-cover"} transition-transform duration-500 group-hover:scale-[1.02]`}
               />
               <span className="block p-3">
                 <span className="block text-2xs tracking-wide text-[#767676] dark:text-[#8a8a8a]">{label}</span>
