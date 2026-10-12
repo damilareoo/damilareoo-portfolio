@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   dayKey,
   normalizeReading,
+  parseDayEntry,
   readSummary,
   saveDay,
   stepsToKm,
@@ -67,5 +68,25 @@ describe("store round-trip", () => {
   });
   it("reports unconfigured when empty", async () => {
     expect(await readSummary()).toEqual({ configured: false });
+  });
+});
+
+describe("parseDayEntry", () => {
+  it("reads file-backend strings", () => {
+    expect(parseDayEntry('{"steps":6933,"updatedAt":"2026-10-12T00:00:00.000Z"}')).toEqual({
+      steps: 6933,
+      updatedAt: "2026-10-12T00:00:00.000Z",
+    });
+  });
+  it("reads KV auto-parsed objects — the feed must survive the client", () => {
+    expect(parseDayEntry({ steps: 6933, updatedAt: "2026-10-12T00:00:00.000Z" })).toEqual({
+      steps: 6933,
+      updatedAt: "2026-10-12T00:00:00.000Z",
+    });
+  });
+  it("rejects garbage without throwing", () => {
+    expect(parseDayEntry("[object Object]")).toBeNull();
+    expect(parseDayEntry(null)).toBeNull();
+    expect(parseDayEntry({ steps: "many" })).toBeNull();
   });
 });

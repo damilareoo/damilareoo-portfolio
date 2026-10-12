@@ -54,6 +54,21 @@ export function normalizeReading(body: unknown): { steps: number } | null {
 
 export type DayEntry = { steps: number; updatedAt: string };
 
+/** One stored day, tolerantly: the file backend keeps raw strings while
+    the KV client auto-parses JSON responses into objects. Either shape
+    must survive — a throw here silently drops the whole feed. */
+export function parseDayEntry(v: unknown): DayEntry | null {
+  try {
+    const e = (typeof v === "string" ? JSON.parse(v) : v) as DayEntry;
+    if (e && typeof e.steps === "number" && Number.isFinite(e.steps)) {
+      return { steps: Math.max(0, Math.floor(e.steps)), updatedAt: typeof e.updatedAt === "string" ? e.updatedAt : new Date(0).toISOString() };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function hasKvStore(): boolean {
   return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 }
@@ -132,11 +147,8 @@ export async function readDays(): Promise<Record<string, DayEntry>> {
     const out: Record<string, DayEntry> = {};
     if (raw) {
       for (const [k, v] of Object.entries(raw)) {
-        try {
-          out[k] = JSON.parse(v) as DayEntry;
-        } catch {
-          /* skip a bad row, keep the rest */
-        }
+        const entry = parseDayEntry(v);
+        if (entry) out[k] = entry;
       }
     }
     return out;
