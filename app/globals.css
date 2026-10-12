@@ -394,12 +394,8 @@ body {
 
 /* The record turns only while the music plays — the class is applied
    conditionally, so a paused record sits still. The reduced-motion
-   blanket above holds it for those who need stillness. */
-@keyframes vinyl-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+   blanket above holds it for those who need stillness. Keyframes live
+   with the vinyl lab system below. */
 
 @layer utilities {
   .shot-in {
