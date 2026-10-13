@@ -6,177 +6,177 @@ import { ExplorationsRail } from "@/components/explorations-rail";
 import { ShotPeek } from "@/components/shot-peek";
 
 export const metadata: Metadata = {
-  title: { absolute: "Damilare Osofisan — Product Designer" },
-  description:
-    "Damilare Osofisan — product designer building 0–1 products. Currently building Hitman's Library. Previously Endgame.ai, ChessEver, HEX.",
-  openGraph: {
-    type: "website",
-    siteName: "Damilare Osofisan",
-  },
-  twitter: {
-    card: "summary_large_image",
-  },
+ title: { absolute: "Damilare Osofisan — Product Designer" },
+ description:
+ "Damilare Osofisan — product designer building 0–1 products. Currently building Hitman's Library. Previously Endgame.ai, ChessEver, HEX.",
+ openGraph: {
+ type: "website",
+ siteName: "Damilare Osofisan",
+ },
+ twitter: {
+ card: "summary_large_image",
+ },
 };
 
 const WORK = [
-  {
-    slug: "hitmans-library",
-    title: "Hitman's Library",
-    sub: "A growing collection of web experiences",
-    img: "/dossier/work/hitman/hitman-cover.gif",
-    alt: "Hitman's Library shelf mark and wordmark",
-    still: true,
-    fit: "contain",
-    bg: "#ececec",
-  },
-  {
-    slug: "sylvan",
-    title: "Sylvan",
-    sub: "Revenue intelligence for modern teams",
-    img: "/dossier/work/sylvan/sylvan-cover.gif",
-    alt: "Sylvan signal marks",
-    still: true,
-  },
-  {
-    slug: "endgame",
-    title: "Endgame",
-    sub: "Product design — most recent role",
-    img: "/dossier/work/endgame/endgame-og.png",
-    alt: "Endgame.ai",
-    tint: "rainbow",
-  },
-  {
-    slug: "chessever",
-    title: "ChessEver",
-    sub: "Live tournaments, players & standings",
-    img: "/dossier/work/chessever/chessever-cover.gif",
-    alt: "ChessEver rookie rook mark",
-    still: true,
-  },
+ {
+ slug: "hitmans-library",
+ title: "Hitman's Library",
+ sub: "A growing collection of web experiences",
+ img: "/dossier/work/hitman/hitman-cover.gif",
+ alt: "Hitman's Library shelf mark and wordmark",
+ still: true,
+ fit: "contain",
+ bg: "#ececec",
+ },
+ {
+ slug: "sylvan",
+ title: "Sylvan",
+ sub: "Revenue intelligence for modern teams",
+ img: "/dossier/work/sylvan/sylvan-cover.gif",
+ alt: "Sylvan signal marks",
+ still: true,
+ },
+ {
+ slug: "endgame",
+ title: "Endgame",
+ sub: "Product design — most recent role",
+ img: "/dossier/work/endgame/endgame-og.png",
+ alt: "Endgame.ai",
+ tint: "rainbow",
+ },
+ {
+ slug: "chessever",
+ title: "ChessEver",
+ sub: "Live tournaments, players & standings",
+ img: "/dossier/work/chessever/chessever-cover.gif",
+ alt: "ChessEver rookie rook mark",
+ still: true,
+ },
 ];
 
 export default function Home() {
-  return (
-    <main className="bg-[#fafafa] text-[#171717] dark:bg-[#131313] dark:text-[#f2f2f2]">
-      <DNav />
-      <div id="top" className="mx-auto w-full max-w-[600px] scroll-mt-20 px-5 pb-10">
-        {/* ── header ── */}
-        <header className="mt-6">
-          <h1 className="sr-only">Damilare Osofisan — Product Designer</h1>
-          <p className="font-sans text-sm font-medium text-[#171717] dark:text-[#f2f2f2]">I like figuring things out.</p>
-          <p className="mt-4 text-pretty font-sans text-sm leading-normal">
-            I design and build digital products across web and mobile.
-            I&apos;ve worked across product, brand and web at{" "}
-            <a
-              href="https://hex.inc"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-sheen sheen-hex"
-            >
-              HEX
-            </a>,{" "}
-            <a
-              href="https://chessever.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-sheen sheen-chessever"
-            >
-              ChessEver
-            </a>{" "}
-            and{" "}
-            <a
-              href="https://endgame.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-sheen sheen-endgame"
-            >
-              endgame.ai
-            </a>
-            .
-          </p>
-          <p className="mt-4 text-pretty font-sans text-sm leading-normal text-[#626262] dark:text-[#a8a8a8]">
-            <Link href="/about" className="link-sheen">about</Link>
-            {" / "}
-            <ShotPeek />
-            {" / "}
-            <a
-              href="https://x.com/damilareoo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-sheen"
-            >
-              x
-            </a>
-            {" / "}
-            <a
-              href="https://layers.to/damilareoo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-sheen"
-            >
-              layers
-            </a>
-            {" / "}
-            <a
-              href="https://github.com/damilareoo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-sheen"
-            >
-              github
-            </a>
-            {" / "}
-            <a
-              href="mailto:dosofisan7@gmail.com"
-              className="link-sheen"
-            >
-              email
-            </a>
-          </p>
-        </header>
+ return (
+ <main className="bg-bg text-ink">
+ <DNav />
+ <div id="top" className="mx-auto w-full max-w-[600px] scroll-mt-20 px-5 pb-10">
+ {/* ── header ── */}
+ <header className="mt-6">
+ <h1 className="sr-only">Damilare Osofisan — Product Designer</h1>
+ <p className="font-sans text-sm font-medium text-ink">I like figuring things out.</p>
+ <p className="mt-4 text-pretty font-sans text-sm leading-normal">
+ I design and build digital products across web and mobile.
+ I&apos;ve worked across product, brand and web at{" "}
+ <a
+ href="https://hex.inc"
+ target="_blank"
+ rel="noopener noreferrer"
+ className="link-sheen sheen-hex"
+ >
+ HEX
+ </a>,{" "}
+ <a
+ href="https://chessever.com"
+ target="_blank"
+ rel="noopener noreferrer"
+ className="link-sheen sheen-chessever"
+ >
+ ChessEver
+ </a>{" "}
+ and{" "}
+ <a
+ href="https://endgame.ai"
+ target="_blank"
+ rel="noopener noreferrer"
+ className="link-sheen sheen-endgame"
+ >
+ endgame.ai
+ </a>
+ .
+ </p>
+ <p className="mt-4 text-pretty font-sans text-sm leading-normal text-ink-2">
+ <Link href="/about" className="link-sheen">about</Link>
+ {" / "}
+ <ShotPeek />
+ {" / "}
+ <a
+ href="https://x.com/damilareoo"
+ target="_blank"
+ rel="noopener noreferrer"
+ className="link-sheen"
+ >
+ x
+ </a>
+ {" / "}
+ <a
+ href="https://layers.to/damilareoo"
+ target="_blank"
+ rel="noopener noreferrer"
+ className="link-sheen"
+ >
+ layers
+ </a>
+ {" / "}
+ <a
+ href="https://github.com/damilareoo"
+ target="_blank"
+ rel="noopener noreferrer"
+ className="link-sheen"
+ >
+ github
+ </a>
+ {" / "}
+ <a
+ href="mailto:dosofisan7@gmail.com"
+ className="link-sheen"
+ >
+ email
+ </a>
+ </p>
+ </header>
 
-        {/* ── work ── */}
-        <section aria-label="Work" id="work" className="mt-12 scroll-mt-20">
-          <h2 className="font-sans text-sm font-medium">[Work]</h2>
-          <div className="mt-3 space-y-8">
-            {WORK.map((w) => (
-              <div key={w.slug}>
-                <Link
-                  href={`/work/${w.slug}`}
-                  aria-label={`${w.title} — ${w.sub}`}
-                  className="group relative block overflow-hidden ring-1 ring-[#e5e5e5] dark:ring-[#2b2b2b] bg-[#0c1f1c]"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={w.img}
-                    alt={w.alt}
-                    loading="lazy"
-                    style={"bg" in w && w.bg ? { background: w.bg as string } : undefined}
-                    className={`aspect-[16/10] w-full ${"fit" in w && w.fit === "contain" ? "object-contain" : "object-cover"} ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
-                  />
-                  {"tint" in w && w.tint && (
-                    <div
-                      aria-hidden
-                      className={`cover-${w.tint} pointer-events-none absolute inset-0`}
-                    />
-                  )}
-                </Link>
-                <p className="mt-2 font-sans text-sm">
-                  <Link href={`/work/${w.slug}`} className="font-medium link-sheen">
-                    {w.title}
-                  </Link>
-                </p>
-                <p className="font-sans text-sm text-[#626262] dark:text-[#a8a8a8]">{w.sub}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+ {/* ── work ── */}
+ <section aria-label="Work" id="work" className="mt-12 scroll-mt-20">
+ <h2 className="font-sans text-sm font-medium">[Work]</h2>
+ <div className="mt-3 space-y-8">
+ {WORK.map((w) => (
+ <div key={w.slug}>
+ <Link
+ href={`/work/${w.slug}`}
+ aria-label={`${w.title} — ${w.sub}`}
+ className="group relative block overflow-hidden ring-1 ring-line bg-[#0c1f1c]"
+ >
+ {/* eslint-disable-next-line @next/next/no-img-element */}
+ <img
+ src={w.img}
+ alt={w.alt}
+ loading="lazy"
+ style={"bg" in w && w.bg ? { background: w.bg as string } : undefined}
+ className={`aspect-[16/10] w-full ${"fit" in w && w.fit === "contain" ? "object-contain" : "object-cover"} ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
+ />
+ {"tint" in w && w.tint && (
+ <div
+ aria-hidden
+ className={`cover-${w.tint} pointer-events-none absolute inset-0`}
+ />
+ )}
+ </Link>
+ <p className="mt-2 font-sans text-sm">
+ <Link href={`/work/${w.slug}`} className="font-medium link-sheen">
+ {w.title}
+ </Link>
+ </p>
+ <p className="font-sans text-sm text-ink-2">{w.sub}</p>
+ </div>
+ ))}
+ </div>
+ </section>
 
-        {/* ── explorations rail ── */}
-        <ExplorationsRail />
+ {/* ── explorations rail ── */}
+ <ExplorationsRail />
 
-        <DFooter />
-      </div>
-    </main>
-  );
+ <DFooter />
+ </div>
+ </main>
+ );
 }

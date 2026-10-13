@@ -61,7 +61,7 @@ export default function SlotsPage() {
             onClick={() => (spinning[c] ? undefined : setAt(shown(c)))}
             onDoubleClick={() => spin([c])}
             aria-label={spinning[c] ? `Reel ${c + 1} spinning` : `Open frame ${pad(shown(c))}: ${shots[shown(c)].alt}`}
-            className="block w-full cursor-pointer overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+            className="block w-full cursor-pointer overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
           >
             <div className="overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}

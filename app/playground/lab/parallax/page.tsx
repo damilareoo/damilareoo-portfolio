@@ -49,7 +49,7 @@ export default function ParallaxPage() {
               type="button"
               onClick={() => setAt(i)}
               aria-label={`Open frame ${pad(i)}: ${s.alt}`}
-              className={`block cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b] ${
+              className={`block cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b] ${
                 i % 3 === 0 ? "w-full" : i % 3 === 1 ? "ml-auto w-[86%]" : "w-[86%]"
               }`}
             >

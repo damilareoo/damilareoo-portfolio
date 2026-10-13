@@ -79,7 +79,7 @@ export default function ScrubPage() {
               }}
               aria-label={`Open frame ${pad(i)}: ${s.alt}`}
               className={`w-[72vw] max-w-[880px] flex-none snap-center overflow-hidden rounded-xl bg-white ring-1 transition-all duration-300 dark:bg-[#1e1e1e] ${
-                i === at ? "ring-2 ring-[#171717] dark:ring-white" : "ring-[#e0e0e0] opacity-60 dark:ring-[#2b2b2b]"
+                i === at ? "ring-2 ring-[#171717] dark:ring-white" : "ring-[#e5e5e5] opacity-60 dark:ring-[#2b2b2b]"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -52,7 +52,7 @@ export default function LightdarkPage() {
           <p className="font-mono text-xs text-[#595959]">lab 73 — light / dark · day shift</p>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {halves.light.map((i) => (
-              <button key={shots[i].src} type="button" onClick={() => setAt(i)} aria-label={`Open frame ${pad(i)}: ${shots[i].alt}`} className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0]">
+              <button key={shots[i].src} type="button" onClick={() => setAt(i)} aria-label={`Open frame ${pad(i)}: ${shots[i].alt}`} className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
               </button>

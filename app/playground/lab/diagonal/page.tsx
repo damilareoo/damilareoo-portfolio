@@ -26,7 +26,7 @@ export default function DiagonalPage() {
               type="button"
               onClick={() => setAt(i)}
               aria-label={`Open frame ${pad(i)}: ${s.alt}`}
-              className="block cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+              className="block cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               style={{ width: "min(72%, 720px)", marginLeft: `${(i % 8) * 3.5}%` }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

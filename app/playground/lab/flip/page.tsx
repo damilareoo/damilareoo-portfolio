@@ -42,7 +42,7 @@ export default function FlipPage() {
                   className="relative block h-full w-full transition-transform duration-500 motion-reduce:transition-none"
                   style={{ transformStyle: "preserve-3d", transform: back ? "rotateY(180deg)" : "none" }}
                 >
-                  <span className="absolute inset-0 overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]" style={{ backfaceVisibility: "hidden" }}>
+                  <span className="absolute inset-0 overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]" style={{ backfaceVisibility: "hidden" }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
                   </span>

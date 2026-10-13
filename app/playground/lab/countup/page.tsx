@@ -45,7 +45,7 @@ export default function CountupPage() {
               className={`block w-full scroll-mt-28 overflow-hidden rounded-xl ring-1 transition-all duration-500 motion-reduce:transition-none ${
                 i === Math.min(n, shots.length - 1)
                   ? "cursor-zoom-in bg-white ring-2 ring-[#171717] dark:bg-[#1e1e1e] dark:ring-white"
-                  : "bg-white opacity-70 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+                  : "bg-white opacity-70 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

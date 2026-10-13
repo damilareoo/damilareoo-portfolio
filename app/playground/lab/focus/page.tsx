@@ -32,7 +32,7 @@ export default function FocusPage() {
                 onMouseEnter={() => setFocus(i)}
                 aria-label={live ? `Open frame ${pad(i)} fullscreen` : `Focus frame ${pad(i)}: ${s.alt}`}
                 className={`block w-full cursor-pointer overflow-hidden rounded-xl bg-white text-left ring-1 transition-all duration-400 motion-reduce:transition-none dark:bg-[#1e1e1e] ${
-                  live ? "col-span-2 row-span-2 ring-2 ring-[#171717] dark:ring-white" : "ring-[#e0e0e0] opacity-75 hover:opacity-100 dark:ring-[#2b2b2b]"
+                  live ? "col-span-2 row-span-2 ring-2 ring-[#171717] dark:ring-white" : "ring-[#e5e5e5] opacity-75 hover:opacity-100 dark:ring-[#2b2b2b]"
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -101,7 +101,7 @@ export default function FlickerPage() {
           src={current.src}
           alt={current.alt}
           draggable={false}
-          className="max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-[#e0e0e0] drop-shadow-[0_24px_48px_rgba(0,0,0,0.24)] dark:ring-[#2b2b2b]"
+          className="max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-[#e5e5e5] drop-shadow-[0_24px_48px_rgba(0,0,0,0.24)] dark:ring-[#2b2b2b]"
         />
       </div>
       <div className="px-5 pb-6">

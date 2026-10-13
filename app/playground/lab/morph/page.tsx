@@ -57,7 +57,7 @@ export default function MorphPage() {
             className={
               view === "index"
                 ? "flex cursor-pointer items-center gap-4 border-b border-[#e5e5e5] py-2 text-left dark:border-white/10"
-                : "block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white text-left ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+                : "block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white text-left ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
             }
           >
             {view === "index" ? (

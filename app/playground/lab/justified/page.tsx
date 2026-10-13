@@ -44,7 +44,7 @@ export default function JustifiedPage() {
                   type="button"
                   onClick={() => setAt(i)}
                   aria-label={`Open frame ${pad(i)}: ${shots[i].alt}`}
-                  className="min-w-0 flex-1 cursor-zoom-in overflow-hidden bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+                  className="min-w-0 flex-1 cursor-zoom-in overflow-hidden bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
                   style={{ height: HEIGHTS[r % HEIGHTS.length] }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -55,7 +55,7 @@ function WaterfallPageInner() {
                     type="button"
                     onClick={() => setAt(i)}
                     aria-label={`Open frame ${pad(i)}: ${s.alt}`}
-                    className="w-full flex-none cursor-pointer overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+                    className="w-full flex-none cursor-pointer overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
                     style={{ marginBottom: 16 }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}

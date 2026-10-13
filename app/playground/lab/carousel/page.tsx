@@ -87,7 +87,7 @@ export default function CarouselPage() {
                 onClick={() => (live ? setOpen(true) : jump(i))}
                 aria-label={live ? `Open frame ${pad(i)} fullscreen` : `Focus frame ${pad(i)}: ${s.alt}`}
                 className={`flex-none snap-center overflow-hidden rounded-xl bg-white ring-1 transition-all duration-300 motion-reduce:transition-none dark:bg-[#1e1e1e] ${
-                  live ? "w-[76vw] max-w-[920px] cursor-zoom-in ring-2 ring-[#171717] dark:ring-white" : "w-[52vw] max-w-[560px] cursor-pointer opacity-50 ring-[#e0e0e0] dark:ring-[#2b2b2b]"
+                  live ? "w-[76vw] max-w-[920px] cursor-zoom-in ring-2 ring-[#171717] dark:ring-white" : "w-[52vw] max-w-[560px] cursor-pointer opacity-50 ring-[#e5e5e5] dark:ring-[#2b2b2b]"
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}

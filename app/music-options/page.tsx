@@ -22,7 +22,7 @@ function Shell({ n, name, note, live, children }: { n: string; name: string; not
         </span>
         {live && <span className="text-[#E11A1B]">live</span>}
       </div>
-      <div className="mt-3 aspect-square w-full overflow-hidden rounded-xl ring-1 ring-[#e0e0e0] dark:ring-white/10">
+      <div className="mt-3 aspect-square w-full overflow-hidden rounded-xl ring-1 ring-[#e5e5e5] dark:ring-white/10">
         {children}
       </div>
       <p className="mt-2 font-mono text-xs text-[#626262] dark:text-[#a8a8a8]">{note}</p>
@@ -57,7 +57,7 @@ function RecordOption() {
             clipPath="url(#opt-record-label)"
           />
           <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="0.6" />
-          <circle cx="50" cy="50" r="1.7" fill="#000" stroke="rgba(255,255,255,0.35)" strokeWidth="0.5" />
+          <circle cx="50" cy="50" r="1.7" fill="#0A0A0A" stroke="rgba(255,255,255,0.35)" strokeWidth="0.5" />
         </g>
       </svg>
     </div>
@@ -71,10 +71,10 @@ function CoverOption() {
       <svg viewBox="0 0 100 100" aria-hidden className="block h-full w-full">
         <defs>
           <linearGradient id="opt-scrim" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#000" stopOpacity="0.55" />
-            <stop offset="28%" stopColor="#000" stopOpacity="0" />
-            <stop offset="58%" stopColor="#000" stopOpacity="0" />
-            <stop offset="100%" stopColor="#000" stopOpacity="0.8" />
+            <stop offset="0%" stopColor="#0A0A0A" stopOpacity="0.55" />
+            <stop offset="28%" stopColor="#0A0A0A" stopOpacity="0" />
+            <stop offset="58%" stopColor="#0A0A0A" stopOpacity="0" />
+            <stop offset="100%" stopColor="#0A0A0A" stopOpacity="0.8" />
           </linearGradient>
           <clipPath id="opt-peek-label">
             <circle cx="84" cy="64" r="8" />
@@ -100,12 +100,12 @@ function CoverOption() {
             clipPath="url(#opt-peek-label)"
           />
           <circle cx="84" cy="64" r="8" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
-          <circle cx="84" cy="64" r="1.4" fill="#000" stroke="rgba(255,255,255,0.4)" strokeWidth="0.4" />
+          <circle cx="84" cy="64" r="1.4" fill="#0A0A0A" stroke="rgba(255,255,255,0.4)" strokeWidth="0.4" />
         </g>
       </svg>
-      <div className="pointer-events-none absolute inset-x-0 top-0 p-2.5" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.85)" }}>
+      <div className="pointer-events-none absolute inset-x-0 top-0 p-3" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.85)" }}>
         <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/75">{TRACK.status}</p>
-        <p className="mt-0.5 line-clamp-2 font-sans text-[15px] font-medium leading-tight text-white">
+        <p className="mt-1 line-clamp-2 font-sans text-[15px] font-medium leading-tight text-white">
           {TRACK.title}
         </p>
       </div>
@@ -163,7 +163,7 @@ function DiscOption() {
             clipPath="url(#opt-disc)"
           />
           <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.8" />
-          <circle cx="50" cy="50" r="2" fill="#000" stroke="rgba(255,255,255,0.5)" strokeWidth="0.6" />
+          <circle cx="50" cy="50" r="2" fill="#0A0A0A" stroke="rgba(255,255,255,0.5)" strokeWidth="0.6" />
         </g>
       </svg>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.85)" }}>

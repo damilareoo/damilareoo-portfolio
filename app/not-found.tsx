@@ -13,16 +13,16 @@ export const metadata = { title: "Not found" };
  * `@theme inline` block exists to make possible.
  */
 export default function NotFound() {
-  return (
-    <main className="mx-auto flex min-h-[60svh] w-full max-w-[1240px] flex-1 flex-col items-center justify-center px-5 text-center sm:px-6">
-      <SectionLabel>404</SectionLabel>
-      <h1 className="mt-4 text-xl font-medium tracking-tight text-ink">Page not found</h1>
-      <p className="mt-3 text-base text-ink-2">
-        The page you&rsquo;re looking for doesn&rsquo;t exist.
-      </p>
-      <Link href="/" className="mt-8 text-sm text-ink link-sheen">
-        Back home
-      </Link>
-    </main>
-  );
+ return (
+ <main className="mx-auto flex min-h-[60svh] w-full max-w-[1240px] flex-1 flex-col items-center justify-center px-5 text-center sm:px-6">
+ <SectionLabel>404</SectionLabel>
+ <h1 className="mt-4 text-xl font-medium tracking-tight text-ink">Page not found</h1>
+ <p className="mt-3 text-base text-ink-2">
+ The page you&rsquo;re looking for doesn&rsquo;t exist.
+ </p>
+ <Link href="/" className="mt-8 text-sm text-ink link-sheen">
+ Back home
+ </Link>
+ </main>
+ );
 }

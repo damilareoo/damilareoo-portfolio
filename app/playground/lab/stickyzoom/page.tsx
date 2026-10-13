@@ -49,7 +49,7 @@ export default function StickyzoomPage() {
               type="button"
               onClick={() => setAt(i)}
               aria-label={`Open frame ${pad(i)}: ${s.alt}`}
-              className="block w-full cursor-zoom-in overflow-hidden rounded-2xl bg-white ring-1 ring-[#e0e0e0] drop-shadow-[0_24px_48px_rgba(0,0,0,0.16)] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+              className="block w-full cursor-zoom-in overflow-hidden rounded-2xl bg-white ring-1 ring-[#e5e5e5] drop-shadow-[0_24px_48px_rgba(0,0,0,0.16)] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={s.src} alt="" aria-hidden loading={i < 3 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />

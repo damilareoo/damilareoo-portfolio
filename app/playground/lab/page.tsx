@@ -113,8 +113,8 @@ const PROTOS = [
 export default function ShotsLabPage() {
   return (
     <main className="mx-auto w-full max-w-[720px] px-5 py-16">
-      <p className="font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">playground / lab</p>
-      <h1 className="mt-2 text-2xl font-bold tracking-tight">four ways to browse 66 frames</h1>
+      <p className="font-mono text-xs text-ink-3">playground / lab</p>
+      <h1 className="mt-2 font-sans text-xl font-medium">four ways to browse 66 frames</h1>
       <ol className="mt-8 space-y-3">
         {PROTOS.map((p) => (
           <li key={p.href}>

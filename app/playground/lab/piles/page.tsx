@@ -51,7 +51,7 @@ export default function PilesPage() {
                     aria-hidden
                     loading="lazy"
                     draggable={false}
-                    className="absolute inset-0 h-full w-full rounded-lg bg-white object-cover ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+                    className="absolute inset-0 h-full w-full rounded-lg bg-white object-cover ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
                     style={{ transform: `rotate(${(k - 1.5) * 7}deg) translateX(${(k - 1.5) * 8}px)`, zIndex: k }}
                   />
                 ))}
@@ -67,7 +67,7 @@ export default function PilesPage() {
                       type="button"
                       onClick={() => setAt(i)}
                       aria-label={`Open frame ${pad(i)}: ${shots[i].alt}`}
-                      className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] motion-safe:animate-[pile-in_0.35s_ease] motion-reduce:animate-none dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+                      className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] motion-safe:animate-[pile-in_0.35s_ease] motion-reduce:animate-none dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />

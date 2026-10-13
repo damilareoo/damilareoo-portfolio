@@ -25,7 +25,7 @@ export default function BaselinePage() {
             type="button"
             onClick={() => setAt(i)}
             aria-label={`Open frame ${pad(i)}: ${s.alt}`}
-            className="w-[46vw] max-w-[380px] flex-none cursor-pointer overflow-hidden rounded-t-xl bg-white ring-1 ring-[#e0e0e0] sm:w-[26vw] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+            className="w-[46vw] max-w-[380px] flex-none cursor-pointer overflow-hidden rounded-t-xl bg-white ring-1 ring-[#e5e5e5] sm:w-[26vw] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
             style={{ height: 200 + ((i * 67) % 5) * 56 }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

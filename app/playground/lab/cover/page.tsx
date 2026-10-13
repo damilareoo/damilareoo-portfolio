@@ -24,7 +24,7 @@ function CoverPageInner() {
           type="button"
           onClick={() => setOpen(true)}
           aria-label={`Open frame ${pad(at)} fullscreen: ${shots[at].alt}`}
-          className="block min-h-0 w-full flex-1 cursor-zoom-in overflow-hidden rounded-2xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+          className="block min-h-0 w-full flex-1 cursor-zoom-in overflow-hidden rounded-2xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
@@ -38,7 +38,7 @@ function CoverPageInner() {
               onMouseEnter={() => setAt(i)}
               aria-label={`Promote frame ${pad(i)}: ${s.alt}`}
               className={`h-14 w-24 flex-none cursor-pointer snap-start overflow-hidden rounded-lg ring-1 transition-all motion-reduce:transition-none ${
-                i === at ? "ring-2 ring-[#171717] dark:ring-white" : "opacity-55 ring-[#e0e0e0] hover:opacity-100 dark:ring-[#2b2b2b]"
+                i === at ? "ring-2 ring-[#171717] dark:ring-white" : "opacity-55 ring-[#e5e5e5] hover:opacity-100 dark:ring-[#2b2b2b]"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -1174,8 +1174,8 @@ body {
     display: block;
     overflow: hidden;
     border-radius: 12px;
-    background: #fff;
-    outline: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--surface);
+    outline: 1px solid var(--border);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.08),
       0 12px 32px rgba(0, 0, 0, 0.22),
@@ -1185,8 +1185,8 @@ body {
   }
 
   .dark .shot-peek-window {
-    background: #1e1e1e;
-    outline-color: rgba(255, 255, 255, 0.12);
+    background: var(--surface);
+    outline-color: var(--border);
   }
 
   .shot-peek-bar {
@@ -1218,7 +1218,7 @@ body {
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #8c8d8c;
+    color: var(--text-3);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1241,12 +1241,12 @@ body {
     position: relative;
     display: block;
     aspect-ratio: 16 / 10;
-    background: #ececea;
+    background: var(--surface-2);
     overflow: hidden;
   }
 
   .dark .shot-peek-stage {
-    background: #2a2a2a;
+    background: var(--surface-2);
   }
 
   .shot-peek-stage img {
@@ -1292,14 +1292,14 @@ body {
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #626262;
+    color: var(--text-2);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .dark .shot-peek-cap {
-    color: #a8a8a8;
+    color: var(--text-2);
   }
 
   .shot-peek-progress {

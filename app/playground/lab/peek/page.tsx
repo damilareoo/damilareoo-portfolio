@@ -38,7 +38,7 @@ function PeekTile({ src, alt, i }: { src: string; alt: string; i: number }) {
         }}
         onContextMenu={(e) => e.preventDefault()}
         aria-label={`Peek frame ${pad(i)}: ${alt}`}
-        className="block w-full cursor-pointer touch-none select-none overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+        className="block w-full cursor-pointer touch-none select-none overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />

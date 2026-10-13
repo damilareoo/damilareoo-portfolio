@@ -26,7 +26,7 @@ export default function DriftfieldPage() {
               type="button"
               onClick={() => setAt(i)}
               aria-label={`Open frame ${pad(i)}: ${s.alt}`}
-              className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] motion-safe:animate-[drift_11s_ease-in-out_infinite] motion-reduce:animate-none dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+              className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] motion-safe:animate-[drift_11s_ease-in-out_infinite] motion-reduce:animate-none dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               style={{ animationDelay: `${-((i * 1.7) % 9).toFixed(2)}s`, animationDuration: `${9 + (i % 5)}s` }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

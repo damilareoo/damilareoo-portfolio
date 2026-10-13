@@ -77,7 +77,7 @@ function MattjinnPageInner() {
               type="button"
               onClick={() => setAt(i)}
               aria-label={`Open frame ${pad(i)}: ${s.alt}`}
-              className="block w-full cursor-pointer overflow-hidden rounded-xl bg-white text-left ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+              className="block w-full cursor-pointer overflow-hidden rounded-xl bg-white text-left ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               style={{ aspectRatio: ratio }}
             >
               <span className="pointer-events-none block h-full w-full">

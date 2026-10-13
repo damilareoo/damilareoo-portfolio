@@ -32,7 +32,7 @@ export default function MirrorpairsPage() {
                 type="button"
                 onClick={() => setAt(i)}
                 aria-label={`Open frame ${pad(i)}: ${shots[i].alt}`}
-                className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e0e0e0] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
+                className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
                 style={{ direction: "ltr" }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
