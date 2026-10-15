@@ -1,5 +1,5 @@
 /**
- * Full case files for each dossier exhibit — only work that is the owner's.
+ * Full case files for each dossier exhibit: only work that is the owner's.
  *
  * Prose is expanded from https://damilareoo.xyz (scraped 2026-09-24). Gallery
  * art is the project's own published imagery (`public/dossier/…`). Years:
@@ -41,8 +41,8 @@ export const workCases: WorkCase[] = [
     quote:
       "Collect the experiences worth stealing from.",
     summary: [
-      "Hitman's Library collects the web's best experiences in one place — a shelf of sites worth studying, each filed with its own screenshot.",
-      "The file is open because the work is open: entries land as they are collected, and the full case notes land here on launch.",
+      "Hitman's Library collects the web's best experiences in one place: a shelf of sites worth studying, each filed with its own screenshot.",
+      "The file stays open while the work is open: entries land as collected, full case notes on launch.",
     ],
     sections: [
       {
@@ -51,11 +51,11 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "What Was Done",
-        v: "Built a visual library for collecting and studying web experiences. Each entry has its own screenshot, link and place in the library.",
+        v: "A visual library for collecting and studying web experiences. Every entry gets a screenshot, a link, and a place.",
       },
       {
         k: "How",
-        v: "I wanted somewhere to keep the things I find interesting instead of letting them disappear into bookmarks. I designed and built the whole thing myself, from the product structure to the interface and code.",
+        v: "I wanted somewhere to keep the things I find interesting instead of losing them to bookmarks. Designed and built it all myself, structure to interface to code.",
       }
     ],
     gallery: [
@@ -63,7 +63,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitmans-library-showcase.mp4",
         alt: "Hitman's Library showcase video",
         caption: "Showcase",
-        note: "The library in motion — every entry photographed, paletted, and filed.",
+        note: "The library in motion. Every entry photographed, paletted, and filed.",
         kind: "video",
         poster: "/dossier/work/hitman/hitman-title.jpg",
       },
@@ -71,13 +71,13 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-title.jpg",
         alt: "Hitman's Library title card",
         caption: "Title card",
-        note: "The identity — a shelf mark and a wordmark, nothing else.",
+        note: "The identity: a shelf mark and a wordmark, nothing else.",
       },
       {
         src: "/dossier/work/hitman/hitman-origin-sheet.jpg",
         alt: "The spreadsheet the library started as",
-        caption: "Origin — the spreadsheet",
-        note: "Links with notes like “the image hover thing” — a collection with no way to look at any of it.",
+        caption: "Origin: the spreadsheet",
+        note: "Links with notes like “the image hover thing”. A collection with no way to look at any of it.",
       },
       {
         src: "/dossier/work/hitman/hitman-library-today.jpg",
@@ -89,37 +89,37 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-cards.jpg",
         alt: "Library cards up close",
         caption: "Up close",
-        note: "Screenshot, title, palette dots, filing tag — every card carries the whole system.",
+        note: "Screenshot, title, palette dots, filing tag. Every card carries the whole system.",
       },
       {
         src: "/dossier/work/hitman/hitman-entry-preview.jpg",
         alt: "Selected entry with its live preview",
-        caption: "Entry — live preview",
-        note: "Select any site and it opens beside the grid — the real page, proxied in live.",
+        caption: "Entry: live preview",
+        note: "Select any site and it opens beside the grid: the real page, proxied in live.",
       },
       {
         src: "/dossier/work/hitman/hitman-entry-mobile.jpg",
         alt: "Entry mobile view",
-        caption: "Entry — mobile",
+        caption: "Entry: mobile",
         note: "Every entry carries its phone view.",
       },
       {
         src: "/dossier/work/hitman/hitman-entry-colors.jpg",
         alt: "Entry color palette",
-        caption: "Entry — colors",
-        note: "Each entry comes back with its palette read — hex, OKLCH, or Tailwind, ready to copy.",
+        caption: "Entry: colors",
+        note: "Each entry comes back with its palette read: hex, OKLCH, or Tailwind, ready to copy.",
       },
       {
         src: "/dossier/work/hitman/hitman-entry-type.jpg",
         alt: "Entry type specimen",
-        caption: "Entry — type",
-        note: "And its type — display and text faces, specimen and CSS.",
+        caption: "Entry: type",
+        note: "And its type: display and text faces, specimen and CSS.",
       },
       {
         src: "/dossier/work/hitman/hitman-category.jpg",
         alt: "Library filtered by category",
         caption: "Filed by category",
-        note: "Product, Studio, Editorial and the rest — 131 in Product alone.",
+        note: "Product, Studio, Editorial and the rest, with 131 in Product alone.",
       },
       {
         src: "/dossier/work/hitman/hitman-request.jpg",
@@ -131,13 +131,13 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-library-dark.jpg",
         alt: "The library in dark mode",
         caption: "Both skins",
-        note: "The whole shelf in dark — nothing lost in translation.",
+        note: "The whole shelf in dark. Nothing lost in translation.",
       },
       {
         src: "/dossier/work/hitman/hitman-about.jpg",
         alt: "About page",
         caption: "About",
-        note: "The story in three paragraphs — a link is not a design.",
+        note: "The story in three paragraphs. A link is not a design.",
       },
       {
         src: "/dossier/work/hitman/hitman-changelog.jpg",
@@ -149,7 +149,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-mark.jpg",
         alt: "Hitman's Library mark",
         caption: "Mark",
-        note: "The shelf — four books, one leaning.",
+        note: "The shelf: four books, one leaning.",
       },
     ],
   },
@@ -163,20 +163,20 @@ export const workCases: WorkCase[] = [
     role: "Brand design, logo design, web design, visual system",
     site: { label: "sylvanlabs.com", href: "https://sylvanlabs.com" },
     oneLiner:
-      "Sylvan helps revenue teams understand what actually drives customer behaviour by turning messy data into useful signals. I worked across the brand, web and visual system.",
+      "Revenue intelligence that turns messy customer data into useful signals. I did brand, web and visual system.",
     credits:
       "Damilare Osofisan, Mario Prasetyo, HEX",
     quote:
       "Sylvan turns noise into signal.",
     summary: [
-      "Sylvan is a revenue intelligence platform with a readability problem to solve before a single dashboard loads: every analytics tool it competes with looks like the clutter it promises to remove.",
-      "The answer was an identity built around the signal mark — a visual system that shows how customer actions create patterns over time. It shifts and adapts, the way real opportunities appear inside customer journeys, and it became the core of the whole brand.",
-      "The rule throughout: simple, but never cold. Every piece of the system reinforces one idea — Sylvan turns noise into signal.",
+      "Sylvan is a revenue intelligence platform with a readability problem: every rival looks like the clutter it promises to remove.",
+      "The answer was an identity built around the signal mark: customer actions drawn as patterns over time. It shifts and adapts like real opportunity, and became the core of the brand.",
+      "The rule throughout: simple, but never cold. Every piece of the system reinforces one idea: Sylvan turns noise into signal.",
     ],
     sections: [
       {
         k: "Role & Contribution",
-        v: "Brand design, logo design, web design and visual direction.",
+        v: "Brand, logo, web design and visual direction.",
       },
       {
         k: "What Was Done",
@@ -184,7 +184,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "How",
-        v: "The product deals with a lot of information, so the identity needed to communicate clarity without feeling like another analytics tool. The system uses simple forms and movement to make the idea of signals feel more tangible.",
+        v: "The product is dense, so the identity had to read clear without feeling like another analytics tool. Simple forms and movement make signals tangible.",
       }
     ],
     gallery: [
@@ -199,7 +199,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/sylvan/sylvan-logo-full.jpg",
         alt: "Sylvan logo lockup",
         caption: "Logo",
-        note: "The lockup — signal mark and wordmark on Primary.",
+        note: "The lockup: signal mark and wordmark on Primary.",
       },
       {
         src: "/dossier/work/sylvan/sylvan-mark-variants.jpg",
@@ -211,7 +211,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/sylvan/sylvan-typeface.jpg",
         alt: "Primary typeface Untitled Sans",
         caption: "Primary typeface",
-        note: "Untitled Sans, from Klim — alternates included.",
+        note: "Untitled Sans, from Klim, alternates included.",
       },
       {
         src: "/dossier/work/sylvan/sylvan-char-set.jpg",
@@ -229,7 +229,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/sylvan/sylvan-type-system.jpg",
         alt: "Type system from H1 to P3",
         caption: "Type system",
-        note: "H1 to P3 — tracked and leaded.",
+        note: "H1 to P3, tracked and leaded.",
       },
       {
         src: "/dossier/work/sylvan/sylvan-neutrals.jpg",
@@ -247,7 +247,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/sylvan/sylvan-visual-system.jpg",
         alt: "Visual system rationale",
         caption: "Visual system",
-        note: "ASCII trees — data and nature in code characters.",
+        note: "ASCII trees: data and nature in code characters.",
       },
       {
         src: "/dossier/work/sylvan/sylvan-ascii-growth.jpg",
@@ -271,7 +271,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/sylvan-featured.gif",
         alt: "Sylvan identity in motion",
         caption: "Signal in motion",
-        note: "The mark, alive — sylvanlabs.com.",
+        note: "The mark, alive on sylvanlabs.com.",
       },
     ],
   },
@@ -289,31 +289,31 @@ export const workCases: WorkCase[] = [
       { label: "ANDROID", href: "https://play.google.com/store/apps/details?id=com.chessEver.app" },
     ],
     oneLiner:
-      "Following professional chess in real time — on the phone, the desktop, and the web. I was the founding designer, from first concepts to launch.",
+      "Following professional chess in real time: on the phone, the desktop, and the web. I was the founding designer, from first concepts to launch.",
     credits:
       "Damilare Osofisan, Kenny Olajide, Vasif Durarbayli",
     quote:
-      "Everything works exactly how you'd expect it to — no learning curve.",
+      "Everything works exactly how you'd expect it to. No learning curve.",
     summary: [
-      "Chess fans had no intuitive way to follow live tournaments. Existing platforms were clunky, outdated, or shut down entirely — serious players and fans needed something that felt natural.",
-      "ChessEver lives in three places. The phone app is the heart of it: live games with engine evaluation, full player stats and head-to-head records, and favorites you curate yourself. The desktop client takes the same tournaments to a big screen, with the depth of a database and the full live broadcast. The website is the way in — the broadcast essentials, a creator directory, a memorial page, and news.",
+      "Chess fans had no intuitive way to follow live tournaments. Existing platforms were clunky, outdated, or shut down entirely. Serious players and fans needed something that felt natural.",
+      "ChessEver lives in three places. The phone app is the heart: live games with engine evaluation, full stats and head-to-heads, favorites you curate. Desktop takes the same tournaments big-screen, database-deep and broadcast live. The website is the way in: broadcast essentials, creator directory, memorial page, news.",
     ],
     sections: [
       {
         k: "Role & Contribution",
-        v: "Founding designer. Research, product design and interface across iOS, Android, desktop, and web.",
+        v: "Founding designer: research, product and interface across iOS, Android, desktop and web.",
       },
       {
         k: "What Was Done",
-        v: "One product in three places, each with its own job. Phone: live games, standings, player stats, tournament coverage — follow, save, find. Desktop: the round on a big screen, database-deep and broadcast live. Web: the essentials plus directory, memorial, and news.",
+        v: "One product in three places. Phone: live games, standings, stats, coverage. Follow, save, find. Desktop: the round big-screen, database-deep, broadcast live. Web: essentials, directory, memorial, news.",
       },
       {
         k: "How",
-        v: "Simple was the whole brief — following live chess should feel obvious. I designed the phone experience first, then gave desktop and web their own shapes from the same language.",
+        v: "Simple was the whole brief. Following live chess should feel obvious. Designed phone-first, then gave desktop and web their own shapes from the same language.",
       },
       {
         k: "Proof",
-        v: "4.9 stars on both stores — 120 reviews on Apple, 165 on Google Play, best in its segment. 200+ sign-ups daily since launch. Top 10 finalist in the TWIST Gamma pitch competition.",
+        v: "4.9 stars on both stores: 120 reviews on Apple, 165 on Google Play, best in its segment. 200+ sign-ups daily since launch. Top 10 finalist in the TWIST Gamma pitch competition.",
       }
     ],
     gallery: [
@@ -321,92 +321,92 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/chessever/13-mark.jpg",
         alt: "ChessEver mark on black",
         caption: "Mark",
-        note: "The mark in motion — four squares, one piece.",
+        note: "The mark in motion: four squares, one piece.",
         motion: "chessever",
       },
       {
         src: "/dossier/work/chessever/01-onboarding.jpg",
-        alt: "ChessEver onboarding — welcome and locale",
+        alt: "ChessEver onboarding, welcome and locale",
         caption: "Onboarding",
-        note: "The entry — two steps, then straight to chess.",
+        note: "The entry: two steps, then straight to chess.",
       },
       {
         src: "/dossier/work/chessever/02-follow-players.jpg",
         alt: "Following players during onboarding",
         caption: "Follow players",
-        note: "Follow at least three players to get started — the feed builds itself from there.",
+        note: "Follow at least three players to get started. The feed builds itself from there.",
       },
       {
         src: "/dossier/work/chessever/04-swipe-between-games.jpg",
         alt: "Swiping the board between live games",
         caption: "Swipe between games",
-        note: "The core interaction — swipe the board to move between live games.",
+        note: "The core interaction: swipe the board to move between live games.",
       },
       {
         src: "/dossier/work/chessever/05-game-review.jpg",
         alt: "Game review with engine evaluation",
         caption: "Game review",
-        note: "Every game carries its engine read — no learning curve to find it.",
+        note: "Every game carries its engine read. No learning curve to find it.",
       },
       {
         src: "/dossier/work/chessever/06-opening-explorer.jpg",
         alt: "Opening explorer with board and lines",
         caption: "Opening explorer",
-        note: "Depth when you want it — openings and plans off the same board.",
+        note: "Depth when you want it: openings and plans off the same board.",
       },
       {
         src: "/dossier/work/chessever/07-pin-games.jpg",
         alt: "Pinning games to the top of the list",
         caption: "Pin games",
-        note: "Pin the games that matter — your round, your order.",
+        note: "Pin the games that matter: your round, your order.",
       },
       {
         src: "/dossier/work/chessever/09-standings.jpg",
         alt: "Tournament standings and player score card",
         caption: "Standings",
-        note: "Standings plus the player card — form at a glance.",
+        note: "Standings plus the player card: form at a glance.",
       },
       {
         src: "/dossier/work/chessever/10-library.jpg",
         alt: "Database library lists",
         caption: "Library",
-        note: "The library — every list in one quiet place.",
+        note: "The library: every list in one quiet place.",
       },
       {
         src: "/dossier/work/chessever/15-database.jpg",
         alt: "TWIC database search and book builder",
         caption: "Database",
-        note: "The database goes deep — TWIC lists, search, and a book builder.",
+        note: "The database goes deep: TWIC lists, search, and a book builder.",
       },
       {
         src: "/dossier/work/chessever/11-filter-database.jpg",
         alt: "Filtering options in the database",
         caption: "Filter the database",
-        note: "Search any player or event instantly — filters that stay out of the way.",
+        note: "Search any player or event instantly. Filters that stay out of the way.",
       },
       {
         src: "/dossier/work/chessever/14-notifications.jpg",
         alt: "Notification settings",
         caption: "Notifications",
-        note: "Heads-up before rounds, live move by move — never miss your game.",
+        note: "Heads-up before rounds, live move by move. Never miss your game.",
       },
       {
         src: "/dossier/work/chessever/12-brand.jpg",
         alt: "ChessEver brand posters",
         caption: "Brand",
-        note: "The voice off the board — follow chess better.",
+        note: "The voice off the board: follow chess better.",
       },
       {
         src: "/dossier/work/chessever/16-merch.jpg",
         alt: "ChessEver hoodie front and back",
         caption: "Merch",
-        note: "Off the screen — the mark on cloth.",
+        note: "Off the screen: the mark on cloth.",
       },
       {
         src: "/dossier/work/chessever/17-lockup.jpg",
         alt: "ChessEver full lockup",
         caption: "Lockup",
-        note: "The lockup — wordmark and mark, front and back.",
+        note: "The lockup: wordmark and mark, front and back.",
       },
     ],
   },
@@ -427,15 +427,15 @@ export const workCases: WorkCase[] = [
     sections: [
       {
         k: "Role & Contribution",
-        v: "Product design across web and mobile. UX, interaction design, UI and feature development.",
+        v: "Product design across web and mobile: UX, interaction, UI, features.",
       },
       {
         k: "What Was Done",
-        v: "Restructured existing experiences, brought web closer to mobile parity, and helped design new features including Puzzle Run, Endgame Club and Endgame Watch.",
+        v: "Restructured the live product, brought web to mobile parity, and designed what came next: Puzzle Run, Club, Watch, Coach, Learn, gamification, custom piece sets and avatars.",
       },
       {
         k: "How",
-        v: "The product was already live, so the job was less about starting over and more about figuring out what needed to change. I worked through existing flows, tightened the experience and carried the product language across web and mobile while designing new features along the way.",
+        v: "The product was live, so the job was figuring out what needed to change, not starting over. I tightened existing flows, carried the product language across web and mobile, and designed new features along the way.",
       },
     ],
     gallery: [
@@ -443,13 +443,13 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/endgame/endgame-web.jpg",
         alt: "Play Online lobby on web",
         caption: "Web, closer to mobile",
-        note: "Lobby, time controls, and live games — web at mobile parity.",
+        note: "Lobby, time controls, and live games. Web at mobile parity.",
       },
       {
         src: "/dossier/work/endgame/endgame-netflix.jpg",
         alt: "Netflix partnership feature on the homepage",
         caption: "Netflix Exclusive",
-        note: "The partnership slot — new users only, with a quick hide, so it never fights Play Online.",
+        note: "The Hans vs Magnus spotlight: one trailer slot for new fans, quick to hide, never fighting Play Online.",
       },
       {
         src: "/dossier/work/endgame/endgame-clubs.jpg",
@@ -467,13 +467,13 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/endgame/endgame-puzzle-countdown.jpg",
         alt: "Puzzle Run countdown",
         caption: "Puzzle Run",
-        note: "Three lives, one countdown — the run starts here.",
+        note: "Three lives, one countdown. The run starts here.",
       },
       {
         src: "/dossier/work/endgame/endgame-puzzle-trio.jpg",
         alt: "Puzzle Run setup across three screens",
         caption: "Puzzle Run, three screens",
-        note: "Pick a time, set a target, start the run — web, web-mobile, and app.",
+        note: "Pick a time, set a target, start the run: web, web-mobile, and app.",
       },
       {
         src: "/dossier/work/endgame/endgame-puzzle-3.jpg",
@@ -491,19 +491,19 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/endgame/endgame-watch.jpg",
         alt: "Watch experience with live tournaments and boards",
         caption: "Watch",
-        note: "Tournament cards, live boards, standings, chat — the event in your pocket.",
+        note: "Tournament cards, live boards, standings, chat. The event in your pocket.",
       },
       {
         src: "/dossier/work/endgame/endgame-watch-teams.jpg",
         alt: "Watch coverage of team events",
         caption: "Watch, team events",
-        note: "Team events on Watch — coverage few platforms attempt.",
+        note: "Team events on Watch. Coverage few platforms attempt.",
       },
       {
         src: "/dossier/work/endgame/endgame-learn.jpg",
         alt: "Learn chapter checkpoint on discovered attacks",
         caption: "Learn",
-        note: "Chapter checkpoints — Discovered Attacks, taught with a Nimzowitsch quote.",
+        note: "Chapter checkpoints: Discovered Attacks, taught with a Nimzowitsch quote.",
       },
       {
         src: "/dossier/work/endgame/endgame-learn-1.jpg",
@@ -527,13 +527,13 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/endgame/endgame-coach.jpg",
         alt: "Coach review with accuracy breakdown",
         caption: "Coach review",
-        note: "Review with Coach — accuracy by phase, every move classified.",
+        note: "Review with Coach: accuracy by phase, every move classified.",
       },
       {
         src: "/dossier/work/endgame/endgame-standings.jpg",
         alt: "Team event standings",
         caption: "Team standings",
-        note: "Standings stripped to signal — MP, GP, nothing else.",
+        note: "Standings stripped to signal. MP, GP, nothing else.",
       },
       {
         src: "/dossier/work/endgame/endgame-team-card.jpg",
@@ -545,7 +545,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/endgame/endgame-gamification.jpg",
         alt: "Player profile with XP and achievements",
         caption: "Gamification",
-        note: "XP, streaks, achievements — the profile as a game board.",
+        note: "XP, streaks, achievements: the profile as a game board.",
       },
       {
         src: "/dossier/work/endgame/endgame-gamification-1.jpg",
@@ -557,19 +557,19 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/endgame/endgame-pieces.jpg",
         alt: "CZAR piece set in two colorways",
         caption: "Piece sets",
-        note: "CZAR — the geometric set, drawn from scratch in two colorways.",
+        note: "CZAR: the geometric set, drawn from scratch in two colorways.",
       },
       {
         src: "/dossier/work/endgame/endgame-pieces-1.jpg",
         alt: "Hopea piece set",
         caption: "Hopea",
-        note: "Hopea — named for an Indian wood type; soft rounded pieces on modern, playful boards.",
+        note: "Hopea is named for an Indian wood type. Soft, rounded pieces on modern, playful boards.",
       },
       {
         src: "/dossier/work/endgame/endgame-theme.mov",
         alt: "Theme switching video",
         caption: "Theme switching",
-        note: "One system, two skins — the whole product flips.",
+        note: "One system, two skins. The whole product flips.",
         kind: "video",
         poster: "/dossier/work/endgame/endgame-theme-poster.jpg",
       },

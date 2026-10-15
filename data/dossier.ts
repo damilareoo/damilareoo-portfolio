@@ -23,7 +23,7 @@ export const dossier = {
       visualAlt: "Hitman's Library — collection of web experiences",
       video: "/dossier/work/hitman/hitmans-library-showcase.mp4",
       oneLiner:
-        "A collection of cool experiences across the web. Currently building — the case file stays open until it ships.",
+        "A collection of cool experiences across the web. Currently building, so the case file stays open until it ships.",
       rows: [
         {
           k: "BRIEF",
@@ -43,19 +43,19 @@ export const dossier = {
       visual: "/dossier/sylvan-featured.gif",
       visualAlt: "Sylvan — revenue intelligence platform",
       oneLiner:
-        "Helps teams understand what actually drives revenue by making customer data simple to read. Most analytics tools bury you in reports and slow dashboards — Sylvan cuts through that.",
+        "Helps teams understand what actually drives revenue by making customer data simple to read. Most analytics tools bury you in reports and slow dashboards. Sylvan cuts through that.",
       rows: [
         {
           k: "CHALLENGE",
-          v: "Revenue teams need to spot the small changes in customer behavior that matter. Most platforms make this harder, not easier — the identity had to feel like the opposite of a cluttered analytics tool.",
+          v: "Revenue teams need to spot the small changes in customer behavior that matter. Most platforms make this harder, not easier. The identity had to feel like the opposite of a cluttered analytics tool.",
         },
         {
           k: "BUILT",
-          v: "The signal mark — a visual system showing how customer actions create patterns over time. It shifts and adapts, like real opportunities appearing in customer journeys, and became the core of the identity.",
+          v: "The signal mark is a visual system showing how customer actions create patterns over time. It shifts and adapts, like real opportunities appearing in customer journeys, and became the core of the identity.",
         },
         {
           k: "APPROACH",
-          v: "Simple but meaningful. Clarity without feeling cold or technical — every piece of the system reinforces one idea: Sylvan turns noise into signal.",
+          v: "Simple but meaningful. Clarity without feeling cold or technical. Every piece of the system reinforces one idea: Sylvan turns noise into signal.",
         },
       ],
     },
@@ -75,7 +75,7 @@ export const dossier = {
       visual: "/dossier/chessever-featured.jpg",
       visualAlt: "ChessEver — live chess tournaments app",
       oneLiner:
-        "Following professional chess in real time — on the phone, the desktop, and the web. With FollowChess gone, there was no simple way to track live games, standings, and player stats in one place — ChessEver brings that back.",
+        "Following professional chess in real time: on the phone, the desktop, and the web. With FollowChess gone, there was no simple way to track live games, standings, and player stats in one place. ChessEver brings that back.",
       rows: [
         {
           k: "BUILT",
@@ -83,7 +83,7 @@ export const dossier = {
         },
         {
           k: "PROOF",
-          v: "4.9 stars on iOS and Android — 120 reviews on Apple, 165 on Google Play. 200+ sign-ups daily since launch. Top 10 finalist, TWIST Gamma pitch competition.",
+          v: "4.9 stars on iOS and Android: 120 reviews on Apple, 165 on Google Play. 200+ sign-ups daily since launch. Top 10 finalist, TWIST Gamma pitch competition.",
         },
       ],
     },
@@ -110,14 +110,14 @@ export const dossier = {
     {
       name: "WORKBENCH",
       tag: "TOOL",
-      text: "An infinite canvas for organizing and sharing mockup images — live below, fully interactive.",
+      text: "An infinite canvas for organizing and sharing mockup images. Live below, fully interactive.",
       href: "https://nacre-quake-50137672.figma.site",
       embed: "https://nacre-quake-50137672.figma.site",
     },
     {
       name: "PIXEL SOCCER",
       tag: "GAME",
-      text: "Classic pixelated soccer — playable right here, right now.",
+      text: "Classic pixelated soccer. Playable right here, right now.",
       href: "https://pixel-soccer.vercel.app",
       embed: "https://pixel-soccer.vercel.app",
     },

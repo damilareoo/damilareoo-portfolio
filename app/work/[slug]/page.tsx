@@ -248,7 +248,7 @@ export default async function WorkCasePage({
  <div className="mx-auto w-full max-w-[600px] px-5 pb-10">
  <div>
  <p className="mt-2 text-pretty font-sans text-sm leading-normal text-ink-2">
- Credits — {c.credits}
+ Credits: {c.credits}
  </p>
  </div>
  {/* prev / next — visual cards, so the next project sells itself */}
