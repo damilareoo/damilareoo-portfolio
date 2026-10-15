@@ -414,6 +414,7 @@ export const workCases: WorkCase[] = [
     slug: "endgame",
     exhibit: "EXHIBIT D",
     name: "Endgame",
+    year: "2026",
     logo: "/dossier/endgame-logo.png",
     status: "SHIPPED",
     role: "Product Designer",
@@ -421,7 +422,7 @@ export const workCases: WorkCase[] = [
     oneLiner:
       "I joined Endgame.ai after launch to help restructure the product and bring the web experience closer to mobile.",
     credits:
-      "Damilare Osofisan, Kenny Olajide, Hans Neimann",
+      "Damilare Osofisan, Kenny Olajide, Hans Niemann",
     summary: [],
     sections: [
       {
@@ -435,10 +436,6 @@ export const workCases: WorkCase[] = [
       {
         k: "How",
         v: "The product was already live, so the job was less about starting over and more about figuring out what needed to change. I worked through existing flows, tightened the experience and carried the product language across web and mobile while designing new features along the way.",
-      },
-      {
-        k: "Hopea",
-        v: "Hopea, named for an Indian wood type — a custom chess piece with its own visual identity, on boards made to feel modern, playful, and approachable. CZAR is the geometric set; Hopea is the soft one.",
       },
     ],
     gallery: [

@@ -39,3 +39,4 @@ describe("the wall rhythm", () => {
     expect(Math.abs(once.indexOf("a study 1") - once.indexOf("a study 2"))).toBe(1);
   });
 });
+

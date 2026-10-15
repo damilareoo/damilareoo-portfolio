@@ -24,34 +24,46 @@ const WORK = [
  title: "Hitman's Library",
  sub: "A growing collection of web experiences",
  img: "/dossier/work/hitman/hitman-cover.gif",
+ poster: "/dossier/work/hitman/hitman-cover-poster.jpg",
  alt: "Hitman's Library shelf mark and wordmark",
  still: true,
  fit: "contain",
  bg: "#ececec",
+ width: 1600,
+ height: 1000,
  },
  {
  slug: "sylvan",
  title: "Sylvan",
  sub: "Revenue intelligence for modern teams",
  img: "/dossier/work/sylvan/sylvan-cover.gif",
+ poster: "/dossier/work/sylvan/sylvan-cover-poster.jpg",
  alt: "Sylvan signal marks",
  still: true,
+ width: 1600,
+ height: 1000,
  },
  {
  slug: "endgame",
  title: "Endgame",
- sub: "Product design — most recent role",
- img: "/dossier/work/endgame/endgame-og.png",
- alt: "Endgame.ai",
- tint: "rainbow",
+ sub: "Product design",
+ img: "/dossier/work/endgame/endgame-cover.gif",
+ poster: "/dossier/work/endgame/endgame-cover-poster.jpg",
+ alt: "Endgame E mark in stars and stripes",
+ still: true,
+ width: 1600,
+ height: 1000,
  },
  {
  slug: "chessever",
  title: "ChessEver",
  sub: "Live tournaments, players & standings",
  img: "/dossier/work/chessever/chessever-cover.gif",
+ poster: "/dossier/work/chessever/chessever-cover-poster.jpg",
  alt: "ChessEver rookie rook mark",
  still: true,
+ width: 1920,
+ height: 1200,
  },
 ];
 
@@ -127,6 +139,24 @@ export default function Home() {
  </a>
  {" / "}
  <a
+ href="https://www.linkedin.com/in/damilareoo"
+ target="_blank"
+ rel="noopener noreferrer"
+ className="link-sheen"
+ >
+ linkedin
+ </a>
+ {" / "}
+ <a
+ href="https://www.are.na/damilare-osofisan"
+ target="_blank"
+ rel="noopener noreferrer"
+ className="link-sheen"
+ >
+ are.na
+ </a>
+ {" / "}
+ <a
  href="mailto:dosofisan7@gmail.com"
  className="link-sheen"
  >
@@ -139,27 +169,37 @@ export default function Home() {
  <section aria-label="Work" id="work" className="mt-12 scroll-mt-20">
  <h2 className="font-sans text-sm font-medium">[Work]</h2>
  <div className="mt-3 space-y-8">
- {WORK.map((w) => (
+ {WORK.map((w, i) => (
  <div key={w.slug}>
  <Link
  href={`/work/${w.slug}`}
  aria-label={`${w.title} — ${w.sub}`}
- className="group relative block overflow-hidden ring-1 ring-line bg-[#0c1f1c]"
+ className="group relative block overflow-hidden bg-surface-2 ring-1 ring-line"
  >
  {/* eslint-disable-next-line @next/next/no-img-element */}
  <img
  src={w.img}
  alt={w.alt}
- loading="lazy"
- style={"bg" in w && w.bg ? { background: w.bg as string } : undefined}
+ width={"width" in w ? (w.width as number) : 1600}
+ height={"height" in w ? (w.height as number) : 1000}
+ loading={i === 0 ? "eager" : "lazy"}
+ fetchPriority={i === 0 ? "high" : "auto"}
+ decoding="async"
+ style={
+ "poster" in w && w.poster
+ ? {
+ backgroundImage: `url(${w.poster as string})`,
+ backgroundSize: "fit" in w && w.fit === "contain" ? "contain" : "cover",
+ backgroundPosition: "center",
+ backgroundRepeat: "no-repeat",
+ ...("bg" in w && w.bg ? { backgroundColor: w.bg as string } : { backgroundColor: "var(--surface-2)" }),
+ }
+ : "bg" in w && w.bg
+ ? { background: w.bg as string }
+ : { background: "var(--surface-2)" }
+ }
  className={`aspect-[16/10] w-full ${"fit" in w && w.fit === "contain" ? "object-contain" : "object-cover"} ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
  />
- {"tint" in w && w.tint && (
- <div
- aria-hidden
- className={`cover-${w.tint} pointer-events-none absolute inset-0`}
- />
- )}
  </Link>
  <p className="mt-2 font-sans text-sm">
  <Link href={`/work/${w.slug}`} className="font-medium link-sheen">

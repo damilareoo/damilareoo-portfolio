@@ -23,6 +23,9 @@ describe("site record", () => {
     expect(site.url, "kennyolajide.com has no DNS — see data/site.ts").not.toContain(
       "kennyolajide.com",
     );
+    expect(site.url, "damilareoo.xyz is a different portfolio — see data/site.ts").not.toContain(
+      "damilareoo.xyz",
+    );
     expect(() => new URL(site.url)).not.toThrow();
   });
 

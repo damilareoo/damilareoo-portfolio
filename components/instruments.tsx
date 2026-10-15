@@ -97,11 +97,13 @@ const INDEX = Array.from({ length: 12 }, (_, hour) => {
  };
 });
 
+
 export function ClockTile() {
- const [now, setNow] = useState("--:--:--");
+ const [now, setNow] = useState("");
  const [hands, setHands] = useState({ h: 0, m: 0, s: 0 });
  /* White face on dark pages, black face on light ones — the footer
- flips as one, led by the run widget. */
+ flips as one, led by the run widget. No square behind it: the dial
+ is a circle and floats on its own shadow. */
  const dark = useDark();
  const face = dark ? "#FFFFFF" : "#141414";
  const ink = dark ? "#0A0A0A" : "#FFFFFF";
@@ -122,7 +124,7 @@ export function ClockTile() {
  }, []);
 
  return (
- <Tile label="Local time" value={now}>
+ <Tile label="Local time" value={now} faceStyle={{ background: "transparent", boxShadow: "none" }}>
  <svg viewBox="0 0 100 100" role="img" aria-label="Local time" className="block h-full w-full">
  <circle cx="50" cy="50" r="50" fill={face} />
  {INDEX.map((mk, i) => (
@@ -502,25 +504,42 @@ type Track = {
 export function MusicTile() {
  const [track, setTrack] = useState<Track | null>(null);
  const [artOk, setArtOk] = useState(true);
- const dark = useDark();
 
  useEffect(() => {
  let dead = false;
- const poll = async () => {
+ const KEY = "damilareoo-now-playing-v1";
+ const once = async () => {
+ try {
+ const cached = sessionStorage.getItem(KEY);
+ if (cached) {
+ const json = JSON.parse(cached) as Track;
+ if (typeof json.isPlaying === "boolean") {
+ if (!dead) setTrack(json);
+ return;
+ }
+ }
+ } catch {
+ /* private mode — fall through to the single fetch */
+ }
  try {
  const res = await fetch("/api/now-playing", { cache: "no-store" });
  const json = (await res.json()) as Track;
- if (!dead && typeof json.isPlaying === "boolean") setTrack(json);
+ if (!dead && typeof json.isPlaying === "boolean") {
+ setTrack(json);
+ try {
+ sessionStorage.setItem(KEY, JSON.stringify(json));
+ } catch {
+ /* private mode */
+ }
+ }
  else if (!dead) setTrack(null);
  } catch {
  if (!dead) setTrack(null);
  }
  };
- poll();
- const id = setInterval(poll, 30_000);
+ once();
  return () => {
  dead = true;
- clearInterval(id);
  };
  }, []);
 
@@ -528,10 +547,11 @@ export function MusicTile() {
  setArtOk(true);
  }, [track?.albumArt]);
 
+ if (track === null || !track.title) return null;
  const playing = Boolean(track?.isPlaying && track.title);
  const lastPlayed = Boolean(!playing && track?.title);
  const status = playing ? "now playing" : "last played";
- const value = track === null ? "—" : track.title ? `${track.artist ?? status}` : "Silent";
+ const value = `${track.artist ?? status}`;
  const art = track?.albumArt ?? null;
  const artUrl = art && artOk ? `/api/now-playing/art?u=${encodeURIComponent(art)}` : null;
 
@@ -539,7 +559,7 @@ export function MusicTile() {
  <Tile
  label={playing ? `Now playing: ${track!.title} by ${track!.artist}` : lastPlayed ? `Last played: ${track!.title} by ${track!.artist}` : "Nothing playing"}
  value={value}
- faceStyle={dark ? { background: "#FFFFFF" } : undefined}
+ faceStyle={{ background: "transparent", boxShadow: "none" }}
  >
  <div className="relative h-full w-full">
  {artUrl ? (
@@ -759,27 +779,39 @@ export function StepsTile() {
 
  useEffect(() => {
  let dead = false;
- const poll = async () => {
+ const KEY = "damilareoo-steps-v1";
+ const once = async () => {
+ try {
+ const cached = sessionStorage.getItem(KEY);
+ if (cached) {
+ const j = JSON.parse(cached);
+ if (j && typeof j.km === "number") {
+ if (!dead) setData({ km: j.km, averageKm: j.averageKm ?? j.km, steps: j.steps ?? 0, date: j.date ?? "" });
+ return;
+ }
+ }
+ } catch {
+ /* private mode — fall through to the single fetch */
+ }
  try {
  const res = await fetch("/api/steps", { cache: "no-store" });
  const j = await res.json();
  if (!dead && j && j.configured && typeof j.km === "number") {
- setData({ km: j.km, averageKm: j.averageKm ?? j.km, steps: j.steps ?? 0, date: j.date ?? "" });
+ const reading = { km: j.km, averageKm: j.averageKm ?? j.km, steps: j.steps ?? 0, date: j.date ?? "" };
+ setData(reading);
+ try {
+ sessionStorage.setItem(KEY, JSON.stringify(reading));
+ } catch {
+ /* private mode */
+ }
  }
  } catch {
- /* offline — the last reading (or the rest field) stands */
+ /* offline — unconfigured widgets stay unrendered */
  }
  };
- poll();
- const id = setInterval(poll, 5 * 60_000);
- const onVis = () => {
- if (document.visibilityState === "visible") poll();
- };
- document.addEventListener("visibilitychange", onVis);
+ once();
  return () => {
  dead = true;
- clearInterval(id);
- document.removeEventListener("visibilitychange", onVis);
  };
  }, []);
 
@@ -807,9 +839,13 @@ export function StepsTile() {
  return () => cancelAnimationFrame(raf);
  }, [data, pal]);
 
+ /* Unconfigured: nothing server-side, nothing before data — a dead
+ tile must not cost a caption flash nor a second request. */
+ if (!data) return null;
+
  /* The mini-poster: live kilometres as dot-matrix, the shared trace with
  its endpoints, and figures scaled off the distance — the adequate-size
- composition, exactly. No data yet: the same face, dimmed to zeros. */
+ composition, exactly. */
  const km = data?.km ?? 0;
  const dist = km.toFixed(1);
  const time = runTimeForKm(km);
@@ -820,12 +856,8 @@ export function StepsTile() {
 
  return (
  <Tile
- label={
- data
- ? `Run ${data.date}: ${fmtKm(data.km)} kilometres in ${time}, ${kcal} kilocalories, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres, on the ${pal.name} canvas.`
- : "Steps not reported"
- }
- value={data ? `${fmtKm(data.km)} km · ${fmtSteps(data.steps)}` : "—"}
+ label={`Run ${data.date}: ${fmtKm(data.km)} kilometres in ${time}, ${kcal} kilocalories, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres, on the ${pal.name} canvas.`}
+ value={`${fmtKm(data.km)} km · ${fmtSteps(data.steps)}`}
  faceStyle={{ background: pal.bg }}
  >
  <svg viewBox={`0 0 ${FACE} ${FACE}`} aria-hidden className="block h-full w-full">

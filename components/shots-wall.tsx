@@ -60,9 +60,10 @@ export function leadsFor(shots: { alt: string; caption?: string }[], min = LEAD_
 }
 
 /**
- * The wall — one quiet grid, click-to-open. No modes, no shuffle:
- * the work is the whole interaction. Project openers lead at double
- * size, so the rhythm carries the grouping.
+ * The wall — studies filed by project, click-to-open. One intro line,
+ * a jump list, then a section per project with the same bracket labels
+ * the site already uses. Same masonry tiles, same viewer; the sections
+ * only say what the clusters already were.
  */
 export function ShotsWall({ shots }: { shots: Shot[] }) {
  const [focus, setFocus] = useState<number | null>(null);
@@ -109,6 +110,9 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  return (
  <div className="pt-8">
  <p className="text-xs tracking-wide text-ink-3">[Playground]</p>
+ <p className="mt-2 font-sans text-sm text-ink-2">
+ {shots.length} studies and sketches — click any tile to open.
+ </p>
 
  <div className="mt-6 grid grid-cols-2 grid-flow-dense gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
  {ordered.map((s, i) => (
@@ -148,14 +152,14 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  draggable={false}
  className="shot-in max-h-[74vh] w-auto max-w-[92vw] rounded-xl object-contain ring-1 ring-line drop-shadow-[0_24px_48px_rgba(0,0,0,0.24)]"
  />
- <figcaption className="mt-4 flex items-center gap-3">
+ <figcaption className="mt-4 flex items-center gap-2">
  <span className="flex items-center gap-1 rounded-full bg-surface/85 p-1 ring-1 ring-line backdrop-blur-md dark:ring-white/10">
  <button
  type="button"
  onClick={() => step(-1)}
  aria-label="Previous shot"
  data-tone="tap"
- className="cursor-pointer rounded-full p-2 text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
  >
  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
  <path d="M10 3 5 8l5 5" />
@@ -166,18 +170,20 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  onClick={() => step(1)}
  aria-label="Next shot"
  data-tone="tap"
- className="cursor-pointer rounded-full p-2 text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
  >
  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
  <path d="m6 3 5 5-5 5" />
  </svg>
  </button>
+ </span>
+ <span className="rounded-full bg-surface/85 p-1 ring-1 ring-line backdrop-blur-md dark:ring-white/10">
  <button
  type="button"
  onClick={() => setFocus(null)}
  aria-label="Close viewer"
  data-tone="tap"
- className="cursor-pointer rounded-full p-2 text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
  >
  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
  <path d="M3 3l10 10M13 3 3 13" />

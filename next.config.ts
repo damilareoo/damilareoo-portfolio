@@ -12,6 +12,17 @@ const nextConfig: NextConfig = {
       { source: "/shots/:path*", destination: "/playground/:path*", permanent: true },
     ];
   },
+  /* /dossier/* ships immutable artwork: covers, frames, studies. Without
+     this every image revalidates on every visit (B1); with it a second
+     visit revalidates nothing. */
+  async headers() {
+    return [
+      {
+        source: "/dossier/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

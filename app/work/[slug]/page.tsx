@@ -12,7 +12,7 @@ import { findCase, workCases } from "@/data/dossier-work";
  as the front page. */
 const COVERS: Record<string, { src: string; alt: string; fit?: "contain"; bg?: string }> = {
  "hitmans-library": { src: "/dossier/work/hitman/hitman-cover.gif", alt: "Hitman's Library cover", fit: "contain", bg: "#ececec" },
- endgame: { src: "/dossier/work/endgame/endgame-og.png", alt: "Endgame cover" },
+ endgame: { src: "/dossier/work/endgame/endgame-cover.gif", alt: "Endgame cover" },
  chessever: { src: "/dossier/work/chessever/chessever-cover.gif", alt: "ChessEver cover" },
  sylvan: { src: "/dossier/work/sylvan/sylvan-cover.gif", alt: "Sylvan cover" },
 };
@@ -131,7 +131,7 @@ export default async function WorkCasePage({
  {g.note}
  </p>
  )}
- <div className={g.motion ? "relative overflow-hidden ring-1 ring-line" : g.tall ? "mx-auto max-w-[400px] bg-surface p-3 ring-1 ring-line" : undefined}>
+ <div className={g.motion ? "relative overflow-hidden bg-surface-2 ring-1 ring-line" : g.tall ? "mx-auto max-w-[400px] bg-surface p-3 ring-1 ring-line" : "bg-surface-2 ring-1 ring-line"}>
  {g.kind === "video" ? (
  <video
  src={g.src}
@@ -140,12 +140,12 @@ export default async function WorkCasePage({
  muted
  loop
  playsInline
- preload="metadata"
+ preload="auto"
  aria-label={g.alt}
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `w-full ${g.motion ? "" : "ring-1 ring-line"}`
+ : `aspect-[16/10] w-full object-cover ${g.motion ? "" : "ring-1 ring-line"}`
  }
  />
  ) : (
@@ -153,11 +153,13 @@ export default async function WorkCasePage({
  <img
  src={g.src}
  alt={g.alt}
- loading="lazy"
+ loading="eager"
+ fetchPriority="high"
+ decoding="async"
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `w-full ${g.motion ? "" : "ring-1 ring-line"}`
+ : `aspect-[16/10] w-full bg-surface-2 object-cover ${g.motion ? "" : "ring-1 ring-line"}`
  }
  />
  )}
@@ -195,7 +197,7 @@ export default async function WorkCasePage({
  {g.note}
  </p>
  )}
- <div className={g.motion ? "relative overflow-hidden ring-1 ring-line" : g.tall ? "mx-auto max-w-[400px] bg-surface p-3 ring-1 ring-line" : undefined}>
+ <div className={g.motion ? "relative overflow-hidden bg-surface-2 ring-1 ring-line" : g.tall ? "mx-auto max-w-[400px] bg-surface p-3 ring-1 ring-line" : "bg-surface-2 ring-1 ring-line"}>
  {g.kind === "video" ? (
  <video
  src={g.src}
@@ -209,7 +211,7 @@ export default async function WorkCasePage({
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `w-full ${g.motion ? "" : "ring-1 ring-line"}`
+ : `aspect-[16/10] w-full object-cover ${g.motion ? "" : "ring-1 ring-line"}`
  }
  />
  ) : (
@@ -218,10 +220,11 @@ export default async function WorkCasePage({
  src={g.src}
  alt={g.alt}
  loading="lazy"
+ decoding="async"
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `w-full ${g.motion ? "" : "ring-1 ring-line"}`
+ : `aspect-[16/10] w-full bg-surface-2 object-cover ${g.motion ? "" : "ring-1 ring-line"}`
  }
  />
  )}
@@ -245,7 +248,7 @@ export default async function WorkCasePage({
  <div className="mx-auto w-full max-w-[600px] px-5 pb-10">
  <div>
  <p className="mt-2 text-pretty font-sans text-sm leading-normal text-ink-2">
- Credits — {c.credits}.
+ Credits — {c.credits}
  </p>
  </div>
  {/* prev / next — visual cards, so the next project sells itself */}

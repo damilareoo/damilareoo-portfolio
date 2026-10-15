@@ -31,14 +31,16 @@ const mono = localFont({
   display: "swap",
 });
 
-/* site.url (data/site.ts) is the live deployment, and it is read from there
-   rather than hardcoded here so one edit moves every absolute URL the site
-   emits when a custom domain arrives. It must be a host that answers: an
-   og:image resolved against a domain with no DNS is a share card no scraper
-   can fetch, which is what shipped until 2026-09-17.
-   On Vercel the deployment's own URL wins, so preview and production
-   deploys emit cards that resolve where they are served. */
-const base = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : site.url;
+/* site.url (data/site.ts) is the production origin, and it is read from
+   there rather than hardcoded here so one edit moves every absolute URL
+   the site emits when a custom domain arrives. It must be a host that
+   answers: an og:image resolved against a domain with no DNS is a share
+   card no scraper can fetch, which is what shipped until 2026-09-17.
+   Preview deployments must not feed metadataBase: VERCEL_URL names a
+   per-deployment host that dies when the build is cleaned up, so every
+   share would carry a link with an expiry date (B2). Cards always resolve
+   against the production host, wherever they are served. */
+const base = site.url;
 export const metadata: Metadata = {
   metadataBase: new URL(base),
   title: { default: `${site.name} — ${site.role}`, template: `%s — ${site.name}` },

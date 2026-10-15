@@ -51,7 +51,7 @@ export function PhotoDeck() {
  }, []);
 
  return (
- <div className="relative h-32 w-52" role="group" aria-label="Photos of Damilare — tap to shuffle">
+ <div className="relative h-32 w-52 bg-surface-2" role="group" aria-label="Photos of Damilare — tap to shuffle">
  {order.map((photoIdx, depth) => {
  const p = PHOTOS[photoIdx];
  const fan = FAN[Math.min(depth, FAN.length - 1)];
@@ -63,7 +63,7 @@ export function PhotoDeck() {
  data-tone="shuffle"
  aria-label={depth === 0 ? "Photos of Damilare — tap to shuffle" : `Show ${p.alt}`}
  tabIndex={depth > 2 ? -1 : 0}
- className={`absolute left-8 top-0 h-24 w-20 cursor-pointer overflow-hidden rounded-md bg-surface ring-1 ring-line transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 motion-reduce:transition-none ${fan.s}`}
+ className={`absolute left-8 top-0 h-24 w-20 cursor-pointer overflow-hidden rounded-md bg-surface-2 ring-1 ring-line transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 motion-reduce:transition-none ${fan.s}`}
  style={{
  transform: ready
  ? `translate(${fan.x}px, ${fan.y}px) rotate(${fan.r}deg)`
@@ -80,7 +80,9 @@ export function PhotoDeck() {
  width={80}
  height={96}
  draggable={false}
- loading={depth > 1 ? "lazy" : undefined}
+ decoding="async"
+ fetchPriority={depth === 0 ? "high" : "auto"}
+ loading={depth > 1 ? "lazy" : "eager"}
  className={`pointer-events-none h-full w-full object-cover ${p.pos}`}
  />
  </button>

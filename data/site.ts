@@ -3,14 +3,16 @@ export const site = {
   role: "Product Designer",
   headline: "Product Designer building 0–1 products",
   location: "Lagos, Nigeria",
-  /* Where the site actually is, and it has to be the live one: every absolute
+  /* Where this site actually is, and it has to be the live one: every absolute
      URL the site emits — og:image, twitter:image, the canonical, the sitemap's
      rows, robots' sitemap line — is resolved against this.
 
-     When the custom domain is bought and pointed at the deployment, this is the
-     one line that changes. `data/site.test.ts` holds it to a host that answers
-     so the same mistake cannot land twice. */
-  url: "https://damilareoo.xyz",
+     damilareoo.xyz is a different portfolio and must never be named here;
+     this build serves from its own production host. If a custom domain ever
+     points at this deployment, this is the one line that changes.
+     `data/site.test.ts` holds it to a host that answers so the same mistake
+     cannot land twice. */
+  url: "https://damilareoo-portfolio.vercel.app",
   email: "dosofisan7@gmail.com",
   linkedin: "https://www.linkedin.com/in/damilareoo",
 };
