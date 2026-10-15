@@ -8,14 +8,16 @@ const KEY = "damilareoo-sound";
  * The site's own voice — four cues synthesized live with Web Audio,
  * one per toy, nothing generic. No files, no dependency.
  *
- * - coin: a metallic clink. Two detuned high oscillators under a
- *   noise click, gone in a third of a second — the whip sets the
- *   brightness, so a hard spin rings brighter (see Coin).
- * - shuffle: a paper swish. Bandpassed noise falling as the pile
- *   re-deals, for both photo piles.
- * - cap: a glassy tick. One short sine and its harmonic, for the
- *   stray cap's dash.
- * - tap: a soft wooden tok for the floor switches.
+ * The palette is felt, not steel: low partials, fast decays, everything
+ * lowpassed and kept quiet, so the toys sound like desk objects in a
+ * quiet room rather than UI bleeps.
+ *
+ * - coin: a warm clink. Two low triangle partials under a soft strike;
+ *   the whip sets the brightness, so a hard spin rings brighter.
+ * - shuffle: a paper breath. Low bandpassed noise easing down as the
+ *   pile re-deals, for both photo piles.
+ * - cap: a soft wooden tick. One low sine and its fifth, gone fast.
+ * - tap: a muted thock for the floor switches.
  *
  * The context is created on the first gesture, so nothing can
  * sound before the visitor acts. Respects the footer mute,
@@ -24,7 +26,7 @@ const KEY = "damilareoo-sound";
 
 let ctx: AudioContext | null = null;
 let enabled = true;
-let volume = 0.35;
+let volume = 0.2;
 
 function ac(): AudioContext | null {
   if (typeof window === "undefined") return null;
@@ -56,26 +58,26 @@ export function coinSound(brightness = 0.5) {
   if (!c || !enabled) return;
   const t = c.currentTime;
   const b = Math.min(1, Math.max(0, brightness));
-  // the clink: two detuned metallic partials
-  [4180 + b * 900, 5630 + b * 1100].forEach((f, i) => {
+  // the clink: two low, detuned warm partials
+  [1560 + b * 320, 2330 + b * 420].forEach((f, i) => {
     const o = c.createOscillator();
     const g = c.createGain();
-    o.type = i === 0 ? "triangle" : "sine";
+    o.type = "triangle";
     o.frequency.value = f * (1 + (Math.random() - 0.5) * 0.01);
-    env(g, t, volume * (i === 0 ? 0.5 : 0.3), 0.32);
+    env(g, t, volume * (i === 0 ? 0.5 : 0.32), 0.2);
     o.connect(g).connect(c.destination);
     o.start(t);
-    o.stop(t + 0.4);
+    o.stop(t + 0.26);
   });
-  // the strike: a click of noise
+  // the strike: a soft lowpassed thud of noise
   const n = c.createBufferSource();
   n.buffer = noiseBuffer(c, 0.05);
-  const hp = c.createBiquadFilter();
-  hp.type = "highpass";
-  hp.frequency.value = 6000;
+  const lp = c.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 2400;
   const g = c.createGain();
-  env(g, t, volume * 0.35, 0.05);
-  n.connect(hp).connect(g).connect(c.destination);
+  env(g, t, volume * 0.3, 0.05);
+  n.connect(lp).connect(g).connect(c.destination);
   n.start(t);
 }
 
@@ -87,11 +89,11 @@ export function shuffleSound() {
   n.buffer = noiseBuffer(c, 0.25);
   const bp = c.createBiquadFilter();
   bp.type = "bandpass";
-  bp.Q.value = 1.2;
-  bp.frequency.setValueAtTime(3200, t);
-  bp.frequency.exponentialRampToValueAtTime(900, t + 0.2);
+  bp.Q.value = 0.9;
+  bp.frequency.setValueAtTime(2000, t);
+  bp.frequency.exponentialRampToValueAtTime(700, t + 0.22);
   const g = c.createGain();
-  env(g, t, volume * 0.5, 0.22);
+  env(g, t, volume * 0.4, 0.24);
   n.connect(bp).connect(g).connect(c.destination);
   n.start(t);
 }
@@ -100,15 +102,15 @@ export function capSound() {
   const c = ac();
   if (!c || !enabled) return;
   const t = c.currentTime;
-  [2760, 4140].forEach((f, i) => {
+  [1320, 1980].forEach((f, i) => {
     const o = c.createOscillator();
     const g = c.createGain();
     o.type = "sine";
     o.frequency.value = f;
-    env(g, t, volume * (i === 0 ? 0.4 : 0.18), 0.12);
+    env(g, t, volume * (i === 0 ? 0.38 : 0.16), 0.1);
     o.connect(g).connect(c.destination);
     o.start(t);
-    o.stop(t + 0.15);
+    o.stop(t + 0.13);
   });
 }
 
@@ -118,10 +120,10 @@ export function tapSound() {
   const t = c.currentTime;
   const o = c.createOscillator();
   const g = c.createGain();
-  o.type = "sine";
-  o.frequency.setValueAtTime(820, t);
-  o.frequency.exponentialRampToValueAtTime(540, t + 0.07);
-  env(g, t, volume * 0.5, 0.09);
+  o.type = "triangle";
+  o.frequency.setValueAtTime(300, t);
+  o.frequency.exponentialRampToValueAtTime(190, t + 0.07);
+  env(g, t, volume * 0.45, 0.08);
   o.connect(g).connect(c.destination);
   o.start(t);
   o.stop(t + 0.1);

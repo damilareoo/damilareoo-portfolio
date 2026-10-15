@@ -21,8 +21,9 @@ const FAN = [
 
 /**
  * The photo strip — five prints fanned on the desk. Tap and
- * the top print slides to the back of the pile. No labels;
- * still life under reduced motion.
+ * the top print slides to the back of the pile; drag it and it
+ * follows your finger, then flies off past the threshold. No
+ * labels; still life under reduced motion.
  *
  * Loading borrows the Are.na intro choreography (Martin Silvestre's
  * portfolio animation: a deck that deals itself into place): on
@@ -50,8 +51,14 @@ export function PhotoDeck() {
  setOrder((o) => [...o.slice(1), o[0]]);
  }, []);
 
+ /* Drag the top print: it tracks the pointer with a lean, and past
+  the threshold it flies to the back on release. A tap without travel
+  falls through to the click handler, so both gestures shuffle. */
+ const [drag, setDrag] = useState<number | null>(null);
+ const moved = useCallback(() => (drag !== null && Math.abs(drag) > 8 ? drag : null), [drag]);
+
  return (
- <div className="relative h-32 w-52 bg-surface-2" role="group" aria-label="Photos of Damilare — tap to shuffle">
+ <div className="relative h-32 w-52" role="group" aria-label="Photos of Damilare — tap to shuffle">
  {order.map((photoIdx, depth) => {
  const p = PHOTOS[photoIdx];
  const fan = FAN[Math.min(depth, FAN.length - 1)];
@@ -59,17 +66,41 @@ export function PhotoDeck() {
  <button
  key={p.src}
  type="button"
- onClick={shuffle}
+ onClick={() => {
+ if (depth === 0 && moved() !== null) {
+ setDrag(null);
+ return;
+ }
+ shuffle();
+ }}
  data-tone="shuffle"
  aria-label={depth === 0 ? "Photos of Damilare — tap to shuffle" : `Show ${p.alt}`}
  tabIndex={depth > 2 ? -1 : 0}
  className={`absolute left-8 top-0 h-24 w-20 cursor-pointer overflow-hidden rounded-md bg-surface-2 ring-1 ring-line transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 motion-reduce:transition-none ${fan.s}`}
+ onPointerDown={depth === 0 ? (e) => { e.currentTarget.setPointerCapture(e.pointerId); setDrag(0); } : undefined}
+ onPointerMove={depth === 0 && drag !== null ? (e) => {
+ const r = e.currentTarget.getBoundingClientRect();
+ setDrag(Math.max(-120, Math.min(120, e.clientX - (r.left + r.width / 2) - fan.x)));
+ } : undefined}
+ onPointerUp={depth === 0 ? () => {
+ if (drag !== null && Math.abs(drag) > 48) {
+ setDrag(null);
+ setOrder((o) => [...o.slice(1), o[0]]);
+ } else {
+ setDrag(null);
+ }
+ } : undefined}
+ onPointerCancel={depth === 0 ? () => setDrag(null) : undefined}
  style={{
- transform: ready
+ transform:
+ depth === 0 && drag !== null && ready
+ ? `translate(${fan.x + drag}px, ${fan.y + Math.abs(drag) * 0.15}px) rotate(${fan.r + drag / 10}deg)`
+ : ready
  ? `translate(${fan.x}px, ${fan.y}px) rotate(${fan.r}deg)`
  : `translate(0px, 0px) rotate(0deg) scale(0.94)`,
  opacity: ready || depth === 0 ? 1 : 0,
  transitionDelay: !dealt && ready ? `${depth * 90}ms` : "0ms",
+ transitionDuration: depth === 0 && drag !== null ? "0ms" : undefined,
  zIndex: PHOTOS.length - depth,
  }}
  >
