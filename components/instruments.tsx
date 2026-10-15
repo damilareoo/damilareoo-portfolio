@@ -508,38 +508,48 @@ export function MusicTile() {
  useEffect(() => {
  let dead = false;
  const KEY = "damilareoo-now-playing-v1";
- const once = async () => {
- try {
- const cached = sessionStorage.getItem(KEY);
- if (cached) {
- const json = JSON.parse(cached) as Track;
- if (typeof json.isPlaying === "boolean") {
- if (!dead) setTrack(json);
- return;
- }
- }
- } catch {
- /* private mode — fall through to the single fetch */
- }
+ let interval = 0;
+ async function fetchFresh() {
  try {
  const res = await fetch("/api/now-playing", { cache: "no-store" });
  const json = (await res.json()) as Track;
- if (!dead && typeof json.isPlaying === "boolean") {
+ if (dead || typeof json.isPlaying !== "boolean") return;
  setTrack(json);
  try {
  sessionStorage.setItem(KEY, JSON.stringify(json));
  } catch {
  /* private mode */
  }
- }
- else if (!dead) setTrack(null);
+ arm(Boolean(json.isPlaying && json.title));
  } catch {
- if (!dead) setTrack(null);
+ /* offline — the last good reading stands */
  }
+ }
+ function arm(playing: boolean) {
+ window.clearInterval(interval);
+ if (playing && !dead) interval = window.setInterval(() => void fetchFresh(), 30_000);
+ }
+ async function boot() {
+ try {
+ const cached = sessionStorage.getItem(KEY);
+ if (cached) {
+ const json = JSON.parse(cached) as Track;
+ if (!dead && typeof json.isPlaying === "boolean") setTrack(json);
+ }
+ } catch {
+ /* private mode — straight to the network */
+ }
+ await fetchFresh();
+ }
+ boot();
+ const onVis = () => {
+ if (document.visibilityState === "visible") void fetchFresh();
  };
- once();
+ document.addEventListener("visibilitychange", onVis);
  return () => {
  dead = true;
+ window.clearInterval(interval);
+ document.removeEventListener("visibilitychange", onVis);
  };
  }, []);
 
