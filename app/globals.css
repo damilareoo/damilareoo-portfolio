@@ -1408,9 +1408,37 @@ body {
  .foot-group .fx-roll,
  .foot-group .fx-spindot svg {
  transition: none;
+ animation: none;
  }
  .foot-group:hover .fx-roll,
  .foot-group:hover .fx-spindot svg {
  transform: none;
+ }
+}
+/* Touch devices never hover, so the pair rolls on its own clock: one
+ full roll every six seconds, arrow spinning along. Desktop keeps the
+ hover-only version above. */
+@media (hover: none) {
+ .foot-group .fx-roll {
+ animation: foot-roll 6s ease-in-out infinite;
+ }
+ .foot-group .fx-spindot svg {
+ animation: foot-spin 6s ease-in-out infinite;
+ }
+}
+@keyframes foot-roll {
+ 0% {
+ transform: rotate(-2deg);
+ }
+ 14%, 100% {
+ transform: rotate(358deg);
+ }
+}
+@keyframes foot-spin {
+ 0% {
+ transform: rotate(0deg);
+ }
+ 14%, 100% {
+ transform: rotate(360deg);
  }
 }

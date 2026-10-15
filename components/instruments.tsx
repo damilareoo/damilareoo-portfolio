@@ -610,7 +610,7 @@ export function MusicTile() {
  </svg>
  <div className="pointer-events-none absolute inset-x-0 top-0 p-3" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.85)" }}>
  <p className="font-sans text-2xs uppercase tracking-[0.2em] text-white/75">{status}</p>
- <p className="mt-1 line-clamp-2 font-sans text-base font-medium leading-tight text-white">
+ <p className="mt-1 line-clamp-2 font-sans text-sm font-medium leading-snug text-white">
  {track!.title}
  </p>
  </div>
