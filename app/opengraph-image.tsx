@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Damilare Osofisan, Software Designer — black bottle cap on white";
+export const alt = "Damilare Osofisan, Software Designer — cap, widget tiles and sticker footer";
 
 /* The share card is the coin, full stop. It used to be a generated dark
    lockup with the portrait; the owner chose the cap instead, so this route
