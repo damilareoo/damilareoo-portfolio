@@ -14,7 +14,7 @@ export function Chip({
   }[variant];
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-1 font-mono text-xs uppercase tracking-wider ${styles}`}
+      className={`inline-flex items-center rounded-full px-2.5 py-1 font-sans text-xs uppercase tracking-wider ${styles}`}
     >
       {children}
     </span>
@@ -23,7 +23,7 @@ export function Chip({
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="font-mono text-xs uppercase tracking-wider text-ink-3">{children}</p>
+    <p className="font-sans text-xs uppercase tracking-wider text-ink-3">{children}</p>
   );
 }
 
@@ -69,7 +69,7 @@ export function RecordRow({ label, children }: { label: string; children: ReactN
 /** Discipline tags — the metadata is the aesthetic, so it is never decoration. */
 export function Tags({ items }: { items: readonly string[] }) {
   return (
-    <span className="font-mono text-2xs uppercase tracking-wider text-ink-3">
+    <span className="font-sans text-2xs uppercase tracking-wider text-ink-3">
       {items.join(" · ")}
     </span>
   );

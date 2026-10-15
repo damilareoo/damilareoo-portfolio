@@ -1214,7 +1214,7 @@ body {
 
   .shot-peek-title {
     flex: 1;
-    font-family: var(--font-suisse-mono), ui-monospace, monospace;
+    font-family: var(--font-bdo), system-ui, sans-serif;
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -1288,7 +1288,7 @@ body {
   }
 
   .shot-peek-cap {
-    font-family: var(--font-suisse-mono), ui-monospace, monospace;
+    font-family: var(--font-bdo), system-ui, sans-serif;
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -1388,4 +1388,29 @@ body {
   .spin-breathe {
     animation: none;
   }
+}
+
+/* Footer sticker roll (lab 06): hovering either the sticker or the dot
+ rolls the pair — the sticker rolls, the dot's arrow spins along. */
+.foot-group .fx-roll {
+ transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.foot-group:hover .fx-roll {
+ transform: rotate(358deg);
+}
+.foot-group .fx-spindot svg {
+ transition: transform 500ms ease;
+}
+.foot-group:hover .fx-spindot svg {
+ transform: rotate(360deg);
+}
+@media (prefers-reduced-motion: reduce) {
+ .foot-group .fx-roll,
+ .foot-group .fx-spindot svg {
+ transition: none;
+ }
+ .foot-group:hover .fx-roll,
+ .foot-group:hover .fx-spindot svg {
+ transform: none;
+ }
 }

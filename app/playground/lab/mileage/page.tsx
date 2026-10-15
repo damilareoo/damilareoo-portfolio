@@ -37,7 +37,7 @@ function BackUp({ big }: { big?: boolean }) {
   return (
     <a
       href="#top"
-      className={`link-sheen ${big ? "font-sans text-sm font-medium" : "font-mono text-xs tracking-wide"}`}
+      className={`link-sheen ${big ? "font-sans text-sm font-medium" : "font-sans text-xs tracking-wide"}`}
     >
       Back to top ↑
     </a>
@@ -63,7 +63,7 @@ const STUDIES: { name: string; note: string; render: (m: Mile) => React.ReactNod
     name: "Ledger",
     note: "One mono line, everything inline.",
     render: (m) => (
-      <p className="font-mono text-xs tracking-wide text-ink-2">
+      <p className="font-sans text-xs tracking-wide text-ink-2">
         SCROLLED {String(m.px).padStart(4, "0")} PX · <BackUp />
       </p>
     ),
@@ -73,8 +73,8 @@ const STUDIES: { name: string; note: string; render: (m: Mile) => React.ReactNod
     note: "The number is the voice; count and ride second.",
     render: (m) => (
       <div className="space-y-1">
-        <p className="font-mono text-3xl tabular-nums text-ink">{String(m.px).padStart(4, "0")}</p>
-        <p className="font-mono text-xs tracking-wide text-ink-2">
+        <p className="font-sans text-3xl tabular-nums text-ink">{String(m.px).padStart(4, "0")}</p>
+        <p className="font-sans text-xs tracking-wide text-ink-2">
           PX DOWN · <BackUp />
         </p>
       </div>
@@ -88,7 +88,7 @@ const STUDIES: { name: string; note: string; render: (m: Mile) => React.ReactNod
         <div aria-hidden className="h-px w-full bg-ink/15">
           <div className="h-px bg-ink" style={{ width: `${m.pct}%` }} />
         </div>
-        <p className="font-mono text-xs tracking-wide text-ink-2">
+        <p className="font-sans text-xs tracking-wide text-ink-2">
           {m.pct}% DOWN · <BackUp />
         </p>
       </div>
@@ -98,7 +98,7 @@ const STUDIES: { name: string; note: string; render: (m: Mile) => React.ReactNod
     name: "Depth",
     note: "Coordinates energy: depth over a known bottom.",
     render: (m) => (
-      <p className="font-mono text-xs tracking-wide text-ink-2">
+      <p className="font-sans text-xs tracking-wide text-ink-2">
         DEPTH {String(m.px).padStart(4, "0")} / {String(m.max).padStart(4, "0")} PX · <BackUp />
       </p>
     ),
@@ -108,7 +108,7 @@ const STUDIES: { name: string; note: string; render: (m: Mile) => React.ReactNod
     note: "Centered stack: the count first, the ride home biggest.",
     render: (m) => (
       <div className="space-y-1 text-center">
-        <p className="font-mono text-xs tracking-wide text-ink-2">
+        <p className="font-sans text-xs tracking-wide text-ink-2">
           {String(m.px).padStart(4, "0")} PX DOWN
         </p>
         <p>
@@ -152,7 +152,7 @@ export default function MileageLabPage() {
                   <div className="px-1">{s.render(m)}</div>
                 </div>
               </div>
-              <p className="mt-2 font-mono text-xs text-ink-3">{s.note}</p>
+              <p className="mt-2 font-sans text-xs text-ink-3">{s.note}</p>
             </section>
           ))}
         </div>

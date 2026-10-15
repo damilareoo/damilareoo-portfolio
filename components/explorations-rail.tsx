@@ -42,7 +42,7 @@ export function ExplorationsRail() {
  key={e.slug}
  className="w-full shrink-0 snap-start bg-surface-2 p-4 ring-1 ring-line"
  >
- <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-widest text-ink-3">
+ <div className="flex items-baseline justify-between font-sans text-xs uppercase tracking-widest text-ink-3">
  <span>{e.exhibit}</span>
  <span aria-hidden>[{String(i + 1).padStart(2, "0")}]</span>
  </div>
@@ -69,7 +69,7 @@ export function ExplorationsRail() {
  />
  )}
  </div>
- <div className="mt-3 flex items-baseline justify-between gap-2 font-mono text-xs uppercase tracking-widest text-ink-3">
+ <div className="mt-3 flex items-baseline justify-between gap-2 font-sans text-xs uppercase tracking-widest text-ink-3">
  <span className="truncate">{e.title}</span>
  {e.embed ? (
  <a

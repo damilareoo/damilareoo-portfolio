@@ -64,7 +64,7 @@ function Tile({
  ) : (
  face
  )}
- <p className="mt-2 truncate text-center font-mono text-xs tabular-nums text-ink-2">
+ <p className="mt-2 truncate text-center font-sans text-xs tabular-nums text-ink-2">
  {value}
  </p>
  </div>
@@ -609,7 +609,7 @@ export function MusicTile() {
  </g>
  </svg>
  <div className="pointer-events-none absolute inset-x-0 top-0 p-3" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.85)" }}>
- <p className="font-mono text-2xs uppercase tracking-[0.2em] text-white/75">{status}</p>
+ <p className="font-sans text-2xs uppercase tracking-[0.2em] text-white/75">{status}</p>
  <p className="mt-1 line-clamp-2 font-sans text-base font-medium leading-tight text-white">
  {track!.title}
  </p>
@@ -769,7 +769,7 @@ const ROUTE_SC = 0.5556;
 const ROUTE_DOT = 0.83;
 const ROUTE_END = 3.9;
 const STATS_Y = 284;
-const MONO = "var(--font-suisse-mono), ui-monospace, SFMono-Regular, Menlo, monospace";
+const MONO = "var(--font-bdo), system-ui, sans-serif";
 
 export function StepsTile() {
  const runnerRef = useRef<SVGCircleElement>(null);

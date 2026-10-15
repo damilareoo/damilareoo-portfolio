@@ -63,7 +63,7 @@ function UpPill() {
     <a
       href="#top"
       aria-label="Back to top"
-      className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#ffd60a] px-5 font-mono text-xs tracking-wide text-[#0a0a0a] shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition-transform duration-200 hover:-translate-y-0.5"
+      className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#ffd60a] px-5 font-sans text-xs tracking-wide text-[#0a0a0a] shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition-transform duration-200 hover:-translate-y-0.5"
     >
       BACK TO TOP
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -75,7 +75,7 @@ function UpPill() {
 
 function Copy() {
   return (
-    <p className="font-mono text-xs text-ink-3">© {new Date().getFullYear()} {site.name}</p>
+    <p className="font-sans text-xs text-ink-3">© {new Date().getFullYear()} {site.name}</p>
   );
 }
 
@@ -219,7 +219,7 @@ export default function FooterLabPage() {
                 <Widgets />
               </div>
               <div className="mt-6">{idea.body}</div>
-              <p className="mt-4 font-mono text-xs text-ink-3">{idea.note}</p>
+              <p className="mt-4 font-sans text-xs text-ink-3">{idea.note}</p>
             </section>
           ))}
         </div>
