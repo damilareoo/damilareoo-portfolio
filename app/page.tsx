@@ -6,7 +6,7 @@ import { ExplorationsRail } from "@/components/explorations-rail";
 import { ShotPeek } from "@/components/shot-peek";
 
 export const metadata: Metadata = {
- title: { absolute: "Damilare Osofisan — Product Designer" },
+ title: { absolute: "Damilare Osofisan — Software Designer" },
  description:
  "Damilare Osofisan — product designer building 0–1 products. Currently building Hitman's Library. Previously Endgame.ai, ChessEver, HEX.",
  openGraph: {
@@ -74,7 +74,7 @@ export default function Home() {
  <div id="top" className="mx-auto w-full max-w-[600px] scroll-mt-20 px-5 pb-10">
  {/* ── header ── */}
  <header className="mt-6">
- <h1 className="sr-only">Damilare Osofisan — Product Designer</h1>
+ <h1 className="sr-only">Damilare Osofisan — Software Designer</h1>
  <p className="font-sans text-sm font-medium text-ink">I like figuring things out.</p>
  <p className="mt-4 text-pretty font-sans text-sm leading-normal">
  I design and build digital products across web and mobile.

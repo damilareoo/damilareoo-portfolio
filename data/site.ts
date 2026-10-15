@@ -1,6 +1,6 @@
 export const site = {
   name: "Damilare Osofisan",
-  role: "Product Designer",
+  role: "Software Designer",
   headline: "Product Designer building 0–1 products",
   location: "Lagos, Nigeria",
   /* Where this site actually is, and it has to be the live one: every absolute

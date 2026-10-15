@@ -65,6 +65,39 @@ export const viewport: Viewport = {
   ],
 };
 
+/* Structured identity for search engines and LLM crawlers: who this
+ is, what they do, and where the proof lives. Plain JSON-LD, no deps. */
+const personSchema = {
+ "@context": "https://schema.org",
+ "@type": "Person",
+ name: site.name,
+ url: site.url,
+ jobTitle: "Software Designer",
+ address: { "@type": "PostalAddress", addressLocality: "Lagos", addressCountry: "NG" },
+ email: `mailto:${site.email}`,
+ sameAs: [
+ "https://x.com/damilareoo",
+ "https://github.com/damilareoo",
+ "https://layers.to/damilareoo",
+ site.linkedin,
+ "https://www.are.na/damilare-osofisan",
+ ],
+ knowsAbout: [
+ "Product Design",
+ "Software Design",
+ "UX Design",
+ "Interaction Design",
+ "Design Systems",
+ "Brand Design",
+ "Design Engineering",
+ ],
+ worksFor: [
+ { "@type": "Organization", name: "Endgame.ai", jobTitle: "Product Designer" },
+ { "@type": "Organization", name: "ChessEver", jobTitle: "Founding Designer" },
+ { "@type": "Organization", name: "HEX", jobTitle: "Design Partner" },
+ ],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -86,6 +119,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CoinFavicon />
         </ThemeProvider>
         <Analytics />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
       </body>
     </html>
   );

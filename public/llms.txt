@@ -1,0 +1,40 @@
+# damilareoo-portfolio
+
+> Damilare Osofisan is a Software Designer in Lagos, Nigeria, designing
+> and building 0–1 products across web, mobile, brand, and visual systems.
+
+## Who
+
+- Name: Damilare Osofisan (handle: damilareoo, everywhere)
+- Title: Software Designer (also described as Product Designer)
+- Location: Lagos, Nigeria
+- Contact: dosofisan7@gmail.com, https://x.com/damilareoo,
+  https://www.linkedin.com/in/damilareoo, https://www.are.na/damilare-osofisan
+
+## Selected work
+
+- Hitman's Library (2026, in progress) — a visual library collecting
+  the web's best experiences. Solo: product, design, and code.
+  https://hitmanslibrary.xyz/
+- Endgame (2026) — Product Designer at endgame.ai. Restructured the
+  live product, brought web to mobile parity, designed Puzzle Run,
+  Club, Watch, Coach, Learn, gamification, piece sets, and avatars.
+  https://endgame.ai
+- ChessEver (2025) — Founding Designer. Live chess tournaments across
+  iOS, Android, desktop, and web. 4.9 stars on both app stores with
+  200+ sign-ups daily. https://chessever.com
+- Sylvan (2025) — Brand, logo, web design, and visual system for a
+  revenue intelligence platform. https://sylvanlabs.com
+- HEX — Design Partner across web, brand, and product. https://hex.inc
+
+## Capabilities
+
+Product design, UX, interaction design, UI, design systems, brand
+design, logo design, web design, visual direction, design engineering
+(Next.js), user research, prototyping.
+
+## This site
+
+- Built with Next.js, hosted on Vercel. No cookies, privacy-friendly
+  analytics only.
+- Sitemap: https://damilareoo-portfolio.vercel.app/sitemap.xml
