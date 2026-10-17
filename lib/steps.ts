@@ -98,8 +98,8 @@ function filePath(): string {
 function readFile(): Record<string, DayEntry> {
   try {
     const p = filePath();
-    if (!existsSync(p)) return {};
-    return JSON.parse(readFileSync(p, "utf8")) as Record<string, DayEntry>;
+    if (!existsSync(/*turbopackIgnore: true*/ p)) return {};
+    return JSON.parse(readFileSync(/*turbopackIgnore: true*/ p, "utf8")) as Record<string, DayEntry>;
   } catch {
     return {};
   }
@@ -108,11 +108,11 @@ function readFile(): Record<string, DayEntry> {
 function writeFile(all: Record<string, DayEntry>): boolean {
   try {
     const p = filePath();
-    mkdirSync(dirname(p), { recursive: true });
+    mkdirSync(/*turbopackIgnore: true*/ dirname(p), { recursive: true });
     const keys = Object.keys(all).sort().slice(-60);
     const pruned: Record<string, DayEntry> = {};
     for (const k of keys) pruned[k] = all[k];
-    writeFileSync(p, JSON.stringify(pruned));
+    writeFileSync(/*turbopackIgnore: true*/ p, JSON.stringify(pruned));
     return true;
   } catch {
     return false;
