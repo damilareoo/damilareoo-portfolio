@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import Pic from "./pic";
+
 /**
  * The warp — a tile that bends toward the pointer.
  *
@@ -56,8 +58,7 @@ export function WarpShot({ src, alt, eager, index, square, fit }: { src: string;
  className="shot-in block h-full w-full break-inside-avoid overflow-hidden ring-1 ring-line motion-reduce:animate-none"
  style={{ perspective: "600px", animationDelay: `${Math.min(index, 10) * 40}ms` }}
  >
- {/* eslint-disable-next-line @next/next/no-img-element */}
- <img
+ <Pic
  ref={imgRef}
  src={src}
  alt={alt}
@@ -66,7 +67,7 @@ export function WarpShot({ src, alt, eager, index, square, fit }: { src: string;
  sizes="(max-width: 600px) 50vw, 280px"
  draggable={false}
  className={`h-full w-full will-change-transform ${fit === "contain" ? "object-contain" : "object-cover"} ${square ? "aspect-square" : ""}`}
- />
+/>
  </figure>
  );
 }

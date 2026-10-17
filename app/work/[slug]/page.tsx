@@ -5,6 +5,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { DFloor } from "@/components/dfooter";
 import { CaseRail } from "@/components/case-rail";
+import Pic from "@/components/pic";
 import { WayBack } from "@/components/way-back";
 import { findCase, workCases } from "@/data/dossier-work";
 
@@ -149,8 +150,7 @@ export default async function WorkCasePage({
  }
  />
  ) : (
- // eslint-disable-next-line @next/next/no-img-element
- <img
+ <Pic
  src={g.src}
  alt={g.alt}
  loading="eager"
@@ -215,8 +215,7 @@ export default async function WorkCasePage({
  }
  />
  ) : (
- // eslint-disable-next-line @next/next/no-img-element
- <img
+ <Pic
  src={g.src}
  alt={g.alt}
  loading="lazy"

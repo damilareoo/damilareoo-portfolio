@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
+import Pic from "./pic";
 
 const WANT = [
   "/dossier/shots/110.png",
@@ -83,8 +84,7 @@ export function ShotPeek({ word = "playground", href = "/playground" }: { word?:
           </span>
           <span className="shot-peek-stage">
             {PEEK.map((s, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Pic
                 key={s.src}
                 src={s.src}
                 alt=""

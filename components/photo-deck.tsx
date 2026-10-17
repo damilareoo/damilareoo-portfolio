@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import Pic from "./pic";
+
 const PHOTOS = [
  { src: "/dossier/about/about-1.jpg", alt: "Mirror fit check", pos: "object-[72%_18%]" },
  { src: "/dossier/about/about-2.jpg", alt: "Night out in Lagos", pos: "object-center" },
@@ -104,8 +106,7 @@ export function PhotoDeck() {
  zIndex: PHOTOS.length - depth,
  }}
  >
- {/* eslint-disable-next-line @next/next/no-img-element */}
- <img
+ <Pic
  src={p.src}
  alt=""
  width={80}
@@ -115,7 +116,7 @@ export function PhotoDeck() {
  fetchPriority={depth === 0 ? "high" : "auto"}
  loading={depth > 1 ? "lazy" : "eager"}
  className={`pointer-events-none h-full w-full object-cover ${p.pos}`}
- />
+/>
  </button>
  );
  })}
