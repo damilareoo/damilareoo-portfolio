@@ -32,3 +32,16 @@ const Pic = React.forwardRef(function Pic(
 Pic.displayName = "Pic";
 
 export default Pic;
+
+/**
+ * The WebP path for a static raster, for the places `<picture>` cannot go:
+ * CSS `background-image`, `<video poster>`, and canvas `new Image()` sources.
+ * Only raster extensions are rewritten. Animated GIFs pass through so a cover
+ * stays animated, and SVGs pass through because they are already tiny vectors
+ * with no WebP companion — rewriting `/badges/chelsea.svg` to `.webp` would
+ * 404 into a CSS background that silently renders nothing. Kept here so the
+ * naming rule lives in one place.
+ */
+export function webp(src: string): string {
+  return src.replace(/\.(png|jpe?g)$/i, ".webp");
+}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DFooter } from "@/components/dfooter";
 import { DNav } from "@/components/dnav";
 import { ExplorationsRail } from "@/components/explorations-rail";
+import { webp } from "@/components/pic";
 
 export const metadata: Metadata = {
  title: { absolute: "Damilare Osofisan — Software Designer" },
@@ -76,8 +77,8 @@ export default function Home() {
  <h1 className="sr-only">Damilare Osofisan — Software Designer</h1>
  <p className="font-sans text-sm font-medium text-ink">I like figuring things out.</p>
  <p className="mt-4 text-pretty font-sans text-sm leading-normal">
- I design and build digital products across web and mobile.
- I&apos;ve worked in product, brand and web design at{" "}
+ I design and build digital products on web and mobile.
+ I&apos;ve worked across product, brand and web design at{" "}
  <a
  href="https://hex.inc"
  target="_blank"
@@ -174,7 +175,7 @@ export default function Home() {
  style={
  "poster" in w && w.poster
  ? {
- backgroundImage: `url(${w.poster as string})`,
+ backgroundImage: `url(${webp(w.poster as string)})`,
  backgroundSize: "fit" in w && w.fit === "contain" ? "contain" : "cover",
  backgroundPosition: "center",
  backgroundRepeat: "no-repeat",

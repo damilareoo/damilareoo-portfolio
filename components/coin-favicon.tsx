@@ -2,10 +2,12 @@
 
 import { useEffect } from "react";
 
-const CAP = "/dossier/cap.png";
-/* The header coin's reverse, drawn with the same cover math:
-   object-fit: cover, object-position 50% 38%. */
-const FACE = "/dossier/dami.jpg";
+/* Both faces are the coin's purpose-cropped 240px squares, not the original
+   artwork. This canvas is 64px; the full-size portrait is 576x864 and was
+   being fetched purely to be scaled down into it. Canvas cannot use
+   <picture>, so the small JPEG is the source. */
+const CAP = "/dossier/cap-coin.jpg";
+const FACE = "/dossier/dami-coin.jpg";
 const SIZE = 64;
 /* The header's own speed — 1.8 degrees per 1/60s frame, linear, endless.
    Time-based so the tab keeps the exact phase speed at any frame rate. */

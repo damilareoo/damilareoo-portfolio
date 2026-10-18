@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Pic from "./pic";
 
 const SIZE = 24;
 const MARGIN = 20;
@@ -130,9 +131,8 @@ export function StrayCap() {
       className="fixed left-0 top-0 z-40 block h-6 w-6 cursor-pointer rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
       style={{ willChange: "transform" }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/dossier/cap.png"
+      <Pic
+        src="/dossier/cap-coin.jpg"
         alt=""
         width={SIZE}
         height={SIZE}

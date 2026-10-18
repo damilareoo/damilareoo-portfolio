@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Pic from "./pic";
 import { WarpShot } from "./warp-shot";
 
 type Shot = { src: string; alt: string; caption?: string; fit?: "contain" };
@@ -144,8 +145,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  onClick={() => setFocus(null)}
  />
  <figure className="relative z-10 mx-4 flex max-h-[86vh] flex-col items-center">
- {/* eslint-disable-next-line @next/next/no-img-element */}
- <img
+ <Pic
  key={current.src}
  src={current.src}
  alt={current.alt}

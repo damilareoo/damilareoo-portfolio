@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { webp } from "./pic";
+
 /**
  * A word that drops its vinyl. Hover (fine pointers only) pops a sleeve
  * above the word; the disc slides out and spins while you stay. Touch
@@ -25,8 +27,8 @@ export function Vinyl({ word, cover, sheen }: { word: string; cover: string; she
         {word}
       </button>
       <span aria-hidden className="vinyl-pop">
-        <span className="vinyl-sleeve" style={{ backgroundImage: `url(${cover})` }} />
-        <span className="vinyl-disc" style={{ backgroundImage: `url(${cover})` }} />
+        <span className="vinyl-sleeve" style={{ backgroundImage: `url(${webp(cover)})` }} />
+        <span className="vinyl-disc" style={{ backgroundImage: `url(${webp(cover)})` }} />
       </span>
     </span>
   );
@@ -53,7 +55,7 @@ export function Badge({ word, cover }: { word: string; cover: string }) {
         {word}
       </button>
       <span aria-hidden className="vinyl-pop">
-        <span className="badge-crest" style={{ backgroundImage: `url(${cover})` }} />
+        <span className="badge-crest" style={{ backgroundImage: `url(${webp(cover)})` }} />
       </span>
     </span>
   );

@@ -1,12 +1,21 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Pic from "./pic";
 import { coinSound } from "./sound";
 
 /**
  * The avatar coin — his bottle cap up front, him on the
  * reverse. Spins endlessly; tap to whip it faster. Rests
  * on him under reduced motion.
+ *
+ * Both faces are purpose-cropped squares at 240px, not the original
+ * artwork. The coin draws 40px in the nav, so it was previously
+ * pulling a 576x864 portrait (718KB) above the fold on every single
+ * page to fill 40x40. 240px is six times the drawn size and stays
+ * sharp at 2x on any display; the full-size portrait is still on the
+ * site for anywhere it is actually used large. Do not point this back
+ * at the originals.
  */
 export function Coin() {
   const wrapRef = useRef<HTMLSpanElement>(null);
@@ -51,13 +60,11 @@ export function Coin() {
       >
         {/* front — the cap */}
         <span className="absolute inset-0 overflow-hidden rounded-full" style={{ backfaceVisibility: "hidden" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/dossier/cap.png" alt="" width={40} height={40} className="h-full w-full object-cover" />
+          <Pic src="/dossier/cap-coin.jpg" alt="" width={40} height={40} className="h-full w-full object-cover" />
         </span>
         {/* back — him */}
         <span className="absolute inset-0 overflow-hidden rounded-full" style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/dossier/dami.jpg" alt="" width={40} height={40} className="h-full w-full object-cover object-[50%_38%]" />
+          <Pic src="/dossier/dami-coin.jpg" alt="" width={40} height={40} className="h-full w-full object-cover" />
         </span>
       </span>
     </button>

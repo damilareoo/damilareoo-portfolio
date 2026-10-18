@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 const SRC = "/dossier/harbour-ship.mp4";
-const POSTER = "/dossier/harbour-ship-poster.png";
+/* WebP: a <video poster> takes one URL and cannot use <picture>. */
+const POSTER = "/dossier/harbour-ship-poster.webp";
 
 /**
  * Harbour reveal — condensation you wipe away to find the ship.
