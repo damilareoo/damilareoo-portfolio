@@ -790,38 +790,59 @@ export function StepsTile() {
  useEffect(() => {
  let dead = false;
  const KEY = "damilareoo-steps-v1";
- const once = async () => {
+ /* How often to re-read, and only while the tab is actually visible. */
+ const POLL_MS = 5 * 60_000;
+
+ const show = (r: StepsReading) => {
+ if (!dead && r) setData(r);
+ };
+
+ /* Paint the last good reading immediately so the tile is never blank, then
+ go to the network regardless. The cache is a fast first paint, never the
+ answer: it used to `return` on a hit, so once a reading was cached the tile
+ never asked again for the rest of the tab's life and a stale number could
+ sit there looking current all day. MusicTile already reconciled; this now
+ matches it, and adds the poll the README already promised. */
+ const load = async () => {
  try {
  const cached = sessionStorage.getItem(KEY);
  if (cached) {
  const j = JSON.parse(cached);
  if (j && typeof j.km === "number") {
- if (!dead) setData({ km: j.km, averageKm: j.averageKm ?? j.km, steps: j.steps ?? 0, date: j.date ?? "" });
- return;
+ show({ km: j.km, averageKm: j.averageKm ?? j.km, steps: j.steps ?? 0, date: j.date ?? "" });
  }
  }
  } catch {
- /* private mode — fall through to the single fetch */
+ /* private mode — network only */
  }
  try {
  const res = await fetch("/api/steps", { cache: "no-store" });
  const j = await res.json();
- if (!dead && j && j.configured && typeof j.km === "number") {
- const reading = { km: j.km, averageKm: j.averageKm ?? j.km, steps: j.steps ?? 0, date: j.date ?? "" };
- setData(reading);
+ if (dead || !j || !j.configured || typeof j.km !== "number") return;
+ const reading: StepsReading = { km: j.km, averageKm: j.averageKm ?? j.km, steps: j.steps ?? 0, date: j.date ?? "" };
+ show(reading);
  try {
  sessionStorage.setItem(KEY, JSON.stringify(reading));
  } catch {
  /* private mode */
  }
- }
  } catch {
- /* offline — unconfigured widgets stay unrendered */
+ /* offline — the last good reading stands */
  }
  };
- once();
+
+ void load();
+ const id = window.setInterval(() => {
+ if (document.visibilityState === "visible") void load();
+ }, POLL_MS);
+ const onVisible = () => {
+ if (document.visibilityState === "visible") void load();
+ };
+ document.addEventListener("visibilitychange", onVisible);
  return () => {
  dead = true;
+ window.clearInterval(id);
+ document.removeEventListener("visibilitychange", onVisible);
  };
  }, []);
 
