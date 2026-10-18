@@ -37,4 +37,4 @@ design, logo design, web design, visual direction, design engineering
 
 - Built with Next.js, hosted on Vercel. No cookies, privacy-friendly
   analytics only.
-- Sitemap: https://damilareoo-portfolio.vercel.app/sitemap.xml
+- Sitemap: https://www.damilare.works/sitemap.xml

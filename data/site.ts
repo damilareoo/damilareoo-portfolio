@@ -12,7 +12,7 @@ export const site = {
      points at this deployment, this is the one line that changes.
      `data/site.test.ts` holds it to a host that answers so the same mistake
      cannot land twice. */
-  url: "https://damilareoo-portfolio.vercel.app",
+  url: "https://www.damilare.works",
   email: "dosofisan7@gmail.com",
   linkedin: "https://www.linkedin.com/in/damilareoo",
 };
