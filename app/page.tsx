@@ -77,7 +77,7 @@ export default function Home() {
  <p className="font-sans text-sm font-medium text-ink">I like figuring things out.</p>
  <p className="mt-4 text-pretty font-sans text-sm leading-normal">
  I design and build digital products across web and mobile.
- I&apos;ve worked across product, brand and web at{" "}
+ I&apos;ve worked in product, brand and web design at{" "}
  <a
  href="https://hex.inc"
  target="_blank"
