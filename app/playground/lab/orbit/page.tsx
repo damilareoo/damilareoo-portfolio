@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -52,8 +53,7 @@ export default function OrbitPage() {
                 zIndex: Math.round((z + 1) * 50),
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+              <Pic src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
             </button>
           );
         })}

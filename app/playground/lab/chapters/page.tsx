@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 /** Project group sizes in wall order: vienna, sylvan, chessever, hitman's,
@@ -47,8 +48,7 @@ export default function ChaptersPage() {
                   aria-label={`Open frame ${pad(i)}: ${shots[i].alt}`}
                   className="w-[78vw] max-w-[560px] flex-none cursor-zoom-in snap-start overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] sm:w-[46vw] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+                  <Pic src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
                 </button>
               ))}
             </div>

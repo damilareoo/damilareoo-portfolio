@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -38,16 +39,14 @@ export default function EchotrailPage() {
               aria-label={`Open frame ${pad(i)}: ${s.alt}`}
               className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+              <Pic src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
             </button>
           ))}
         </div>
       </div>
       <div aria-hidden className="pointer-events-none fixed inset-0 z-40 hidden sm:block">
         {trail.map((i, k) => (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
+          <Pic
             key={`${i}-${k}`}
             src={shots[i].src}
             alt=""

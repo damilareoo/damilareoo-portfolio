@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { dossier } from "@/data/dossier";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -37,8 +38,7 @@ export default function SplitviewerPage() {
   const half = (which: "l" | "r", i: number) => (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col">
       <div className="flex min-h-0 flex-1 items-center justify-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={shots[i].src} src={shots[i].src} alt={shots[i].alt} draggable={false} className="max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-white/10" />
+        <Pic key={shots[i].src} src={shots[i].src} alt={shots[i].alt} draggable={false} className="max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-white/10" />
       </div>
       <div className="flex items-center justify-center gap-2 pt-3">
         <button type="button" onClick={() => step(which, -1)} aria-label={`${which === "l" ? "Left" : "Right"} frame back`} className="cursor-pointer rounded-full p-2 ring-1 ring-white/15">←</button>

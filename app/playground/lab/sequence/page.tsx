@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -82,8 +83,7 @@ export default function SequencePage() {
             aria-label={`Open frame ${pad(i)} fullscreen: ${s.alt}`}
             className="block w-full max-w-[1200px] cursor-zoom-in overflow-hidden rounded-xl ring-1 ring-white/10"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.src} alt={s.alt} loading={i < 2 ? undefined : "lazy"} draggable={false} className="block max-h-[86dvh] w-full object-contain" />
+            <Pic src={s.src} alt={s.alt} loading={i < 2 ? undefined : "lazy"} draggable={false} className="block max-h-[86dvh] w-full object-contain" />
           </button>
         </section>
       ))}

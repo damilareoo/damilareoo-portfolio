@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -35,8 +36,7 @@ export default function FocusPage() {
                   live ? "col-span-2 row-span-2 ring-2 ring-[#171717] dark:ring-white" : "ring-[#e5e5e5] opacity-75 hover:opacity-100 dark:ring-[#2b2b2b]"
                 }`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.src} alt={live ? s.alt : ""} aria-hidden={!live} loading={i < 8 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+                <Pic src={s.src} alt={live ? s.alt : ""} aria-hidden={!live} loading={i < 8 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
               </button>
             );
           })}

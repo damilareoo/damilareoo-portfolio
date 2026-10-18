@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -26,8 +27,7 @@ function CoverPageInner() {
           aria-label={`Open frame ${pad(at)} fullscreen: ${shots[at].alt}`}
           className="block min-h-0 w-full flex-1 cursor-zoom-in overflow-hidden rounded-2xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+          <Pic key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
         </button>
         <div className="flex snap-x gap-2 overflow-x-auto pt-3">
           {shots.map((s, i) => (
@@ -41,8 +41,7 @@ function CoverPageInner() {
                 i === at ? "ring-2 ring-[#171717] dark:ring-white" : "opacity-55 ring-[#e5e5e5] hover:opacity-100 dark:ring-[#2b2b2b]"
               }`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+              <Pic src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" />
             </button>
           ))}
         </div>

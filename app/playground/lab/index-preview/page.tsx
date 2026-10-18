@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -74,8 +75,7 @@ function IndexPreviewPageInner() {
               aria-label={`Open frame ${pad(at)} fullscreen`}
               className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img key={current.src} src={current.src} alt={current.alt} draggable={false} className="block w-full object-cover" style={{ aspectRatio: ratio }} />
+              <Pic key={current.src} src={current.src} alt={current.alt} draggable={false} className="block w-full object-cover" style={{ aspectRatio: ratio }} />
             </button>
             <p className="mt-3 text-center font-mono text-xs text-[#595959] dark:text-[#8a8a8a]">
               {pad(at)} / {shots.length}

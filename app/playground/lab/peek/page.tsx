@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -40,8 +41,7 @@ function PeekTile({ src, alt, i }: { src: string; alt: string; i: number }) {
         aria-label={`Peek frame ${pad(i)}: ${alt}`}
         className="block w-full cursor-pointer touch-none select-none overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+        <Pic src={src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
       </button>
       {(lift || pin) && (
         <div
@@ -52,8 +52,7 @@ function PeekTile({ src, alt, i }: { src: string; alt: string; i: number }) {
           aria-modal="true"
           aria-label={`${alt} — ${pad(i)} of ${shots.length}`}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Pic
             src={src}
             alt={alt}
             draggable={false}

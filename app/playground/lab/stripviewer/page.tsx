@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -32,8 +33,7 @@ export default function StripviewerPage() {
     <main className="flex h-dvh flex-col overflow-hidden bg-black text-white">
       <p className="px-5 pt-6 font-mono text-xs text-white/50">lab 78 — strip viewer</p>
       <div className="flex min-h-0 flex-1 items-center justify-center px-5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-white/10" />
+        <Pic key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-white/10" />
       </div>
       <div ref={stripRef} className="flex snap-x gap-2 overflow-x-auto px-5 pb-2">
         {shots.map((s, i) => (
@@ -45,8 +45,7 @@ export default function StripviewerPage() {
             aria-label={`Show frame ${pad(i)}: ${s.alt}`}
             className={`h-14 w-24 flex-none cursor-pointer snap-start overflow-hidden rounded-md ring-1 transition-opacity ${i === at ? "opacity-100 ring-white" : "opacity-45 ring-white/10 hover:opacity-90"}`}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+            <Pic src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" />
           </button>
         ))}
       </div>

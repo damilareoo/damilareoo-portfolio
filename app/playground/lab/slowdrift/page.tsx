@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { useReducedMotion } from "@/lib/motion";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -27,8 +28,7 @@ export default function SlowdriftPage() {
     <main className="flex h-dvh flex-col overflow-hidden bg-[#0d0d0d] text-[#f2f2f2]">
       <p className="px-5 pt-6 font-mono text-xs text-[#8a8a8a]">lab 52 — slow drift</p>
       <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden px-5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Pic
           key={shots[at].src}
           src={shots[at].src}
           alt={shots[at].alt}

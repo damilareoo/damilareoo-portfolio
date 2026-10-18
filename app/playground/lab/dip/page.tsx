@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { useReducedMotion } from "@/lib/motion";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -57,8 +58,7 @@ export default function DipPage() {
     <main className="flex h-dvh flex-col overflow-hidden bg-black text-white">
       <p className="px-5 pt-6 font-mono text-xs text-white/50">lab 39 — dip slideshow</p>
       <div className="flex min-h-0 flex-1 items-center justify-center px-5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Pic
           key={shots[at].src}
           src={shots[at].src}
           alt={shots[at].alt}

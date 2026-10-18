@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -27,8 +28,7 @@ export default function EdgebleedPage() {
             aria-label={`Open frame ${pad(i)}: ${s.alt}`}
             className="h-[64dvh] w-[112vw] max-w-none flex-none cursor-pointer snap-center overflow-hidden bg-white ring-1 ring-[#e5e5e5] sm:w-[64vw] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.src} alt="" aria-hidden loading={i < 2 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+            <Pic src={s.src} alt="" aria-hidden loading={i < 2 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
           </button>
         ))}
       </div>

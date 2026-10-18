@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -74,8 +75,7 @@ export default function FlicktossPage() {
         }}
         onPointerCancel={() => (drag.current = null)}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-white/10" />
+        <Pic key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-white/10" />
       </div>
       <div className="mx-auto flex w-full max-w-[560px] items-center gap-4 px-5 pb-6">
         <button type="button" onClick={() => go(at - 1)} aria-label="Previous frame" className="cursor-pointer rounded-full p-2 ring-1 ring-white/15">←</button>

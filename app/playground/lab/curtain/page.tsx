@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -32,8 +33,7 @@ export default function CurtainPage() {
             viewport={{ once: true, margin: "-12% 0px" }}
             className="relative block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white text-left ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.src} alt="" aria-hidden loading={i < 2 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+            <Pic src={s.src} alt="" aria-hidden loading={i < 2 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
             {!reduced && (
               <span aria-hidden className="pointer-events-none absolute inset-0 flex">
                 {[0, 1, 2, 3, 4].map((k) => (

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
 import { useReducedMotion } from "@/lib/motion";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -55,8 +56,7 @@ export default function DealinPage() {
                 aria-label={`Open frame ${pad(i)}: ${s.alt}`}
                 className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] motion-safe:animate-[deal_0.4s_ease] motion-reduce:animate-none dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+                <Pic src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
               </button>
             );
           })}

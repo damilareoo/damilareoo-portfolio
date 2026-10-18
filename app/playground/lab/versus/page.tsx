@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -42,8 +43,7 @@ export default function VersusPage() {
             aria-label={`Prefer frame ${pad(i)}: ${shots[i].alt}`}
             className="block min-h-0 w-full cursor-pointer overflow-hidden rounded-xl ring-1 ring-white/15 transition-transform active:scale-[0.99]"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={shots[i].src} alt="" aria-hidden draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+            <Pic src={shots[i].src} alt="" aria-hidden draggable={false} className="pointer-events-none block h-full w-full object-cover" />
           </button>
         ))}
       </div>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
 import { useReducedMotion } from "@/lib/motion";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -64,8 +65,7 @@ export default function SlotsPage() {
             className="block w-full cursor-pointer overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
           >
             <div className="overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Pic
                 key={`${c}-${offsets[c]}`}
                 src={shots[shown(c)].src}
                 alt=""

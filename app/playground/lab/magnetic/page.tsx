@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -60,8 +61,7 @@ export default function MagneticPage() {
         className="absolute w-[min(64vw,560px)] cursor-pointer"
         style={{ left: `${pos.x}%`, top: `${pos.y}%`, transform: "translate(-50%, -50%)" }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none block aspect-video w-full rounded-xl object-cover ring-1 ring-white/15 drop-shadow-[0_24px_48px_rgba(0,0,0,0.5)]" />
+        <Pic key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none block aspect-video w-full rounded-xl object-cover ring-1 ring-white/15 drop-shadow-[0_24px_48px_rgba(0,0,0,0.5)]" />
       </button>
       <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3">
         <button type="button" onClick={() => setAt((a) => (a - 1 + shots.length) % shots.length)} aria-label="Previous frame" className="cursor-pointer rounded-full p-2 ring-1 ring-white/15">←</button>

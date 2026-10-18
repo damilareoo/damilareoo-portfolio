@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -36,8 +37,7 @@ export default function TrayPage() {
                 seen.includes(i) ? "bg-white opacity-100 ring-[#171717] dark:bg-[#1e1e1e] dark:ring-white" : "bg-white opacity-80 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               }`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+              <Pic src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
             </button>
           ))}
         </div>
@@ -53,8 +53,7 @@ export default function TrayPage() {
                 aria-label={`Revisit frame ${pad(i)}: ${shots[i].alt}`}
                 className="h-12 w-20 flex-none cursor-pointer overflow-hidden rounded-md ring-1 ring-[#171717] dark:ring-white"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+                <Pic src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" />
               </button>
             ))}
           </div>

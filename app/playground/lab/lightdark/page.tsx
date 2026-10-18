@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -53,8 +54,7 @@ export default function LightdarkPage() {
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {halves.light.map((i) => (
               <button key={shots[i].src} type="button" onClick={() => setAt(i)} aria-label={`Open frame ${pad(i)}: ${shots[i].alt}`} className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+                <Pic src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
               </button>
             ))}
           </div>
@@ -66,8 +66,7 @@ export default function LightdarkPage() {
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {halves.dark.map((i) => (
               <button key={shots[i].src} type="button" onClick={() => setAt(i)} aria-label={`Open frame ${pad(i)}: ${shots[i].alt}`} className="block w-full cursor-zoom-in overflow-hidden rounded-xl ring-1 ring-white/10">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+                <Pic src={shots[i].src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
               </button>
             ))}
           </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -48,17 +49,23 @@ export default function CrossfadePage() {
         >
           {shots.map((s, i) => {
             const near = Math.abs(i - pos) < 3;
+            /* Only frames within two of the current one mount at all.
+               Skipping the element entirely beats emitting a picture tag
+               with no source, which is what this relied on before. */
             return (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                key={s.src}
-                src={near ? s.src : undefined}
-                alt={i === pos ? s.alt : ""}
-                aria-hidden={i !== pos}
-                draggable={false}
-                className="pointer-events-none absolute inset-0 h-full w-full rounded-xl object-cover ring-1 ring-white/10 transition-opacity duration-500"
-                style={{ opacity: i === pos ? 1 : 0 }}
-              />
+              <>
+              {near && (
+                <Pic
+                  key={s.src}
+                  src={s.src}
+                  alt={i === pos ? s.alt : ""}
+                  aria-hidden={i !== pos}
+                  draggable={false}
+                  className="pointer-events-none absolute inset-0 h-full w-full rounded-xl object-cover ring-1 ring-white/10 transition-opacity duration-500"
+                  style={{ opacity: i === pos ? 1 : 0 }}
+                />
+              )}
+              </>
             );
           })}
         </button>

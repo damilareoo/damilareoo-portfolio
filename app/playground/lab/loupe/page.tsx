@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -58,8 +59,7 @@ export default function LoupePage() {
                 aria-label={`Open frame ${pad(i)}: ${s.alt}`}
                 className="block w-full cursor-zoom-in overflow-hidden rounded-md bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+                <Pic src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
               </button>
             ))}
           </div>
@@ -69,8 +69,7 @@ export default function LoupePage() {
               className="pointer-events-none absolute z-10 hidden w-[380px] max-w-[70vw] overflow-hidden rounded-xl bg-white ring-2 ring-[#171717] drop-shadow-[0_24px_48px_rgba(0,0,0,0.3)] sm:block dark:bg-[#1e1e1e] dark:ring-white"
               style={{ left: Math.min(lens.x + 24, (gridRef.current?.clientWidth ?? 400) - 390), top: Math.max(lens.y - 130, 0) }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={shots[lens.i].src} alt="" aria-hidden draggable={false} className="block aspect-video w-full object-cover" />
+              <Pic src={shots[lens.i].src} alt="" aria-hidden draggable={false} className="block aspect-video w-full object-cover" />
               <p className="px-3 py-2 text-center font-mono text-[11px] text-[#595959] dark:text-[#8a8a8a]">
                 {pad(lens.i)} / {shots.length}
               </p>

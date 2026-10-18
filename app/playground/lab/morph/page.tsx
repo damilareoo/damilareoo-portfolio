@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
 import { useReducedMotion } from "@/lib/motion";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -63,12 +64,10 @@ export default function MorphPage() {
             {view === "index" ? (
               <>
                 <span className="font-mono text-sm text-[#595959] dark:text-[#8a8a8a]">{pad(i)}</span>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="h-10 w-16 rounded object-cover" />
+                <Pic src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="h-10 w-16 rounded object-cover" />
               </>
             ) : (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={s.src} alt={s.alt} loading={i < 6 ? undefined : "lazy"} draggable={false} className="block aspect-video w-full object-cover" />
+              <Pic src={s.src} alt={s.alt} loading={i < 6 ? undefined : "lazy"} draggable={false} className="block aspect-video w-full object-cover" />
             )}
           </motion.button>
         ))}

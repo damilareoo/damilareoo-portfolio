@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -63,8 +64,7 @@ export default function ScatterPage() {
                 className="cursor-grab touch-none select-none active:cursor-grabbing"
                 style={{ transform: `translate(${p.x + m.x}px, ${p.y + m.y}px) rotate(${p.rot}deg)`, zIndex: m.x !== 0 || m.y !== 0 ? 5 : 0 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.src} alt="" aria-hidden draggable={false} className="pointer-events-none block aspect-video w-full rounded-lg bg-white object-cover ring-1 ring-[#e5e5e5] drop-shadow-[0_10px_20px_rgba(0,0,0,0.18)] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]" />
+                <Pic src={s.src} alt="" aria-hidden draggable={false} className="pointer-events-none block aspect-video w-full rounded-lg bg-white object-cover ring-1 ring-[#e5e5e5] drop-shadow-[0_10px_20px_rgba(0,0,0,0.18)] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]" />
               </div>
             );
           })}

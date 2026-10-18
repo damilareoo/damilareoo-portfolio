@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LabViewer } from "@/components/lab-viewer";
 import { LabSetProvider, useLabShots } from "@/components/lab-set";
+import Pic from "@/components/pic";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -44,8 +45,7 @@ function WarpTile({ src, alt, eager }: { src: string; alt: string; eager?: boole
 
   return (
     <figure ref={frameRef} className="block h-full w-full overflow-hidden" style={{ perspective: "600px" }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Pic
         ref={imgRef}
         src={src}
         alt={alt}

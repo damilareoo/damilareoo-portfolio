@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -43,12 +44,10 @@ export default function FlipPage() {
                   style={{ transformStyle: "preserve-3d", transform: back ? "rotateY(180deg)" : "none" }}
                 >
                   <span className="absolute inset-0 overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]" style={{ backfaceVisibility: "hidden" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+                    <Pic src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
                   </span>
                   <span className="absolute inset-0 overflow-hidden rounded-xl bg-white ring-2 ring-[#171717] dark:bg-[#1e1e1e] dark:ring-white" style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" style={{ transform: "scale(2)" }} />
+                    <Pic src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" style={{ transform: "scale(2)" }} />
                   </span>
                 </span>
               </button>

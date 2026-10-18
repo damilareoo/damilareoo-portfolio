@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -65,8 +66,7 @@ function AccordionPageInner() {
                 className="relative h-full flex-none cursor-pointer overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
                 style={{ width: live ? "min(72vw, 880px)" : 56 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Pic
                   src={s.src}
                   alt={live ? s.alt : ""}
                   aria-hidden={!live}

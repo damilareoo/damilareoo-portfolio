@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -60,8 +61,7 @@ export default function SlitPage() {
             aria-label={`Open frame ${pad(i)}: ${s.alt}`}
             className="block w-full cursor-zoom-in overflow-hidden rounded-xl ring-1 ring-white/10 will-change-transform"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.src} alt="" aria-hidden loading={i < 2 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+            <Pic src={s.src} alt="" aria-hidden loading={i < 2 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
           </button>
         ))}
       </div>

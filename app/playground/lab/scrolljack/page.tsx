@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -54,8 +55,7 @@ export default function ScrolljackPage() {
               aria-label={`Open frame ${pad(i)}: ${s.alt}`}
               className="h-[62dvh] w-[min(74vw,980px)] flex-none cursor-pointer overflow-hidden rounded-xl ring-1 ring-white/10"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.src} alt="" aria-hidden loading={i < 3 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+              <Pic src={s.src} alt="" aria-hidden loading={i < 3 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
             </button>
           ))}
         </div>

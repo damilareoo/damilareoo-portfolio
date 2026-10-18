@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -52,8 +53,7 @@ export default function PanoramaPage() {
             className="h-[62dvh] flex-none cursor-pointer snap-center"
             style={{ width: "min(78vw, 1100px)" }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.src} alt="" aria-hidden loading={i < 3 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+            <Pic src={s.src} alt="" aria-hidden loading={i < 3 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
           </button>
         ))}
       </div>

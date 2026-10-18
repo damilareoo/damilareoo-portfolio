@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -33,10 +34,8 @@ export default function SplitwipePage() {
           setOpen(true);
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={`b-${shots[next].src}`} src={shots[next].src} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Pic key={`b-${shots[next].src}`} src={shots[next].src} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
+        <Pic
           key={`a-${shots[at].src}`}
           src={shots[at].src}
           alt={shots[at].alt}

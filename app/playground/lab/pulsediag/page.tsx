@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -33,8 +34,7 @@ export default function PulsediagPage() {
                 className="block w-full cursor-zoom-in overflow-hidden rounded-xl ring-1 ring-white/10 motion-safe:animate-[pulse-b_3.2s_ease-in-out_infinite] motion-reduce:animate-none"
                 style={{ animationDelay: `${((row + col) * 0.22).toFixed(2)}s` }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.src} alt="" aria-hidden loading={i < 8 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+                <Pic src={s.src} alt="" aria-hidden loading={i < 8 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
               </button>
             );
           })}

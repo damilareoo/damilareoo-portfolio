@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -46,8 +47,7 @@ export default function ScrubbarPage() {
     <main className="flex h-dvh flex-col overflow-hidden bg-black text-white">
       <p className="px-5 pt-6 font-mono text-xs text-white/50">lab 37 — scrub bar</p>
       <div className="flex min-h-0 flex-1 items-center justify-center px-5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-white/10" />
+        <Pic key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="max-h-full w-auto max-w-full rounded-xl object-contain ring-1 ring-white/10" />
       </div>
       <div className="px-5 pb-8">
         <div className="mx-auto max-w-[720px]">

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { useReducedMotion } from "@/lib/motion";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -55,8 +56,7 @@ export default function CinemaPage() {
         onTouchStart={() => setHeld(true)}
         onTouchEnd={() => setHeld(false)}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Pic
           key={s.src}
           src={s.src}
           alt={s.alt}

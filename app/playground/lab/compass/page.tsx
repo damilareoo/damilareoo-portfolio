@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -35,8 +36,7 @@ function CompassPageInner() {
         aria-label={`Open frame ${pad(at)} fullscreen: ${shots[at].alt}`}
         className="block w-[min(78vw,520px)] cursor-zoom-in overflow-hidden rounded-2xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none block w-full object-cover" style={{ aspectRatio: ratio }} />
+        <Pic key={shots[at].src} src={shots[at].src} alt={shots[at].alt} draggable={false} className="pointer-events-none block w-full object-cover" style={{ aspectRatio: ratio }} />
       </button>
       <div
         role="slider"

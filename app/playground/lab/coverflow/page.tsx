@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -85,8 +86,7 @@ function CoverflowPageInner() {
                 transition: "all 0.45s cubic-bezier(0.22,1,0.36,1)",
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Pic
                 key={`${i}-${dir}`}
                 src={shots[i].src}
                 alt={live ? shots[i].alt : ""}

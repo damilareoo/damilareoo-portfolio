@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { dossier } from "@/data/dossier";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -33,8 +34,7 @@ export default function FlashPage() {
       <p className="px-5 pt-6 font-mono text-xs text-white/40">lab 92 — flash</p>
       <div className="flex min-h-0 flex-1 items-center justify-center px-5">
         {at !== null && (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
+          <Pic
             key={at}
             src={shots[at].src}
             alt={shots[at].alt}

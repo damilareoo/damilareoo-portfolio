@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -47,8 +48,7 @@ export default function JustifiedPage() {
                   className="min-w-0 flex-1 cursor-zoom-in overflow-hidden bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
                   style={{ height: HEIGHTS[r % HEIGHTS.length] }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={shots[i].src} alt="" aria-hidden loading={i < 8 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
+                  <Pic src={shots[i].src} alt="" aria-hidden loading={i < 8 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
                 </button>
               ))}
             </div>

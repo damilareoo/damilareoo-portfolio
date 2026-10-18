@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -79,8 +80,7 @@ function ProgressrailPageInner() {
                 aria-label={`Open frame ${pad(i)}: ${s.alt}`}
                 className="block w-full cursor-zoom-in overflow-hidden rounded-xl bg-white ring-1 ring-[#e5e5e5] dark:bg-[#1e1e1e] dark:ring-[#2b2b2b]"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block w-full object-cover" style={{ aspectRatio: ratio }} />
+                <Pic src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block w-full object-cover" style={{ aspectRatio: ratio }} />
               </button>
             ))}
           </div>

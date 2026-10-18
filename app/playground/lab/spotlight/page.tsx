@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
 import { useReducedMotion } from "@/lib/motion";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -67,8 +68,7 @@ export default function SpotlightPage() {
               aria-label={`Open frame ${pad(i)}: ${s.alt}`}
               className="block w-full cursor-pointer overflow-hidden rounded-xl"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="block aspect-video w-full object-cover" />
+              <Pic src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="block aspect-video w-full object-cover" />
             </button>
           ))}
         </div>
@@ -84,8 +84,7 @@ export default function SpotlightPage() {
           >
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
               {shots.map((s) => (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img key={s.src} src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="block aspect-video w-full rounded-xl object-cover" />
+                <Pic key={s.src} src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="block aspect-video w-full rounded-xl object-cover" />
               ))}
             </div>
           </div>

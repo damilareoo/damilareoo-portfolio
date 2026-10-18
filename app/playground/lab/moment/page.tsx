@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { dossier } from "@/data/dossier";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -43,8 +44,7 @@ export default function MomentPage() {
         {String(hour).padStart(2, "0")}:00
       </p>
       <div className="flex min-h-0 flex-1 items-center justify-center px-5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Pic
           key={shots[at].src}
           src={shots[at].src}
           alt={shots[at].alt}

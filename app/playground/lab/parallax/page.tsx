@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
+import Pic from "@/components/pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -53,8 +54,7 @@ export default function ParallaxPage() {
                 i % 3 === 0 ? "w-full" : i % 3 === 1 ? "ml-auto w-[86%]" : "w-[86%]"
               }`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.src} alt="" aria-hidden loading={i < 4 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
+              <Pic src={s.src} alt="" aria-hidden loading={i < 4 ? undefined : "lazy"} draggable={false} className="pointer-events-none block aspect-video w-full object-cover" />
             </button>
           </div>
         ))}
