@@ -3,7 +3,6 @@ import Link from "next/link";
 import { DFooter } from "@/components/dfooter";
 import { DNav } from "@/components/dnav";
 import { ExplorationsRail } from "@/components/explorations-rail";
-import { ShotPeek } from "@/components/shot-peek";
 
 export const metadata: Metadata = {
  title: { absolute: "Damilare Osofisan — Software Designer" },
@@ -107,9 +106,12 @@ export default function Home() {
  .
  </p>
  <p className="mt-4 text-pretty font-sans text-sm leading-normal text-ink-2">
- <Link href="/about" className="link-sheen">about</Link>
- {" / "}
- <ShotPeek />
+ <a
+ href="mailto:dosofisan7@gmail.com"
+ className="link-sheen"
+ >
+ email
+ </a>
  {" / "}
  <a
  href="https://x.com/damilareoo"
@@ -118,15 +120,6 @@ export default function Home() {
  className="link-sheen"
  >
  x
- </a>
- {" / "}
- <a
- href="https://layers.to/damilareoo"
- target="_blank"
- rel="noopener noreferrer"
- className="link-sheen"
- >
- layers
  </a>
  {" / "}
  <a
@@ -154,13 +147,6 @@ export default function Home() {
  className="link-sheen"
  >
  are.na
- </a>
- {" / "}
- <a
- href="mailto:dosofisan7@gmail.com"
- className="link-sheen"
- >
- email
  </a>
  </p>
  </header>
