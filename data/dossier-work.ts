@@ -35,14 +35,14 @@ export const workCases: WorkCase[] = [
     role: "Design + build",
     site: { label: "hitmanslibrary.xyz", href: "https://hitmanslibrary.xyz/" },
     oneLiner:
-      "I keep a shelf of the best websites I run into, and build the tools to actually look at them.",
+      "A collection of cool experiences across the web. Currently building, so the case file stays open.",
     credits:
       "Damilare Osofisan, Florence Eze",
     quote:
       "Collect the experiences worth stealing from.",
     summary: [
-      "I had hundreds of links sitting in a bookmarks folder I never opened. Nothing was saved alongside them, so nothing was ever worth going back for.",
-      "Every entry now arrives with a screenshot, its own link, and a preview that loads the real page beside it.",
+      "I was keeping sites in Excel sheets. Links down one column, notes beside them, and no way to actually look at any of it.",
+      "Now every entry gets a screenshot, its own link, and a preview that loads the real page beside it.",
     ],
     sections: [
       {
@@ -51,11 +51,11 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "What Was Done",
-        v: "Screenshots, links, palette, type and the phone view for every entry. Filter by category, request new sites, read a changelog of what changed.",
+        v: "A visual library for collecting and studying web experiences. Every entry gets a screenshot, a link, and a place.",
       },
       {
         k: "How",
-        v: "Built it end to end, structure to interface to code. No handoff to argue with, which made everything slower and everything mine.",
+        v: "I wanted somewhere to keep the things I find interesting instead of losing them to bookmarks. Designed and built it all myself, structure to interface to code.",
       }
     ],
     gallery: [
@@ -63,7 +63,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitmans-library-showcase.mp4",
         alt: "Hitman's Library showcase video",
         caption: "Showcase",
-        note: "The whole library in motion. Every entry photographed, colour-read and filed.",
+        note: "The library in motion. Every entry photographed, paletted, and filed.",
         kind: "video",
         poster: "/dossier/work/hitman/hitman-title.jpg",
       },
@@ -71,7 +71,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-title.jpg",
         alt: "Hitman's Library title card",
         caption: "Title card",
-        note: "A shelf mark and a wordmark. Nothing else.",
+        note: "The identity: a shelf mark and a wordmark, nothing else.",
       },
       {
         src: "/dossier/work/hitman/hitman-origin-sheet.jpg",
@@ -95,7 +95,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-entry-preview.jpg",
         alt: "Selected entry with its live preview",
         caption: "Entry: live preview",
-        note: "Select any site and it opens beside the grid, the real page proxied in live.",
+        note: "Select any site and it opens beside the grid: the real page, proxied in live.",
       },
       {
         src: "/dossier/work/hitman/hitman-entry-mobile.jpg",
@@ -107,13 +107,13 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-entry-colors.jpg",
         alt: "Entry color palette",
         caption: "Entry: colors",
-        note: "Every entry comes back with its palette read. Hex, OKLCH or Tailwind, ready to copy.",
+        note: "Each entry comes back with its palette read: hex, OKLCH, or Tailwind, ready to copy.",
       },
       {
         src: "/dossier/work/hitman/hitman-entry-type.jpg",
         alt: "Entry type specimen",
         caption: "Entry: type",
-        note: "The type too. Display and text faces, the specimen, the CSS.",
+        note: "And its type: display and text faces, specimen and CSS.",
       },
       {
         src: "/dossier/work/hitman/hitman-category.jpg",
@@ -137,7 +137,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-about.jpg",
         alt: "About page",
         caption: "About",
-        note: "The story in three paragraphs, which is all it needed.",
+        note: "The story in three paragraphs. A link is not a design.",
       },
       {
         src: "/dossier/work/hitman/hitman-changelog.jpg",
@@ -149,7 +149,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-mark.jpg",
         alt: "Hitman's Library mark",
         caption: "Mark",
-        note: "Four books, one leaning.",
+        note: "The shelf: four books, one leaning.",
       },
     ],
   },
@@ -163,15 +163,15 @@ export const workCases: WorkCase[] = [
     role: "Brand design, logo design, web design, visual system",
     site: { label: "sylvanlabs.com", href: "https://sylvanlabs.com" },
     oneLiner:
-      "Revenue intelligence that turns messy customer data into readable signals. Brand, web design and the visual system.",
+      "Revenue intelligence that turns messy customer data into useful signals. I did brand, web and visual system.",
     credits:
       "Damilare Osofisan, Mario Prasetyo, HEX",
     quote:
       "Sylvan turns noise into signal.",
     summary: [
-      "Sylvan had a readability problem. Every rival in revenue intelligence looked like the clutter they promised to clean up.",
-      "So the identity started from one mark. A customer's actions, drawn as a pattern over time. It moves the way real opportunity does, and everything else hangs off it.",
-      "The rule I held to was simple, but never cold. One idea carries the whole thing, and it is the line they already ran: Sylvan turns noise into signal.",
+      "Sylvan is a revenue intelligence platform with a readability problem: every rival looks like the clutter it promises to remove.",
+      "The answer was an identity built around the signal mark: customer actions drawn as patterns over time. It shifts and adapts like real opportunity, and became the core of the brand.",
+      "The rule throughout: simple, but never cold. Every piece of the system reinforces one idea: Sylvan turns noise into signal.",
     ],
     sections: [
       {
@@ -180,11 +180,11 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "What Was Done",
-        v: "The logo, the three mark variants, the web build, the type system from H1 to P3, the colour ramps, and the ASCII trees that made the idea visible.",
+        v: "Built the identity around the idea of signals and patterns, then carried it across the logo, website, hero visuals and supporting artwork.",
       },
       {
         k: "How",
-        v: "The product itself is dense. Stack more noise on top of that and none of it lands, so the forms stayed plain and the movement did the work.",
+        v: "The product is dense, so the identity had to read clear without feeling like another analytics tool. Simple forms and movement make signals tangible.",
       }
     ],
     gallery: [
@@ -199,7 +199,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/sylvan/sylvan-logo-full.jpg",
         alt: "Sylvan logo lockup",
         caption: "Logo",
-        note: "The lockup. Signal mark and wordmark on Primary.",
+        note: "The lockup: signal mark and wordmark on Primary.",
       },
       {
         src: "/dossier/work/sylvan/sylvan-mark-variants.jpg",
@@ -247,7 +247,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/sylvan/sylvan-visual-system.jpg",
         alt: "Visual system rationale",
         caption: "Visual system",
-        note: "ASCII trees. Data and nature, drawn in code characters.",
+        note: "ASCII trees: data and nature in code characters.",
       },
       {
         src: "/dossier/work/sylvan/sylvan-ascii-growth.jpg",
@@ -296,7 +296,7 @@ export const workCases: WorkCase[] = [
       "Everything works exactly how you'd expect it to. No learning curve.",
     summary: [
       "Following live chess was genuinely awkward. The platforms that existed were clunky, slow, or already shut down, so anyone who cared about a tournament had to learn a new tool every round.",
-      "It also had to live in three places, because that is where people actually watch chess. Same tournaments and the same language throughout, just shaped differently for the screen in front of you.",
+      "It also had to live in three places, because that is where people actually watch chess. The tournaments are the same in all of them.",
     ],
     sections: [
       {
@@ -309,7 +309,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "How",
-        v: "Simple was the whole brief. Following a live game should not need a tutorial. I designed phone-first, then gave desktop and web their own shapes without letting the language drift.",
+        v: "Simple was the whole brief, because following a live game should not need a tutorial. I designed the phone first and treated it as the reference, then let desktop and web stretch from the same parts rather than inventing their own. Three platforms, one set of rules.",
       },
       {
         k: "Proof",
@@ -420,12 +420,12 @@ export const workCases: WorkCase[] = [
     role: "Product Designer",
     site: { label: "endgame.ai", href: "https://endgame.ai" },
     oneLiner:
-      "I joined after Endgame.ai had already launched, to help restructure a live product and pull the web closer to mobile.",
+      "I joined after Endgame.ai had already launched, to help restructure a live product and bring the mobile app up to the web.",
     credits:
       "Damilare Osofisan, Kenny Olajide, Hans Niemann",
     summary: [
-      "Endgame was already live when I joined, which changes the job completely. You cannot redesign from zero. It becomes working out what is actually wrong, then fixing that without breaking the parts people already love.",
-      "The web had drifted behind the app. Closing that gap was most of the first stretch, and once it was closed the design work opened up into building the new features.",
+      "The two sides had drifted apart, and the phone was the one behind. Anyone on a phone got less of the product than anyone on a laptop, which is a strange thing to have shipped. Bringing mobile up to the web was the first real block of work.",
+      "I joined after launch, so none of this started from a blank page. Once the two sides matched, the design work opened up into whatever came next.",
     ],
     sections: [
       {
@@ -434,19 +434,19 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "What Was Done",
-        v: "Restructured the live product, brought the web up to mobile parity, then designed what came after. Puzzle Run, Club, Watch, Coach, Learn, gamification, custom piece sets and avatars.",
+        v: "Restructured the live product, then designed what came after. Puzzle Run, Club, Watch, Coach, Learn, gamification, custom piece sets and avatars.",
       },
       {
         k: "How",
-        v: "The product was live, so the job was never starting over. It was working out what was actually wrong and fixing it without breaking what people already relied on. Tightening the existing flows came first, new features followed.",
+        v: "The product was live with people already using it, so every change had to earn itself. I would rather move something small and provably right than redesign it to look considered. Holding one product language across both sides is what made the later features cheap to add.",
       },
     ],
     gallery: [
       {
         src: "/dossier/work/endgame/endgame-web.jpg",
         alt: "Play Online lobby on web",
-        caption: "Web, closer to mobile",
-        note: "Lobby, time controls, and live games. Web at mobile parity.",
+        caption: "The bar to match",
+        note: "The web lobby with its time controls and live games. This is the depth the phone had to reach.",
       },
       {
         src: "/dossier/work/endgame/endgame-netflix.jpg",
