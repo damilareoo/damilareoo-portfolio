@@ -118,7 +118,7 @@ green end to end; KV makes readings survive restarts and redeploys.
 ## Deployment
 
 Vercel. `app/layout.tsx` resolves absolute metadata against `site.url`
-(`https://www.damilare.works`) — never `VERCEL_URL`, whose
+(`https://damilare.works`) — never `VERCEL_URL`, whose
 per-deployment host dies with the build and takes every share card with
 it. Whitelist the production Spotify redirect URI alongside localhost.
 

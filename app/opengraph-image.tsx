@@ -3,16 +3,19 @@ import { join } from "node:path";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Damilare Osofisan, Software Designer — cap, widget tiles and sticker footer";
+export const alt = "Damilare Osofisan, Software Designer — close-up of a bottle cap on white";
 
-/* The share card is the coin, full stop. It used to be a generated dark
-   lockup with the portrait; the owner chose the cap instead, so this route
-   serves the static artwork in `public/dossier/og-image.png` rather than
-   drawing a second card. One card, automatic on every route that does not
-   set its own (work pages use their gallery frames). A scraper only ever
-   fetches a static file, so no spin can reach a feed — the most motion this
-   surface can carry is the coin caught at an angle, which is how the file
-   itself is composed. */
+/* The share card, and it is one file because a scraper will only ever fetch
+   one. The owner's composition is used exactly as sent: the source is
+   already 1.9048:1, the Open Graph ratio, so serving it is a downscale and
+   never a crop. Nothing is re-laid-out here — the cap stays on the right,
+   the name and role stay on the left, because a redrawn card is a second
+   card and would drift from the one the owner approved.
+
+   Next appends a per-build hash to this route's URL, so a deploy changes
+   the address and every platform re-scrapes instead of serving the card
+   it cached from the last one. That is why the long-lived immutable
+   header below is safe here and would not be on a fixed URL. */
 export default function Image() {
   const bytes = readFileSync(join(process.cwd(), "public/dossier/og-image.png"));
   return new Response(bytes, {
