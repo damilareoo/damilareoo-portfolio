@@ -6,8 +6,8 @@ import { useEffect } from "react";
    artwork. This canvas is 64px; the full-size portrait is 576x864 and was
    being fetched purely to be scaled down into it. Canvas cannot use
    <picture>, so the small JPEG is the source. */
-const CAP = "/dossier/cap-coin.jpg";
-const FACE = "/dossier/dami-coin.jpg";
+const CAP = "/dossier/cap-coin.webp";
+const FACE = "/dossier/dami-coin.webp";
 const SIZE = 64;
 /* The header's own speed — 1.8 degrees per 1/60s frame, linear, endless.
    Time-based so the tab keeps the exact phase speed at any frame rate. */

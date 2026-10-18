@@ -9,13 +9,20 @@ import { coinSound } from "./sound";
  * reverse. Spins endlessly; tap to whip it faster. Rests
  * on him under reduced motion.
  *
- * Both faces are purpose-cropped squares at 240px, not the original
- * artwork. The coin draws 40px in the nav, so it was previously
- * pulling a 576x864 portrait (718KB) above the fold on every single
- * page to fill 40x40. 240px is six times the drawn size and stays
- * sharp at 2x on any display; the full-size portrait is still on the
- * site for anywhere it is actually used large. Do not point this back
- * at the originals.
+ * Both faces are small dedicated assets, not the original artwork, and both
+ * reproduce exactly what the browser was already drawing.
+ *
+ * The face is cropped to the square window object-fit:cover with
+ * object-position:50% 38% took out of a 576x864 portrait, then kept at
+ * 240px. The coin draws 40px, so it was pulling 718KB above the fold on
+ * every page to fill 40x40; 240px is six times the drawn size and stays
+ * sharp at 2x on any display.
+ *
+ * The cap keeps its alpha and its original 153x145 aspect. It must not be
+ * flattened to RGB or forced square: the transparent surround is what makes
+ * it read as a cap, and squashing it turns the crimped edge into an oval.
+ * Do not point either face back at the originals, and do not "optimise"
+ * the cap into an RGB square.
  */
 export function Coin() {
   const wrapRef = useRef<HTMLSpanElement>(null);
@@ -60,7 +67,7 @@ export function Coin() {
       >
         {/* front — the cap */}
         <span className="absolute inset-0 overflow-hidden rounded-full" style={{ backfaceVisibility: "hidden" }}>
-          <Pic src="/dossier/cap-coin.jpg" alt="" width={40} height={40} className="h-full w-full object-cover" />
+          <Pic src="/dossier/cap-coin.png" alt="" width={40} height={40} className="h-full w-full object-cover" />
         </span>
         {/* back — him */}
         <span className="absolute inset-0 overflow-hidden rounded-full" style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}>

@@ -132,7 +132,7 @@ export function StrayCap() {
       style={{ willChange: "transform" }}
     >
       <Pic
-        src="/dossier/cap-coin.jpg"
+        src="/dossier/cap-coin.png"
         alt=""
         width={SIZE}
         height={SIZE}
