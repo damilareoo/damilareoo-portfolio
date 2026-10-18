@@ -10,3 +10,4 @@ node_modules/
 
 # local step readings (dev only, never commit)
 data/steps.local.json
+data/steps.attempt.local.json

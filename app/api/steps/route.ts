@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { dayKey, normalizeReading, readSummary, saveDay, stepsToKm } from "@/lib/steps";
+import { dayKey, normalizeReading, readSummary, recordAttempt, saveDay, stepsToKm } from "@/lib/steps";
 
 export const dynamic = "force-dynamic";
 
@@ -19,19 +19,36 @@ function authorized(req: Request): boolean {
  * the day's count with `Authorization: Bearer <STEPS_WEBHOOK_SECRET>`.
  * Recommended macro body: {"steps": <count>}. Kilometres are derived
  * server-side from STEPS_STRIDE_M so the macro stays dumb.
+ *
+ * Every attempt is traced, including the ones that never reach storage —
+ * a rejected POST writes nothing, so without a trace there is no way to
+ * tell a macro that stopped firing from one that is firing and being
+ * turned away. See recordAttempt(); that trace is temporary and goes
+ * away with /api/steps/debug.
  */
 export async function POST(req: Request) {
+  const trace = (outcome: Parameters<typeof recordAttempt>[0]["outcome"], extra?: { steps?: number; date?: string }) =>
+    recordAttempt({
+      outcome,
+      ua: req.headers.get("user-agent"),
+      ip: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null,
+      ...extra,
+    });
+
   if (!authorized(req)) {
+    await trace("unauthorized");
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401, headers: NO_CACHE });
   }
   let body: unknown = null;
   try {
     body = await req.json();
   } catch {
+    await trace("bad-json");
     return NextResponse.json({ ok: false, error: "bad json" }, { status: 400, headers: NO_CACHE });
   }
   const reading = normalizeReading(body);
   if (!reading) {
+    await trace("no-count");
     return NextResponse.json(
       { ok: false, error: "no step count found — send {\"steps\": <count>}" },
       { status: 422, headers: NO_CACHE },
@@ -42,6 +59,7 @@ export async function POST(req: Request) {
       ? String((body as Record<string, unknown>).date).slice(0, 10)
       : dayKey();
   const { persisted } = await saveDay(date, reading.steps);
+  await trace("accepted", { steps: reading.steps, date });
   return NextResponse.json(
     {
       ok: true,

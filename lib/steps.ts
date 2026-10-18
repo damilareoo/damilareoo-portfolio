@@ -54,9 +54,9 @@ export function normalizeReading(body: unknown): { steps: number } | null {
 
 export type DayEntry = { steps: number; updatedAt: string };
 
-/** One stored day, tolerantly: the file backend keeps raw strings while
-    the KV client auto-parses JSON responses into objects. Either shape
-    must survive — a throw here silently drops the whole feed. */
+/** One stored day, tolerantly: the file backend keeps raw strings while the
+    KV client auto-parses JSON responses into objects. Either shape must
+    survive — a throw here silently drops the whole feed. */
 export function parseDayEntry(v: unknown): DayEntry | null {
   try {
     const e = (typeof v === "string" ? JSON.parse(v) : v) as DayEntry;
@@ -122,9 +122,7 @@ function writeFile(all: Record<string, DayEntry>): boolean {
 /**
  * The store is KV when connected, a small JSON file otherwise (local dev,
  * or prod before the store is attached). The file backend keeps the Test
- * Webhook button green end to end; KV makes it survive restarts.
- * The KV hash is namespaced — the team store is shared with other
- * projects, and our days must never collide with theirs.
+ * Webhook button green end to end; KV makes readings survive restarts.
  */
 const KV_HASH = "portfolio:steps:days";
 export async function saveDay(
@@ -147,8 +145,8 @@ export async function readDays(): Promise<Record<string, DayEntry>> {
     const out: Record<string, DayEntry> = {};
     if (raw) {
       for (const [k, v] of Object.entries(raw)) {
-        const entry = parseDayEntry(v);
-        if (entry) out[k] = entry;
+        const e = parseDayEntry(v);
+        if (e) out[k] = e;
       }
     }
     return out;
@@ -181,4 +179,82 @@ export async function readSummary(now = new Date()): Promise<{
     averageKm: stepsToKm(Math.round(sum / last7.length)),
     updatedAt: latest.updatedAt,
   };
+}
+
+/* ── last-attempt trace ────────────────────────────────────────────────
+   TEMPORARY diagnostic. The reading above cannot tell "the macro never
+   fired" apart from "the macro fired and was rejected", because a failed
+   POST writes nothing. This records the outcome of every attempt,
+   including the ones that never reach storage, so the two separate.
+
+   Kept out of the days hash on purpose: readSummary() walks every key in
+   that hash as if it were a day, and a non-day entry there would poison
+   the summary the widget renders.
+
+   Delete this block and app/api/steps/debug once the feed is healthy. */
+
+const KV_ATTEMPT = "portfolio:steps:lastAttempt";
+
+export type StepAttemptOutcome = "accepted" | "unauthorized" | "bad-json" | "no-count";
+
+export type StepAttempt = {
+  at: string;
+  outcome: StepAttemptOutcome;
+  ua: string | null;
+  /** First two segments only. Enough to tell a phone from a crawler,
+      not enough to be a fingerprint. */
+  ip: string | null;
+  steps?: number;
+  date?: string;
+};
+
+/** Keep enough of the address to tell callers apart, drop the rest. */
+export function coarseIp(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const parts = raw.split(/[.:]/);
+  return parts.length <= 2 ? raw : `${parts.slice(0, 2).join(".")}.x`;
+}
+
+function attemptPath(): string {
+  if (process.env.STEPS_FILE) return `${process.env.STEPS_FILE}.attempt.json`;
+  if (process.env.VERCEL) return join("/tmp", "steps-attempt.json");
+  return join(process.cwd(), "data", "steps.attempt.local.json");
+}
+
+export async function recordAttempt(a: Omit<StepAttempt, "at">): Promise<void> {
+  const entry: StepAttempt = { ...a, at: new Date().toISOString() };
+  if (hasKvStore()) {
+    try {
+      await store().set(KV_ATTEMPT, JSON.stringify(entry));
+      return;
+    } catch {
+      /* fall through to the file so a KV hiccup still leaves a trace */
+    }
+  }
+  try {
+    const p = attemptPath();
+    mkdirSync(/*turbopackIgnore: true*/ dirname(p), { recursive: true });
+    writeFileSync(/*turbopackIgnore: true*/ p, JSON.stringify(entry));
+  } catch {
+    /* diagnostics must never break ingest */
+  }
+}
+
+export async function readLastAttempt(): Promise<StepAttempt | null> {
+  if (hasKvStore()) {
+    try {
+      const raw = await store().get<string>(KV_ATTEMPT);
+      if (!raw) return null;
+      return (typeof raw === "string" ? JSON.parse(raw) : raw) as StepAttempt;
+    } catch {
+      /* fall through to the file */
+    }
+  }
+  try {
+    const p = attemptPath();
+    if (!existsSync(/*turbopackIgnore: true*/ p)) return null;
+    return JSON.parse(readFileSync(/*turbopackIgnore: true*/ p, "utf8")) as StepAttempt;
+  } catch {
+    return null;
+  }
 }
