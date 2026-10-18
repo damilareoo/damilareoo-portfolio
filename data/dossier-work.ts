@@ -55,7 +55,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "How",
-        v: "I wanted somewhere to keep the things I find interesting instead of losing them to bookmarks. Designed and built it all myself, structure to interface to code.",
+        v: "I wanted somewhere to keep the things I find interesting. Designed and built it all myself, structure to interface to code.",
       }
     ],
     gallery: [
@@ -305,7 +305,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "What Was Done",
-        v: "Phone: live games with engine evaluation, full stats and head-to-heads, plus the games you follow and save. Desktop: the round big-screen, deep into the database. Web: the essentials, a creator directory, memorial pages and news.",
+        v: "On the phone, live games with engine evaluation, full stats and head-to-heads, plus the games you follow and save. On desktop, the round goes big-screen and deep into the database. On the web, the essentials, a creator directory, memorial pages and news.",
       },
       {
         k: "How",
