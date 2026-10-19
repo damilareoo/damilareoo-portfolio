@@ -3,7 +3,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+  absorbOverlaps,
   ADHOC_BUCKET,
+  type DayBuckets,
   dayKey,
   forgetDay,
   isPlausibleDay,
@@ -209,6 +211,56 @@ describe("store round-trip", () => {
     await saveDay(normalizeReading({ date: "2026-10-05", steps: 1050 })!.days);
     const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
     expect(s.steps).toBe(1050);
+  });
+
+  it("does not double-count when a resync re-reads a day at a different granularity", async () => {
+    // A background sync sends six-hour chunks...
+    await saveDay(
+      normalizeReading({
+        steps: [
+          interval(600, "2026-10-05T06:00:00Z", "2026-10-05T12:00:00Z"),
+          interval(450, "2026-10-05T12:00:00Z", "2026-10-05T18:00:00Z"),
+        ],
+      })!.days,
+    );
+    expect((await readSummary(new Date("2026-10-05T12:00:00Z"))).steps).toBe(1050);
+
+    // ...and an explicit-range resync reports the same hours as one record.
+    // Same steps, different key. Keying on exact bounds counted both.
+    await saveDay(
+      normalizeReading({
+        steps: [interval(1050, "2026-10-05T06:00:00Z", "2026-10-05T18:00:00Z")],
+      })!.days,
+    );
+    const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
+    expect(s.steps).toBe(1050);
+  });
+
+  it("lets a coarser record supersede the chunks it covers", () => {
+    // The wide record is the authority and drops what it contains...
+    const wide = absorbOverlaps({ "2026-10-05T06:00:00Z|2026-10-05T18:00:00Z": 1050 });
+    expect(sumBuckets(wide)).toBe(1050);
+    // ...and the same happens against what is already stored.
+    const stored: DayBuckets = {
+      "2026-10-05T06:00:00Z|2026-10-05T12:00:00Z": 600,
+      "2026-10-05T12:00:00Z|2026-10-05T18:00:00Z": 450,
+    };
+    const merged = absorbOverlaps({ "2026-10-05T06:00:00Z|2026-10-05T18:00:00Z": 1050 }, stored);
+    expect(Object.keys(merged)).toHaveLength(1);
+    expect(sumBuckets(merged)).toBe(1050);
+  });
+
+  it("keeps genuinely separate intervals", () => {
+    const b = absorbOverlaps({
+      "2026-10-05T06:00:00Z|2026-10-05T12:00:00Z": 600,
+      "2026-10-05T12:00:00Z|2026-10-05T18:00:00Z": 450,
+    });
+    expect(sumBuckets(b)).toBe(1050);
+  });
+
+  it("keeps records with unusable times rather than dropping real steps", () => {
+    const b = absorbOverlaps({ "nonsense": 700 });
+    expect(sumBuckets(b)).toBe(700);
   });
 
   it("still lets a bare total overwrite another bare total", async () => {

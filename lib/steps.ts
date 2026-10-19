@@ -37,10 +37,15 @@ function toInt(v: unknown): number | null {
 }
 
 /** Step intervals for one Lagos day, keyed by the interval they cover.
-    A relay that streams step records sends each interval once, but resends
-    an interval the phone later edits and retries any delivery it never saw
-    acknowledged. Keying by interval identity rather than by a running
-    number is what makes accumulating them safe in the face of all three. */
+ *
+    The key is the exact interval, so a resend of the same record replaces
+    itself rather than adding to it. That alone is not enough, and getting
+    that wrong is what inflated a day to 84,336 steps: a relay's background
+    sync and its explicit-range resync emit buckets at DIFFERENT granularities
+    over the same hours. A 00:00-23:59 bucket and four six-hour buckets cover
+    identical time but are four different keys, so keying on exact bounds let
+    both survive and counted the same steps twice. Overlap is therefore
+    resolved in time, not by string equality — see absorbOverlaps. */
 export type DayBuckets = Record<string, number>;
 
 /** Reserved key for a payload carrying one whole-day figure instead of
@@ -58,6 +63,59 @@ export function sumBuckets(b: DayBuckets | undefined): number {
   let total = 0;
   for (const v of Object.values(b)) if (Number.isFinite(v)) total += v;
   return total;
+}
+
+/** An interval's bounds, parsed. Unparseable bounds (a payload with a count
+    but no times) score as zero-width so they never absorb anything. */
+function span(key: string): { start: number; end: number } {
+  const [s, e] = key.split("|");
+  const start = Date.parse(s ?? "");
+  const end = Date.parse(e ?? "");
+  return {
+    start: Number.isFinite(start) ? start : 0,
+    end: Number.isFinite(end) ? end : 0,
+  };
+}
+
+/**
+ * Fold a day's intervals down so no two cover the same instant.
+ *
+ * Records arrive at whatever granularity the sender felt like, and a coarser
+ * record is the more authoritative of the two: if Health Connect reports the
+ * whole day at once, that total supersedes the four chunks it was assembled
+ * from. So for each interval, anything already stored that it fully covers is
+ * dropped, and it in turn drops only what it covers. Intervals that merely
+ * overlap without containing one another are left alone — Health Connect can
+ * legitimately report adjacent windows that share a boundary instant, and
+ * inventing a subtraction here would lose real steps.
+ *
+ * Order matters: widest first, so a broad record claims its ground before a
+ * narrow one arrives to argue about it.
+ */
+export function absorbOverlaps(incoming: DayBuckets, existing?: DayBuckets): DayBuckets {
+  /* Start from what is already stored, so an incremental payload keeps every
+     interval the day had. Only the ones an incoming record fully covers are
+     dropped — that is the entire set of changes this function makes. */
+  const out: DayBuckets = { ...(existing ?? {}) };
+
+  const ordered = Object.entries(incoming)
+    .map(([key, count]) => ({ key, count: count ?? 0, ...span(key) }))
+    .sort((a, b) => b.end - b.start - (a.end - a.start));
+
+  for (const cand of ordered) {
+    if (!(cand.end > cand.start)) {
+      // No usable times: keep it, it cannot be reasoned about.
+      out[cand.key] = cand.count;
+      continue;
+    }
+    const supersedes = (s: number, e: number) => e > s && cand.start <= s && cand.end >= e;
+    for (const key of Object.keys(out)) {
+      const s = span(key);
+      if (supersedes(s.start, s.end)) delete out[key];
+    }
+    out[cand.key] = cand.count;
+  }
+  return out;
 }
 
 /** A streaming relay: HC Webhook posts
@@ -280,11 +338,15 @@ function mergeDay(existing: DayEntry | null, incoming: DayEntry): DayEntry {
      interval, so it must not be carried into the interval set — otherwise
      the first relay sync reports the old total plus every real step,
      permanently inflated. */
-  const buckets: DayBuckets = {};
+  const stored: DayBuckets = {};
   for (const [k, v] of Object.entries(existing?.buckets ?? {})) {
-    if (k !== ADHOC_BUCKET) buckets[k] = v;
+    if (k !== ADHOC_BUCKET) stored[k] = v;
   }
-  for (const [k, v] of Object.entries(incomingBuckets)) buckets[k] = v;
+  /* Overlap is resolved across BOTH sets, not just within the new payload. A
+     resync after a background sync re-reads the same hours at a different
+     granularity, and keying on exact bounds let both generations of buckets
+     coexist — which is how a morning's walk reached 84,336 steps. */
+  const buckets = absorbOverlaps(incomingBuckets, stored);
   return { steps: sumBuckets(buckets), updatedAt: incoming.updatedAt, buckets };
 }
 
