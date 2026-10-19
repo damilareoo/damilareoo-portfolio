@@ -1,5 +1,13 @@
 import { NextResponse } from "next/server";
-import { normalizeReading, readSummary, saveDay, stepsToKm } from "@/lib/steps";
+import {
+  isPlausibleDay,
+  MAX_DAY_STEPS,
+  normalizeReading,
+  readSummary,
+  saveDay,
+  stepsToKm,
+  sumBuckets,
+} from "@/lib/steps";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +69,20 @@ export async function POST(req: Request) {
       },
       { status: 422, headers: NO_CACHE },
     );
+  }
+
+  /* Refuse an impossible day rather than store it. A relay streams intervals
+     and never resends them, so a figure that should never have been written
+     cannot be walked back by waiting — the steps behind it are gone for good.
+     Rejecting loudly at least leaves the last good reading on the tile. */
+  for (const [day, buckets] of Object.entries(reading.days)) {
+    const steps = sumBuckets(buckets);
+    if (!isPlausibleDay(steps)) {
+      return NextResponse.json(
+        { ok: false, error: `implausible step count for ${day}: ${steps} (max ${MAX_DAY_STEPS})`, refused: true },
+        { status: 422, headers: NO_CACHE },
+      );
+    }
   }
 
   const { persisted, totals } = await saveDay(reading.days);

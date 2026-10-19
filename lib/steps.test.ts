@@ -5,6 +5,8 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   ADHOC_BUCKET,
   dayKey,
+  isPlausibleDay,
+  MAX_DAY_STEPS,
   normalizeReading,
   parseDayEntry,
   readSummary,
@@ -179,15 +181,6 @@ describe("store round-trip", () => {
     expect(s.steps).toBe(520);
   });
 
-  it("lets a whole-day total replace accumulated intervals outright", async () => {
-    await saveDay(normalizeReading({ steps: [interval(600, "2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z")] })!.days);
-    // A bare total cannot be decomposed into intervals, so adding it to the
-    // 600 already stored would count the day twice.
-    await saveDay(normalizeReading({ date: "2026-10-05", steps: 9000 })!.days);
-    const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
-    expect(s.steps).toBe(9000);
-  });
-
   it("discards a bare total when real intervals arrive for the same day", async () => {
     // A day written as one total has no intervals behind it, so the first
     // relay sync has nothing to add to — and its total is the authority.
@@ -195,6 +188,43 @@ describe("store round-trip", () => {
     await saveDay(normalizeReading({ steps: [interval(1500, "2026-10-05T07:00:00Z", "2026-10-05T09:00:00Z")] })!.days);
     const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
     expect(s.steps).toBe(1500);
+  });
+
+  it("refuses to let a bare total destroy a day's intervals", async () => {
+    // The relay streams intervals and never resends them, so a coarser total
+    // arriving later must not discard the day's only copy of them.
+    await saveDay(
+      normalizeReading({
+        steps: [
+          interval(600, "2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z"),
+          interval(450, "2026-10-05T09:00:00Z", "2026-10-05T10:00:00Z"),
+        ],
+      })!.days,
+    );
+    await saveDay(normalizeReading({ date: "2026-10-05", steps: 1050 })!.days);
+    const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
+    expect(s.steps).toBe(1050);
+  });
+
+  it("still lets a bare total overwrite another bare total", async () => {
+    // MacroDroid posts the day's running total repeatedly; the newest wins.
+    await saveDay(normalizeReading({ date: "2026-10-05", steps: 1000 })!.days);
+    await saveDay(normalizeReading({ date: "2026-10-05", steps: 4200 })!.days);
+    const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
+    expect(s.steps).toBe(4200);
+  });
+});
+
+describe("implausible readings", () => {
+  it("classifies by the highest day ever recorded", () => {
+    expect(isPlausibleDay(0)).toBe(true);
+    expect(isPlausibleDay(18_072)).toBe(true);
+    expect(isPlausibleDay(MAX_DAY_STEPS)).toBe(true);
+    expect(isPlausibleDay(MAX_DAY_STEPS + 1)).toBe(false);
+    // A mistyped marker must never pass as a real day.
+    expect(isPlausibleDay(424_242)).toBe(false);
+    expect(isPlausibleDay(-1)).toBe(false);
+    expect(isPlausibleDay(NaN)).toBe(false);
   });
 });
 

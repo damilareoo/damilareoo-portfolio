@@ -212,21 +212,43 @@ function writeFile(all: Record<string, DayEntry>): boolean {
  */
 const KV_HASH = "portfolio:steps:days";
 
+/** Ceiling on a single day's step count. The most ever recorded in a day is
+    around 115,000, so 150,000 sits above anything a phone can legitimately
+    report from a human and well below the figures a bad payload produces.
+    It exists because a single mistyped or mis-signed POST would otherwise
+    overwrite a real reading with one that looks entirely plausible on the
+    tile, and the relay would never resend the intervals it already
+    considered delivered. */
+export const MAX_DAY_STEPS = 150_000;
+
+export function isPlausibleDay(steps: number): boolean {
+  return Number.isFinite(steps) && steps >= 0 && steps <= MAX_DAY_STEPS;
+}
+
 /** Intervals merged with what is already stored for that day. A resend of
     an interval the phone already sent lands on the same key and replaces
     itself, which is what makes a retry safe to acknowledge with a 2xx. */
 function mergeDay(existing: DayEntry | null, incoming: DayEntry): DayEntry {
   const incomingBuckets = incoming.buckets ?? {};
-  /* A whole-day total wins outright. It cannot be split into intervals, so
-     adding it to intervals already stored would count the day twice. */
+  /* A whole-day total wins outright, unless the day already holds intervals.
+
+     A relay streams intervals and never resends them — it only sends what is
+     new since its last successful sync — so intervals already stored are
+     irreplaceable. A bare total can only ever be coarser than them, and
+     accepting one here would discard the day's detail for good, leaving the
+     relay with nothing left to send. Intervals therefore outrank a total in
+     both directions: the two rules below are one decision, not two. */
   if (ADHOC_BUCKET in incomingBuckets) {
+    const existingIsIntervalBased =
+      existing?.buckets !== undefined && !(ADHOC_BUCKET in existing.buckets);
+    if (existingIsIntervalBased && sumBuckets(existing?.buckets) > 0) return existing;
     return { ...incoming, buckets: incomingBuckets };
   }
-  /* The same rule in reverse, and it is the case that catches people: a day
-     first written as one total, then written again as intervals by a relay.
-     The stored total is a reserved key, not a real interval, so it must not
-     be carried into the interval set — otherwise the first relay sync
-     reports the old total plus every real step, permanently inflated. */
+  /* The reverse: a day first written as one total, then written again as
+     intervals by a relay. The stored total is a reserved key, not a real
+     interval, so it must not be carried into the interval set — otherwise
+     the first relay sync reports the old total plus every real step,
+     permanently inflated. */
   const buckets: DayBuckets = {};
   for (const [k, v] of Object.entries(existing?.buckets ?? {})) {
     if (k !== ADHOC_BUCKET) buckets[k] = v;
