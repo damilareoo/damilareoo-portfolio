@@ -187,6 +187,15 @@ describe("store round-trip", () => {
     const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
     expect(s.steps).toBe(9000);
   });
+
+  it("discards a bare total when real intervals arrive for the same day", async () => {
+    // A day written as one total has no intervals behind it, so the first
+    // relay sync has nothing to add to — and its total is the authority.
+    await saveDay(normalizeReading({ date: "2026-10-05", steps: 6933 })!.days);
+    await saveDay(normalizeReading({ steps: [interval(1500, "2026-10-05T07:00:00Z", "2026-10-05T09:00:00Z")] })!.days);
+    const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
+    expect(s.steps).toBe(1500);
+  });
 });
 
 describe("parseDayEntry", () => {

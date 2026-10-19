@@ -93,26 +93,43 @@ does not need them. To wire live playback: create an app at
 authorization-code flow once, and store the resulting refresh token.
 The same token serves every environment.
 
-### Daily steps (Health Connect → macro → webhook)
+### Daily steps (Health Connect → webhook)
 
-The footer steps tile shows real kilometres from the owner's phone:
+The footer steps tile shows real kilometres from the owner's phone. A relay
+app on Android reads Health Connect and POSTs to
+`https://<domain>/api/steps` with header
+`Authorization: Bearer <STEPS_WEBHOOK_SECRET>`. Two payload shapes are
+accepted, and `lib/steps.ts` folds both into step intervals bucketed by
+Lagos day:
 
-1. On Android: Health Connect shares step data with a macro app
-   (MacroDroid). The macro fires once a day: HTTP POST to
-   `https://<domain>/api/steps` with header
-   `Authorization: Bearer <STEPS_WEBHOOK_SECRET>` and JSON body
-   `{"steps": <count>}` (`step_count`, `value`, `count`, or `km` /
-   `distance_km` are accepted too; an optional `"date": "YYYY-MM-DD"`
-   backfills another day).
-2. The route verifies the bearer, converts with `STEPS_STRIDE_M`,
-   and stores the day.
-3. The tile polls every 5 minutes (and on tab focus) and morphs to the
-   new reading in dot-matrix. Tap flips between today and today+average.
+1. **Records** — the shape a relay like [HC Webhook](https://github.com/mcnaveen/health-connect-webhook)
+   streams: `{"steps": [{"count", "start_time", "end_time"}, ...]}`.
+   Such an app sends only what changed since its last successful sync,
+   across a rolling 48-hour window, so each payload is an **increment**, not
+   a day total, and one payload can straddle midnight. Intervals therefore
+   *accumulate*, keyed by their own bounds — which also means a retried or
+   re-delivered interval replaces itself instead of double-counting, so a
+   2xx can never inflate the day.
+2. **A single figure** — a macro template such as MacroDroid's
+   `{"steps": <count>}`. This cannot be decomposed into intervals, so it
+   *replaces* the day outright, in both directions: a total arriving after
+   intervals and a relay sync arriving after a total each supersede rather
+   than add. `step_count`, `stepcount`, `value`, `count`, `total`, `km`,
+   `kilometres` and `distance_km` are accepted as aliases; an optional
+   `"date": "YYYY-MM-DD"` backfills another day.
+
+The route verifies the bearer, converts with `STEPS_STRIDE_M`, and stores the
+day. Each rejection returns a status the sender's log can act on — 401 bad
+bearer, 400 body not JSON, 422 no count in either shape — so nothing that
+will never succeed is retried.
+
+The tile polls every 5 minutes (and on tab focus) and morphs to the new
+reading in dot-matrix. Tap flips between today and today+average.
 
 Storage is Vercel KV when `KV_REST_API_URL` + `KV_REST_API_TOKEN` are
 set (dashboard → Storage → Create KV → connect to the project — no code
 changes), otherwise a small JSON file (`data/steps.local.json` locally,
-`/tmp` on serverless). The file backend keeps the macro's Test button
+`/tmp` on serverless). The file backend keeps the relay's Test button
 green end to end; KV makes readings survive restarts and redeploys.
 
 ## Deployment
