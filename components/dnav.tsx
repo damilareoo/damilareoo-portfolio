@@ -20,8 +20,14 @@ export function DNav() {
  <div className="mx-auto flex w-full max-w-[600px] flex-row items-center gap-2 px-5 pb-3 pt-16 sm:pt-[88px]">
  <div className="flex min-w-0 flex-1 items-center gap-2">
  <Coin />
+ {/* prefetch={false}: the home link sits in the header of every page, so
+     Next prefetched the front page and its four animated covers — the
+     full-size ones — on any visit to the playground or a case study. That was
+     a 173KB GIF arriving before anyone asked for it. The front page is one
+     click away and nothing on it depends on being warm. */}
  <Link
  href="/"
+ prefetch={false}
  aria-label="Damilare Osofisan — back home"
  className="truncate rounded-md py-1.5 font-sans text-sm text-ink transition-opacity hover:opacity-60"
  >
