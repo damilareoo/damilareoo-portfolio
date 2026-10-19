@@ -790,11 +790,26 @@ export function StepsTile() {
  useEffect(() => {
  let dead = false;
  const KEY = "damilareoo-steps-v1";
- /* How often to re-read, and only while the tab is actually visible. */
- const POLL_MS = 5 * 60_000;
+ /* How often to re-read. Fast while the tab is both visible and focused,
+    because that is the only time anyone is looking at the number, and a
+    minute of lag is the whole difference between the tile reading live and
+    reading stale after the phone has already synced. A backgrounded tab has
+    no audience, so there is nothing to buy by ticking it, and returning to
+    the tab refetches at once anyway. */
+ const POLL_MS = 60_000;
 
+ /* Only a change is worth a render. The poll now runs every minute, and a
+ setState with the same reading would repaint the whole tile once a minute
+ for nothing — including restarting the runner animation, which would leave a
+ dot visibly stuttering in place on an otherwise idle page. */
  const show = (r: StepsReading) => {
- if (!dead && r) setData(r);
+ if (!dead && r) {
+ setData((prev) =>
+ prev && prev.km === r.km && prev.averageKm === r.averageKm && prev.steps === r.steps && prev.date === r.date
+ ? prev
+ : r,
+ );
+ }
  };
 
  /* Paint the last good reading immediately so the tile is never blank, then
@@ -833,16 +848,19 @@ export function StepsTile() {
 
  void load();
  const id = window.setInterval(() => {
- if (document.visibilityState === "visible") void load();
+ if (document.visibilityState === "visible" && document.hasFocus()) void load();
  }, POLL_MS);
  const onVisible = () => {
  if (document.visibilityState === "visible") void load();
  };
+ const onFocus = () => void load();
  document.addEventListener("visibilitychange", onVisible);
+ window.addEventListener("focus", onFocus);
  return () => {
  dead = true;
  window.clearInterval(id);
  document.removeEventListener("visibilitychange", onVisible);
+ window.removeEventListener("focus", onFocus);
  };
  }, []);
 

@@ -123,8 +123,14 @@ day. Each rejection returns a status the sender's log can act on — 401 bad
 bearer, 400 body not JSON, 422 no count in either shape — so nothing that
 will never succeed is retried.
 
-The tile polls every 5 minutes (and on tab focus) and morphs to the new
-reading in dot-matrix. Tap flips between today and today+average.
+The tile polls every 60 seconds while its tab is visible and focused, and
+refetches at once on focus or tab return, so a reading lands on screen within
+a minute of the phone posting it. It morphs to the new reading in dot-matrix.
+Tap flips between today and today+average.
+
+The poll is not the limiting factor on freshness — the relay's own sync
+interval is. Whatever the phone posts, the tile shows within a minute of it
+arriving.
 
 Storage is Vercel KV when `KV_REST_API_URL` + `KV_REST_API_TOKEN` are
 set (dashboard → Storage → Create KV → connect to the project — no code
