@@ -17,8 +17,15 @@ export function projectOf(s: { alt: string; caption?: string }): string {
 /** The wall's shuffle, dealt once and forever: project groups keep their
  internal order and their lead tiles, but the groups themselves run in a
  fixed-seed order. Random at render would split server from client, so
- the seed is written down — same wall for everyone, every visit. */
-export const WALL_SEED = 102;
+ the seed is written down — same wall for everyone, every visit.
+
+ 137 was chosen by rendering the opening screen for a spread of seeds and
+ looking at them, not by picking a number. It opens on remi and chessever
+ against dark sylvan and intempus fields, alternating light and dark tiles
+ across the first screen so the grid reads as a composition rather than a
+ stack. Seed 512 was the runner-up and lost on three near-identical dark
+ tiles landing in one row; the old 102 opened on a single-shot orphan. */
+export const WALL_SEED = 137;
 
 function mulberry32(seed: number): () => number {
  let a = seed >>> 0;
