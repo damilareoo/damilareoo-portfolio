@@ -29,7 +29,12 @@ const NO_CACHE = {
  *
  *   unauthorized → the bearer no longer matches STEPS_WEBHOOK_SECRET
  *   bad-json     → body is not being sent as JSON
- *   no-count     → JSON parsed, but no step count inside it
+ *   no-count     → JSON parsed, but no step count inside it. `keys` lists the
+ *                  top-level field names and `raw` carries the first 4 KB,
+ *                  which is what makes an unreadable shape readable rather
+ *                  than a guess. Both are present only on a failed attempt:
+ *                  a delivery that produced a reading has nothing left to
+ *                  diagnose and is never stored raw.
  *   accepted     → it is working; if the widget still looks old, the tile
  *                  is the problem rather than the feed
  *
