@@ -563,6 +563,17 @@ export function MusicTile() {
  const status = playing ? "now playing" : "last played";
  const value = `${track.artist ?? status}`;
  const art = track?.albumArt ?? null;
+ /* Same-origin proxy rather than a direct CDN request. Spotify's image URLs
+    are opaque: the part before the album hash is a size token, but swapping
+    it for another size token 404s — every documented variant was tried and
+    none resolved to the same album. The API only ever hands back the exact
+    URL that works, so the tile has to use it verbatim.
+
+    The proxy earns its keep for the headers, not for hiding the origin: it
+    is what lets the response be cached hard and revalidated by size, so a
+    returning visitor does not re-request Spotify at all. Art is decorative
+    here — the tile's accessible name carries the track — so if Spotify is
+    unreachable the tile falls back to the bare record. */
  const artUrl = art && artOk ? `/api/now-playing/art?u=${encodeURIComponent(art)}` : null;
 
  return (

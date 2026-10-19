@@ -225,6 +225,37 @@ export function isPlausibleDay(steps: number): boolean {
   return Number.isFinite(steps) && steps >= 0 && steps <= MAX_DAY_STEPS;
 }
 
+/** How a day's figure was arrived at: relay intervals, or a single posted
+    total. Only the first can correct itself, so the widget reports which it
+    is showing rather than presenting both with equal confidence. */
+export type DaySource = "intervals" | "total";
+
+/** Read the store and classify each day.
+ *
+ * This is the piece every previous fix was missing. A relay sends only records
+ * new since its last successful sync, so the server is the only party that can
+ * hold a wrong figure and the only party that can repair one. Nothing about a
+ * later delivery will fix a bad day: the phone has no reason to resend what it
+ * already counted as delivered. So the store has to be able to say which days
+ * are backed by intervals (recoverable, self-healing) and which are standing on
+ * a single hand-posted total (not recoverable without a full resync).
+ */
+export type DayState = {
+  days: Record<string, DayEntry>;
+  /** Days holding a bare total rather than intervals. A day listed here cannot
+      improve on its own; it needs the phone to re-read the range. */
+  needsFullResync: string[];
+};
+
+export async function readDayState(): Promise<DayState> {
+  const days = await readDays();
+  const needsFullResync = Object.entries(days)
+    .filter(([, e]) => !e.buckets || ADHOC_BUCKET in e.buckets)
+    .map(([d]) => d)
+    .sort();
+  return { days, needsFullResync };
+}
+
 /** Intervals merged with what is already stored for that day. A resend of
     an interval the phone already sent lands on the same key and replaces
     itself, which is what makes a retry safe to acknowledge with a 2xx. */
@@ -255,6 +286,22 @@ function mergeDay(existing: DayEntry | null, incoming: DayEntry): DayEntry {
   }
   for (const [k, v] of Object.entries(incomingBuckets)) buckets[k] = v;
   return { steps: sumBuckets(buckets), updatedAt: incoming.updatedAt, buckets };
+}
+
+/** Forget a day entirely, so the next payload that covers it starts from
+    nothing. This is the only way out of a day the store holds wrongly: a relay
+    will never resend records it already counted as delivered, so merging more
+    onto a bad copy only compounds it. The phone has to re-read the range, and
+    for that to work the store must be empty for the day first. */
+export async function forgetDay(day: string): Promise<boolean> {
+  if (hasKvStore()) {
+    await store().hdel(KV_HASH, day);
+    return true;
+  }
+  const all = readFile();
+  if (!(day in all)) return false;
+  delete all[day];
+  return writeFile(all);
 }
 
 /**
@@ -313,7 +360,12 @@ export async function readDays(): Promise<Record<string, DayEntry>> {
   return readFile();
 }
 
-/** Today plus the trailing 7-day mean, in whole steps. */
+/** Today plus the trailing 7-day mean, in whole steps.
+ *
+ *  `source` reports whether the day's figure came from relay intervals or a
+ *  single posted total. It is not decoration: only an interval-backed day can
+ *  correct itself, so the widget says which it is showing rather than
+ *  presenting an unrecoverable number with the same confidence as a live one. */
 export async function readSummary(now = new Date()): Promise<{
   configured: boolean;
   date?: string;
@@ -321,6 +373,7 @@ export async function readSummary(now = new Date()): Promise<{
   km?: number;
   averageKm?: number;
   updatedAt?: string;
+  source?: DaySource;
 }> {
   const all = await readDays();
   const days = Object.keys(all).sort();
@@ -337,5 +390,6 @@ export async function readSummary(now = new Date()): Promise<{
     km: stepsToKm(latest.steps),
     averageKm: stepsToKm(Math.round(sum / last7.length)),
     updatedAt: latest.updatedAt,
+    source: latest.buckets && !(ADHOC_BUCKET in latest.buckets) ? "intervals" : "total",
   };
 }

@@ -5,10 +5,12 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   ADHOC_BUCKET,
   dayKey,
+  forgetDay,
   isPlausibleDay,
   MAX_DAY_STEPS,
   normalizeReading,
   parseDayEntry,
+  readDayState,
   readSummary,
   saveDay,
   stepsToKm,
@@ -44,7 +46,8 @@ describe("dayKey", () => {
 });
 
 describe("stepsToKm", () => {
-  it("converts with the default stride", () => {
+  it("converts with the documented stride", () => {
+    // Production runs STEPS_STRIDE_M=0.762; the code default is 0.75.
     expect(stepsToKm(6719)).toBeCloseTo(5.04, 2);
   });
 });
@@ -134,6 +137,8 @@ describe("store round-trip", () => {
     expect(s.configured).toBe(true);
     expect(s.date).toBe("2026-10-05");
     expect(s.steps).toBe(9000);
+    // STRIDE_M is read at module load, so these assert the documented default
+    // (0.75), not the 0.762 production sets via STEPS_STRIDE_M.
     expect(s.km).toBeCloseTo(6.75, 2);
     expect(s.averageKm).toBeCloseTo(5.25, 2);
   });
@@ -212,6 +217,49 @@ describe("store round-trip", () => {
     await saveDay(normalizeReading({ date: "2026-10-05", steps: 4200 })!.days);
     const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
     expect(s.steps).toBe(4200);
+  });
+});
+
+describe("recovery", () => {
+  it("names the days that cannot heal on their own", async () => {
+    await saveDay(normalizeReading({ steps: [interval(900, "2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z")] })!.days);
+    await saveDay(normalizeReading({ date: "2026-10-06", steps: 4242 })!.days);
+    const state = await readDayState();
+    // The interval-backed day is self-healing. The total-backed day is not:
+    // the phone will never resend what it already counted as delivered.
+    expect(state.needsFullResync).toEqual(["2026-10-06"]);
+  });
+
+  it("clears a wrong day so a full resync can rebuild it", async () => {
+    await saveDay(normalizeReading({ date: "2026-10-05", steps: 424242 })!.days);
+    expect((await readSummary(new Date("2026-10-05T12:00:00Z"))).steps).toBe(424242);
+
+    await forgetDay("2026-10-05");
+    const empty = await readSummary(new Date("2026-10-05T12:00:00Z"));
+    expect(empty.configured).toBe(false);
+
+    // The phone re-reads the range and re-delivers every record in it. Landing
+    // on an empty day, they rebuild it — and because they are keyed by their
+    // own bounds, doing this twice is harmless.
+    await saveDay(
+      normalizeReading({
+        steps: [
+          interval(1500, "2026-10-05T07:00:00Z", "2026-10-05T10:00:00Z"),
+          interval(2200, "2026-10-05T10:00:00Z", "2026-10-05T13:00:00Z"),
+        ],
+      })!.days,
+    );
+    const rebuilt = await readSummary(new Date("2026-10-05T12:00:00Z"));
+    expect(rebuilt.steps).toBe(3700);
+    expect(rebuilt.source).toBe("intervals");
+  });
+
+  it("reports source so the widget can tell a live day from a posted one", async () => {
+    await saveDay(normalizeReading({ date: "2026-10-05", steps: 5000 })!.days);
+    expect((await readSummary(new Date("2026-10-05T12:00:00Z"))).source).toBe("total");
+
+    await saveDay(normalizeReading({ steps: [interval(5000, "2026-10-05T07:00:00Z", "2026-10-05T13:00:00Z")] })!.days);
+    expect((await readSummary(new Date("2026-10-05T12:00:00Z"))).source).toBe("intervals");
   });
 });
 
