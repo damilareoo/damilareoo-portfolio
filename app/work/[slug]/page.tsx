@@ -18,10 +18,10 @@ import { findCase, workCases } from "@/data/dossier-work";
   pixels anything could show. The full-size files are still what the front
   page uses, where the card is much larger. */
 const COVERS: Record<string, { src: string; alt: string; fit?: "contain"; bg?: string }> = {
- "hitmans-library": { src: "/dossier/work/hitman/hitman-cover-sm.gif", alt: "Hitman's Library cover", fit: "contain", bg: "#ececec" },
- endgame: { src: "/dossier/work/endgame/endgame-cover-sm.gif", alt: "Endgame cover" },
- chessever: { src: "/dossier/work/chessever/chessever-cover-sm.gif", alt: "ChessEver cover" },
- sylvan: { src: "/dossier/work/sylvan/sylvan-cover-sm.gif", alt: "Sylvan cover" },
+ "hitmans-library": { src: "/dossier/work/hitman/hitman-cover-sm.webp", alt: "Hitman's Library cover", fit: "contain", bg: "#ececec" },
+ endgame: { src: "/dossier/work/endgame/endgame-cover-sm.webp", alt: "Endgame cover" },
+ chessever: { src: "/dossier/work/chessever/chessever-cover-sm.webp", alt: "ChessEver cover" },
+ sylvan: { src: "/dossier/work/sylvan/sylvan-cover-sm.webp", alt: "Sylvan cover" },
 };
 
 export function generateStaticParams() {
