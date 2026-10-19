@@ -37,6 +37,7 @@ TARGETS = [
     ("public/dossier/work/sylvan/sylvan-cover.gif", "sylvan-cover-sm.gif"),
     ("public/dossier/work/chessever/chessever-cover.gif", "chessever-cover-sm.gif"),
     ("public/dossier/work/hitman/hitman-cover.gif", "hitman-cover-sm.gif"),
+    ("public/dossier/work/endgame/endgame-cover.gif", "endgame-cover-sm.gif"),
 ]
 
 

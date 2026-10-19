@@ -10,12 +10,18 @@ import { WayBack } from "@/components/way-back";
 import { findCase, workCases } from "@/data/dossier-work";
 
 /** Home-row covers, reused so the next-project cards show the same face
- as the front page. */
+ as the front page.
+
+  These point at the small builds (scripts/shrink-cover-gifs.py), not the
+  originals. The rail is a strip of cards, not a hero: on a phone a card is
+  about a third of the viewport, so the 1600px originals were five times the
+  pixels anything could show. The full-size files are still what the front
+  page uses, where the card is much larger. */
 const COVERS: Record<string, { src: string; alt: string; fit?: "contain"; bg?: string }> = {
- "hitmans-library": { src: "/dossier/work/hitman/hitman-cover.gif", alt: "Hitman's Library cover", fit: "contain", bg: "#ececec" },
- endgame: { src: "/dossier/work/endgame/endgame-cover.gif", alt: "Endgame cover" },
- chessever: { src: "/dossier/work/chessever/chessever-cover.gif", alt: "ChessEver cover" },
- sylvan: { src: "/dossier/work/sylvan/sylvan-cover.gif", alt: "Sylvan cover" },
+ "hitmans-library": { src: "/dossier/work/hitman/hitman-cover-sm.gif", alt: "Hitman's Library cover", fit: "contain", bg: "#ececec" },
+ endgame: { src: "/dossier/work/endgame/endgame-cover-sm.gif", alt: "Endgame cover" },
+ chessever: { src: "/dossier/work/chessever/chessever-cover-sm.gif", alt: "ChessEver cover" },
+ sylvan: { src: "/dossier/work/sylvan/sylvan-cover-sm.gif", alt: "Sylvan cover" },
 };
 
 export function generateStaticParams() {
