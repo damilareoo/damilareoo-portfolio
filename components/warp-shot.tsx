@@ -16,7 +16,23 @@ import Pic from "./pic";
  * Fine pointers only, still life under reduced motion, and with
  * no JS it renders the exact static tile it enhances.
  */
-export function WarpShot({ src, alt, eager, index, square, fit }: { src: string; alt: string; eager?: boolean; index: number; square?: boolean; fit?: "contain" }) {
+export function WarpShot({
+  src,
+  alt,
+  eager,
+  index,
+  square,
+  fit,
+  sizes = "(max-width: 640px) 46vw, (max-width: 1024px) 31vw, 310px",
+}: {
+  src: string;
+  alt: string;
+  eager?: boolean;
+  index: number;
+  square?: boolean;
+  fit?: "contain";
+  sizes?: string;
+}) {
  const frameRef = useRef<HTMLElement>(null);
  const imgRef = useRef<HTMLImageElement>(null);
  const raf = useRef(0);
@@ -64,7 +80,7 @@ export function WarpShot({ src, alt, eager, index, square, fit }: { src: string;
  alt={alt}
  loading={eager ? undefined : "lazy"}
  decoding="async"
- sizes="(max-width: 600px) 50vw, 280px"
+ sizes={sizes}
  draggable={false}
  className={`h-full w-full will-change-transform ${fit === "contain" ? "object-contain" : "object-cover"} ${square ? "aspect-square" : ""}`}
 />

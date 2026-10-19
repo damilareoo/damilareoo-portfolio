@@ -438,7 +438,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "How",
-        v: "The product was live with people already using it, so every change had to earn itself. I would rather move something small and provably right than redesign it to look considered. Holding one product language across both sides is what made the later features cheap to add.",
+        v: "The product was live with people already using it, so every change had to earn itself. I would rather move something small and probably right than redesign it to look considered. Holding one product language across both sides is what made the later features cheap to add.",
       },
     ],
     gallery: [

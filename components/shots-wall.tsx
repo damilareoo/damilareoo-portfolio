@@ -14,44 +14,87 @@ export function projectOf(s: { alt: string; caption?: string }): string {
  return (s.caption ?? s.alt).split("—")[0].trim().toLowerCase();
 }
 
-/** The wall's shuffle, dealt once and forever: project groups keep their
- internal order and their lead tiles, but the groups themselves run in a
- fixed-seed order. Random at render would split server from client, so
- the seed is written down — same wall for everyone, every visit.
-
- 137 was chosen by rendering the opening screen for a spread of seeds and
- looking at them, not by picking a number. It opens on remi and chessever
- against dark sylvan and intempus fields, alternating light and dark tiles
- across the first screen so the grid reads as a composition rather than a
- stack. Seed 512 was the runner-up and lost on three near-identical dark
- tiles landing in one row; the old 102 opened on a single-shot orphan. */
-export const WALL_SEED = 137;
+/** The wall's shuffle. Each project keeps its studies in order, but the
+ *  projects are dealt out against each other rather than run end to end, so
+ *  the grid mixes studios instead of showing seven Vienna tiles in a row and
+ *  then seven Intempus ones.
+ *
+ *  Two rules, both of them about evenness rather than taste:
+ *
+ *    Deterministic. Random at render would split server from client, so the
+ *    seed is written down — same wall for everyone, every visit.
+ *
+ *    Deal the biggest remaining pile that is not the project you just used.
+ *    Largest-first spreads the long groups evenly instead of letting them
+ *    clump, and the no-repeat rule is what stops two studies from the same
+ *    project landing side by side. It only gives in when the same project is
+ *    genuinely the only one left, which is what a group larger than half the
+ *    wall would force.
+ */
+export const WALL_SEED = 1234;
 
 function mulberry32(seed: number): () => number {
- let a = seed >>> 0;
- return () => {
- a |= 0;
- a = (a + 0x6d2b79f5) | 0;
- let t = Math.imul(a ^ (a >>> 15), 1 | a);
- t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
- return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
- };
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
 export function orderGroups<T extends { alt: string; caption?: string }>(shots: T[], seed = WALL_SEED): T[] {
- const groups = new Map<string, T[]>();
- for (const s of shots) {
- const p = projectOf(s);
- if (!groups.has(p)) groups.set(p, []);
- groups.get(p)!.push(s);
- }
- const order = [...groups.values()];
- const rand = mulberry32(seed);
- for (let i = order.length - 1; i > 0; i--) {
- const j = Math.floor(rand() * (i + 1));
- [order[i], order[j]] = [order[j], order[i]];
- }
- return order.flat();
+  const groups = new Map<string, T[]>();
+  for (const s of shots) {
+    const p = projectOf(s);
+    if (!groups.has(p)) groups.set(p, []);
+    groups.get(p)!.push(s);
+  }
+
+  const piles = [...groups.values()];
+  const rand = mulberry32(seed);
+  for (let i = piles.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [piles[i], piles[j]] = [piles[j], piles[i]];
+  }
+
+  const cursor = new Array<number>(piles.length).fill(0);
+  const out: T[] = [];
+  let last = -1;
+
+  while (out.length < shots.length) {
+    /* Candidates are every project with studies left, minus the one we have
+       just used — that exclusion is what stops two studies from the same
+       project landing side by side. It is dropped only when the same project
+       is genuinely all that remains, which a group of more than half the wall
+       would force. */
+    let candidates = piles.map((_, i) => i).filter((i) => piles[i].length - cursor[i] > 0 && i !== last);
+    if (candidates.length === 0) {
+      candidates = piles.map((_, i) => i).filter((i) => piles[i].length - cursor[i] > 0);
+    }
+    if (candidates.length === 0) break;
+
+    /* Weighted by what each project still has left, so a long group appears
+       more often across the wall but never twice in a row. Picking the
+       outright biggest every time would be even but mechanical: it opens
+       sylvan, intempus, sylvan, intempus... */
+    const total = candidates.reduce((n, i) => n + (piles[i].length - cursor[i]), 0);
+    let roll = rand() * total;
+    let pick = candidates[candidates.length - 1];
+    for (const i of candidates) {
+      roll -= piles[i].length - cursor[i];
+      if (roll <= 0) {
+        pick = i;
+        break;
+      }
+    }
+
+    out.push(piles[pick][cursor[pick]++]);
+    last = pick;
+  }
+
+  return out;
 }
 
 /** One boolean per shot: true for the lead tile of each qualifying group. */
@@ -66,6 +109,21 @@ export function leadsFor(shots: { alt: string; caption?: string }[], min = LEAD_
  return lead;
  });
 }
+
+/** What a tile actually measures, per breakpoint, against the grid below:
+   two columns under 640px, three to 1024px, four inside a max-w-[1240px]
+   container above it. A normal tile is one cell; a lead spans two in both
+   directions and so needs roughly double.
+
+   These have to be the real numbers. They were previously declared as
+   "50vw, 280px" for every tile, which was wrong in both directions: on a
+   phone a tile is about 46vw of the viewport rather than 50 of a
+   half-width, and a lead is twice that, so the browser was choosing a 768px
+   file for a box that needed 1188px on a laptop and 1050px on a phone. The
+   screenshots looked soft until you clicked one and the viewer loaded the
+   full-size original. */
+export const TILE_SIZES = "(max-width: 640px) 46vw, (max-width: 1024px) 31vw, 310px";
+export const LEAD_SIZES = "(max-width: 640px) 94vw, (max-width: 1024px) 64vw, 630px";
 
 /**
  * The wall — studies filed by project, click-to-open. One intro line,
@@ -133,7 +191,14 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  className={`block w-full cursor-zoom-in overflow-hidden bg-surface-2 text-left ring-1 ring-line ${leads[i] ? "col-span-2 row-span-2" : ""}`}
  >
  <span className={`pointer-events-none block w-full ${leads[i] ? "h-full" : "aspect-video"}`}>
- <WarpShot src={s.src} alt={s.alt} eager={i < 8} index={i} fit={s.fit} />
+ <WarpShot
+              src={s.src}
+              alt={s.alt}
+              eager={i < 8}
+              index={i}
+              fit={s.fit}
+              sizes={leads[i] ? LEAD_SIZES : TILE_SIZES}
+            />
  </span>
  </button>
  ))}
