@@ -431,17 +431,6 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  <span className="rounded-full bg-surface/85 px-2.5 py-1 font-mono text-xs text-ink-2 ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
  {focus + 1} / {ordered.length}
  </span>
- <button
- type="button"
- onClick={() => closeViewer()}
- aria-label="Close viewer"
- data-tone="tap"
- className="pointer-events-auto grid h-11 w-11 cursor-pointer place-items-center rounded-full bg-surface/85 text-ink-2 ring-1 ring-line backdrop-blur-md transition-colors hover:text-ink dark:bg-black/50 dark:ring-white/10 dark:hover:text-ink"
- >
- <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
- <path d="M3 3l10 10M13 3 3 13" />
- </svg>
- </button>
  </div>
  <figure
  onTouchStart={onTouchStart}
@@ -529,7 +518,8 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex justify-center sm:hidden"
  style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
  >
- <span className="pointer-events-auto flex items-center gap-1 rounded-full bg-surface/85 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
+ <div className="pointer-events-auto flex items-center gap-1">
+ <span className="flex items-center gap-1 rounded-full bg-surface/85 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
  <button
  type="button"
  onClick={() => step(-1)}
@@ -553,6 +543,20 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  </svg>
  </button>
  </span>
+ <span className="rounded-full bg-surface/85 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
+ <button
+ type="button"
+ onClick={() => closeViewer()}
+ aria-label="Close viewer"
+ data-tone="tap"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ >
+ <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+ <path d="M3 3l10 10M13 3 3 13" />
+ </svg>
+ </button>
+ </span>
+ </div>
  </div>
  </div>
  )}
