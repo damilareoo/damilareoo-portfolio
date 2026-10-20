@@ -59,10 +59,12 @@
      clumsy apology for. lib/type-scale.test.ts holds the shape.
 
      Nothing is smaller at any width than it was on the fixed scale: each
-     minimum is the value that step used to hold everywhere. */
+     minimum is the value that step used to hold everywhere. The small step is
+     the one deliberate lift — 13px read as fine print on a laptop — so `sm`
+     now sits at 14px, and `xs` now sits at 12px. */
   --text-2xs: 0.5625rem;
-  --text-xs: 0.6875rem;
-  --text-sm: 0.8125rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
   --text-base: clamp(0.9375rem, 0.9167rem + 0.104vw, 1rem);
   --text-lg: clamp(1.25rem, 1.1667rem + 0.42vw, 1.5rem);
   --text-xl: clamp(1.875rem, 1.667rem + 1.04vw, 2.5rem);

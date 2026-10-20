@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { LEAD_MIN, leadsFor, orderGroups, projectOf } from "@/components/shots-wall";
+import { LEAD_MIN, LEAD_SIZES, LEAD_WIDTH_MIN, TILE_SIZES, leadsFor, orderGroups, projectOf } from "@/components/shots-wall";
 
 /**
  * The wall's rhythm: the lead tile of each qualifying project group opens
@@ -22,8 +22,32 @@ describe("the wall rhythm", () => {
     expect(leadsFor(shots, 3)).toEqual([false, false, false]);
   });
 
-  it("asks for four studies before a lead", () => {
-    expect(LEAD_MIN).toBe(4);
+  it("moves the lead off a soft cover onto the first sharp study", () => {
+    const shots = [
+      { src: "/small.jpg", alt: "a study 1", caption: "a — study 01." },
+      { src: "/big.jpg", alt: "a study 2", caption: "a — study 02." },
+      { src: "/other.jpg", alt: "b study", caption: "b — study." },
+    ];
+    const widthOf = (s: { src?: string }) => (s.src === "/big.jpg" ? 1920 : 900);
+    expect(leadsFor(shots, 2, widthOf)).toEqual([false, true, false]);
+  });
+
+  it("asks for three studies and real pixels before a lead", () => {
+    expect(LEAD_MIN).toBe(3);
+    expect(LEAD_WIDTH_MIN).toBe(1600);
+  });
+
+  it("asks for the boxes the wide layout actually draws", () => {
+    // 1600px container above 1800, 1800px above 2200; four columns, 12px gaps.
+    expect(TILE_SIZES).toContain("(min-width: 1800px) 381px");
+    expect(TILE_SIZES).toContain("(min-width: 2200px) 431px");
+    expect(LEAD_SIZES).toContain("(min-width: 1800px) 774px");
+    expect(LEAD_SIZES).toContain("(min-width: 2200px) 874px");
+    // Tailwind's columns switch at 640/1024, so the media queries must too.
+    expect(TILE_SIZES).toContain("(max-width: 639px)");
+    expect(TILE_SIZES).toContain("(max-width: 1023px)");
+    expect(LEAD_SIZES).toContain("(max-width: 639px)");
+    expect(LEAD_SIZES).toContain("(max-width: 1023px)");
   });
 
   it("deals projects against each other, deterministically", () => {

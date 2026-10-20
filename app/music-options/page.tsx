@@ -168,7 +168,7 @@ function DiscOption() {
       </svg>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 p-2.5" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.85)" }}>
         <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/75">{TRACK.status}</p>
-        <p className="mt-0.5 truncate font-sans text-[13px] font-medium text-white">
+        <p className="mt-0.5 truncate font-sans text-sm font-medium text-white">
           {TRACK.title} · {TRACK.artist}
         </p>
       </div>
@@ -338,7 +338,7 @@ function TicketOption() {
 function StampOption() {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-[#F4F1EA]">
-      <p className="rotate-[-8deg] rounded border-[3px] border-[#0B0B0D] px-3 py-1 font-mono text-[13px] uppercase tracking-[0.2em] text-[#0B0B0D]">
+      <p className="rotate-[-8deg] rounded border-[3px] border-[#0B0B0D] px-3 py-1 font-mono text-sm uppercase tracking-[0.2em] text-[#0B0B0D]">
         {TRACK.status}
       </p>
       <p className="max-w-[80%] text-center font-sans text-[22px] font-medium leading-tight text-[#0B0B0D]">{TRACK.title}</p>
@@ -628,7 +628,7 @@ function TamaOption() {
           </g>
         </svg>
         <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.2em] text-[#FFD60A]">{TRACK.status}</p>
-        <p className="mt-0.5 max-w-[110px] truncate font-sans text-[13px] font-medium text-white">{TRACK.title}</p>
+        <p className="mt-0.5 max-w-[110px] truncate font-sans text-sm font-medium text-white">{TRACK.title}</p>
       </div>
     </div>
   );

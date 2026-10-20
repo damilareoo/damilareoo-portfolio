@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { LabSetProvider, useLabShots } from "@/components/lab-set";
 import { LabViewer } from "@/components/lab-viewer";
-import Pic from "@/components/pic";
+import Pic from "@/components/lab-pic";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 

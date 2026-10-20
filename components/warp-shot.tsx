@@ -23,7 +23,7 @@ export function WarpShot({
   index,
   square,
   fit,
-  sizes = "(max-width: 640px) 46vw, (max-width: 1024px) 31vw, 310px",
+  sizes,
 }: {
   src: string;
   alt: string;
@@ -31,7 +31,7 @@ export function WarpShot({
   index: number;
   square?: boolean;
   fit?: "contain";
-  sizes?: string;
+  sizes: string;
 }) {
  const frameRef = useRef<HTMLElement>(null);
  const imgRef = useRef<HTMLImageElement>(null);
@@ -79,6 +79,7 @@ export function WarpShot({
  src={src}
  alt={alt}
  loading={eager ? undefined : "lazy"}
+ fetchPriority={index < 2 ? "high" : undefined}
  decoding="async"
  sizes={sizes}
  draggable={false}

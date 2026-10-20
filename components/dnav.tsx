@@ -31,17 +31,17 @@ export function DNav() {
  aria-label="Damilare Osofisan — back home"
  className="truncate rounded-md py-1.5 font-sans text-sm text-ink transition-opacity hover:opacity-60"
  >
- <span className="sm:hidden">Damilare O.</span>
+ <span className="sm:hidden">Damilare</span>
  <span className="hidden sm:inline">Damilare Osofisan</span>
  </Link>
  </div>
- <div className="flex shrink-0 items-center gap-2">
+ <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
  {LINKS.map((l) => (
  <Link
  key={l.href}
  href={l.href}
  aria-current={active(l.href) ? "page" : undefined}
- className={`rounded-md px-2 py-1.5 font-sans text-xs transition-colors link-sheen ${
+ className={`rounded-md px-1.5 py-1.5 font-sans text-xs transition-colors link-sheen sm:px-2 ${
  active(l.href) ? "text-ink" : "text-ink-2 hover:text-ink dark:hover:text-ink"
  }`}
  >
