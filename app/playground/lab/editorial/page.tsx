@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { dossier } from "@/data/dossier";
 import { LabViewer } from "@/components/lab-viewer";
-import Pic from "@/components/pic";
+import Pic from "@/components/lab-pic";
 
 const shots = dossier.shots;
 

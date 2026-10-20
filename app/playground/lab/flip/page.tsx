@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { dossier } from "@/data/dossier";
-import Pic from "@/components/pic";
+import Pic from "@/components/lab-pic";
 
 const shots = dossier.shots;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
@@ -47,7 +47,7 @@ export default function FlipPage() {
                     <Pic src={s.src} alt="" aria-hidden loading={i < 6 ? undefined : "lazy"} draggable={false} className="pointer-events-none block h-full w-full object-cover" />
                   </span>
                   <span className="absolute inset-0 overflow-hidden rounded-xl bg-white ring-2 ring-[#171717] dark:bg-[#1e1e1e] dark:ring-white" style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
-                    <Pic src={s.src} alt="" aria-hidden loading="lazy" draggable={false} className="pointer-events-none block h-full w-full object-cover" style={{ transform: "scale(2)" }} />
+                    <Pic src={s.src} alt="" aria-hidden loading="lazy" draggable={false} sizes="(max-width: 640px) 92vw, (max-width: 1024px) 62vw, 50vw" className="pointer-events-none block h-full w-full object-cover" style={{ transform: "scale(2)" }} />
                   </span>
                 </span>
               </button>

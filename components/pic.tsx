@@ -15,7 +15,7 @@
  * to check that itself — doing so fails the build. See pic-manifest.ts.
  */
 import React from "react";
-import { PIC_CANDIDATES, SHOT_SIZES } from "./pic-manifest";
+import { PIC_CANDIDATES, PIC_FULL, SHOT_SIZES } from "./pic-manifest";
 
 export { PIC_WIDTHS, SHOT_SIZES, FILL_SIZES } from "./pic-manifest";
 export type { PicWidth } from "./pic-manifest";
@@ -65,20 +65,34 @@ const Pic = React.forwardRef(function Pic(
   }
 
   const origExt = src.split(".").pop();
-  const webpSet = widths.map((w) => `${base}-${w}.webp ${w}w`).join(", ");
-  const origSet = widths.map((w) => `${base}-${w}.${origExt} ${w}w`).join(", ");
+  const webpCandidates = widths.map((w) => `${base}-${w}.webp ${w}w`);
+  /* The generated widths stop at 1800 and many sources are 1600 or 1920, so a
+     wide 2x box had nothing big enough and upscaled the 1200/1800 file. Offer
+     the full-size companion as the ceiling, the same way the fallback img
+     already does below. It is only chosen when no generated width covers the
+     box — small tiles and 1x screens keep their lightweight candidates.
+
+     The descriptor has to be the file's real width. A fake 9999w made the
+     browser compute a ~109px intrinsic width for a 1600px file at sizes=680,
+     so the viewer rendered the shot postage-stamp small. */
+  const fullWidth = PIC_FULL[src];
+  if (fullWidth) webpCandidates.push(`${base}.webp ${fullWidth}w`);
+  const webpSet = webpCandidates.join(", ");
+  /* The original fallback needs the same honest ceiling: `9999w` here made a
+     browser without WebP compute a ~109px intrinsic width for the full-size
+     file, the same postage-stamp bug as the WebP source. */
+  const origCandidates = widths.map((w) => `${base}-${w}.${origExt} ${w}w`);
+  if (fullWidth) origCandidates.push(`${src} ${fullWidth}w`);
+  const origSet = origCandidates.join(", ");
 
   return (
     <picture>
       <source type="image/webp" srcSet={webpSet} sizes={sizes} />
-      {/* The full-size original carries no width descriptor: it is the floor
-          for a browser that ignored the WebP source, not a candidate to
-          choose between. */}
       <img
         ref={ref}
         src={src}
         alt={alt}
-        srcSet={`${origSet}, ${src} 9999w`}
+        srcSet={origSet || undefined}
         sizes={sizes}
         width={width}
         height={height}

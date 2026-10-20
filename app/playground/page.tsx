@@ -13,7 +13,7 @@ export default function ShotsPage() {
  return (
  <main className="bg-bg text-ink">
  <WayBack />
- <div id="top" className="mx-auto w-full max-w-[1240px] scroll-mt-20 px-5 pb-10">
+ <div id="top" className="mx-auto w-full max-w-[1240px] scroll-mt-20 px-5 pb-10 min-[1800px]:max-w-[1600px] min-[2200px]:max-w-[1800px]">
  <h1 className="sr-only">Playground</h1>
  <ShotsWall shots={dossier.shots} />
  </div>

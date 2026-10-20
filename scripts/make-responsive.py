@@ -93,6 +93,14 @@ for f in sources:
                                        progressive=True, subsampling=0)
             made += 1
 
+    # The full-size companion: no width suffix, no downscale. pic.tsx offers
+    # it as the srcSet ceiling so a wide 2x box falls back to the source
+    # instead of upscaling the largest generated width.
+    full = f"{base}.webp"
+    if not (os.path.exists(full) and os.path.getmtime(full) >= os.path.getmtime(f)):
+        im.save(full, "WEBP", quality=QUALITY, method=5)
+        made += 1
+
 print(f"sources (generated files excluded): {len(sources)}")
 print(f"companions written: {made}   already current: {skipped}")
 
@@ -101,6 +109,7 @@ print(f"companions written: {made}   already current: {skipped}")
 # build — so the list of real candidates has to be a build-time fact instead of
 # an assumption. Regenerated on every run, so it cannot drift from disk.
 manifest = {}
+fulls = {}
 for f in sources:
     try:
         w = Image.open(f).size[0]
@@ -114,6 +123,12 @@ for f in sources:
     ]
     key = "/" + f[len("public/"):]
     manifest[key] = widths
+    # The companion is generated from the source with no downscale, so the
+    # source width is the honest descriptor. (Reading the WebP instead once
+    # shipped a stale, 1920-wide companion as the width of a 1600-wide JPG;
+    # the fallback then lied about its own pixels.)
+    if os.path.exists(f"{base}.webp"):
+        fulls[key] = w
 
 MANIFEST = "components/pic-manifest.ts"
 lines = [
@@ -141,6 +156,20 @@ lines = [
 for key in sorted(manifest):
     widths = ", ".join(str(x) for x in manifest[key])
     lines.append(f"  {json.dumps(key)}: [{widths}],")
+lines += [
+    "};",
+    "",
+    "/** src -> the source raster's width. The full-size WebP companion (no",
+    "    width suffix) is generated from that source without downscale, so this",
+    "    is both the ceiling and the honest descriptor for the original",
+    "    fallback. `Pic` adds it only where the file is real, because a",
+    "    candidate that 404s can leave the frame empty, and a fake descriptor",
+    "    shrinks the intrinsic box of any `w-auto` image (the viewer). */",
+    "export const PIC_FULL: Record<string, number> = {",
+]
+for key in sorted(fulls):
+    if fulls[key]:
+        lines.append(f"  {json.dumps(key)}: {fulls[key]},")
 lines += [
     "};",
     "",
