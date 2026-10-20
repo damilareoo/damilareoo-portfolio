@@ -139,6 +139,7 @@ export const TILE_SIZES =
   "(min-width: 2200px) 431px, (min-width: 1800px) 381px, (max-width: 639px) 46vw, (max-width: 1023px) 31vw, 310px";
 export const LEAD_SIZES =
   "(min-width: 2200px) 874px, (min-width: 1800px) 774px, (max-width: 639px) 94vw, (max-width: 1023px) 62vw, 594px";
+const VIEWER_SIZES = "(min-width: 1280px) 1184px, calc(100vw - 32px)";
 
 /**
  * The wall — studies filed by project, click-to-open. One intro line,
@@ -148,17 +149,43 @@ export const LEAD_SIZES =
  */
 export function ShotsWall({ shots }: { shots: Shot[] }) {
  const [focus, setFocus] = useState<number | null>(null);
+ const [previous, setPrevious] = useState<number | null>(null);
+ const [loaded, setLoaded] = useState(false);
+ const focusRef = useRef<number | null>(null);
+ const loadedRef = useRef(false);
  const [seed, setSeed] = useState(WALL_SEED);
  const ordered = useMemo(() => orderGroups(shots, seed), [shots, seed]);
  const leads = leadsFor(ordered, LEAD_MIN, (s) => (s.src ? PIC_FULL[s.src] ?? 0 : 0));
 
+ const openShot = useCallback((i: number) => {
+ focusRef.current = i;
+ loadedRef.current = false;
+ setPrevious(null);
+ setLoaded(false);
+ setFocus(i);
+ }, []);
+
+ const closeViewer = useCallback(() => {
+ focusRef.current = null;
+ loadedRef.current = false;
+ setPrevious(null);
+ setLoaded(false);
+ setFocus(null);
+ }, []);
+
  const step = useCallback(
  (dir: 1 | -1) => {
- setFocus((f) =>
- f === null || ordered.length === 0
- ? f
- : (f + dir + ordered.length) % ordered.length,
- );
+ const f = focusRef.current;
+ if (f === null || ordered.length < 2) return;
+ const next = (f + dir + ordered.length) % ordered.length;
+ focusRef.current = next;
+ /* Hold the last painted shot behind the incoming one. If the previous
+    move has not decoded yet, keep the frame before it rather than showing
+    an empty stage while this one loads. */
+ if (loadedRef.current) setPrevious(f);
+ loadedRef.current = false;
+ setLoaded(false);
+ setFocus(next);
  },
  [ordered.length],
  );
@@ -184,7 +211,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  if (Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy) * 1.2) {
  step(dx < 0 ? 1 : -1);
  } else if (dy > 80 && Math.abs(dy) > Math.abs(dx)) {
- setFocus(null);
+ closeViewer();
  }
  };
 
@@ -200,7 +227,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  if (e.key === "Escape") {
  e.preventDefault();
  e.stopImmediatePropagation();
- setFocus(null);
+ closeViewer();
  } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
  e.preventDefault();
  e.stopImmediatePropagation();
@@ -213,7 +240,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  };
  window.addEventListener("keydown", onKey, true);
  return () => window.removeEventListener("keydown", onKey, true);
- }, [focus, step]);
+ }, [focus, step, closeViewer]);
 
  /* Lock the page behind the viewer. This used to write the previous value
     straight back, so a swipe over the overlay scrolled the wall underneath
@@ -269,6 +296,16 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  };
 
  const current = focus !== null ? (ordered[focus] ?? null) : null;
+ const previousShot = previous !== null ? (ordered[previous] ?? null) : null;
+ const neighborIndices =
+ focus === null || ordered.length < 2
+ ? []
+ : [
+ ...new Set([
+ (focus - 1 + ordered.length) % ordered.length,
+ (focus + 1) % ordered.length,
+ ]),
+ ].filter((i) => i !== focus && i !== previous);
 
  return (
  <div className="pt-8">
@@ -297,7 +334,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  type="button"
  onClick={(e) => {
  returnFocus.current = e.currentTarget;
- setFocus(i);
+ openShot(i);
  }}
  aria-label={`Open ${s.alt}`}
  data-tone="tap"
@@ -330,22 +367,63 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  >
  <div
  className="absolute inset-0 overflow-hidden bg-bg dark:bg-black"
- onClick={() => setFocus(null)}
+ onClick={() => closeViewer()}
  aria-hidden
  >
  {/* The shot's own colours fill the stage on a phone, where a 16:9 frame
-     otherwise floats in a lot of empty page. Decorative only. */}
+     otherwise floats in a lot of empty page. Decorative only. The
+     outgoing wash stays behind the incoming one so the whole stage does
+     not flash when the shot changes. */}
+ <div className="absolute inset-0">
+ {previousShot !== null && (
  <Pic
+ key={previousShot.src}
+ src={previousShot.src}
+ alt=""
+ draggable={false}
+ loading="eager"
+ fetchPriority="low"
+ sizes="240px"
+ className={`absolute inset-0 h-full w-full scale-110 object-cover blur-3xl saturate-150 transition-opacity duration-200 ease-out motion-reduce:transition-none ${loaded ? "opacity-0" : "opacity-60"}`}
+ />
+ )}
+ <Pic
+ key={current.src}
  src={current.src}
  alt=""
  draggable={false}
  loading="eager"
  fetchPriority="low"
  sizes="240px"
- className="h-full w-full scale-110 object-cover opacity-60 blur-3xl saturate-150"
+ className={`absolute inset-0 h-full w-full scale-110 object-cover blur-3xl saturate-150 transition-opacity duration-200 ease-out motion-reduce:transition-none ${loaded ? "opacity-60" : "opacity-0"}`}
  />
+ </div>
  <div className="absolute inset-0 bg-bg/35 dark:bg-black/45" />
  </div>
+ {/* Decode the shots on either side of the current one before they are
+     needed. The viewer holds the last frame until the next one has
+     decoded, but this is what makes the step feel instant instead of
+     merely non-blank. */}
+ {neighborIndices.length > 0 && (
+ <div aria-hidden className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0">
+ {neighborIndices.map((i) => (
+ <Pic
+ key={ordered[i].src}
+ src={ordered[i].src}
+ alt=""
+ draggable={false}
+ loading="eager"
+ fetchPriority="low"
+ sizes={VIEWER_SIZES}
+ onLoad={(e) => {
+ const img = e.currentTarget;
+ if (typeof img.decode === "function") void img.decode().catch(() => {});
+ }}
+ className="h-px w-px"
+ />
+ ))}
+ </div>
+ )}
  <div
  className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between px-4 py-4 sm:hidden"
  style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}
@@ -355,7 +433,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  </span>
  <button
  type="button"
- onClick={() => setFocus(null)}
+ onClick={() => closeViewer()}
  aria-label="Close viewer"
  data-tone="tap"
  className="pointer-events-auto grid h-11 w-11 cursor-pointer place-items-center rounded-full bg-surface/85 text-ink-2 ring-1 ring-line backdrop-blur-md transition-colors hover:text-ink dark:bg-black/50 dark:ring-white/10 dark:hover:text-ink"
@@ -371,6 +449,21 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  onTouchCancel={() => { touchStart.current = null; }}
  className="relative z-10 flex max-h-[86dvh] w-full flex-col items-center px-4"
  >
+ <div className="relative flex w-full items-center justify-center">
+ {previousShot !== null && (
+ <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
+ <Pic
+ key={previousShot.src}
+ src={previousShot.src}
+ alt=""
+ draggable={false}
+ loading="eager"
+ fetchPriority="low"
+ sizes={VIEWER_SIZES}
+ className={`max-h-[74dvh] w-auto max-w-[calc(100vw-32px)] rounded-xl object-contain ring-1 ring-line drop-shadow-[0_24px_48px_rgba(0,0,0,0.24)] transition-opacity duration-200 ease-out motion-reduce:transition-none ${loaded ? "opacity-0" : "opacity-100"}`}
+ />
+ </div>
+ )}
  <Pic
  key={current.src}
  src={current.src}
@@ -378,9 +471,20 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  draggable={false}
  loading="eager"
  fetchPriority="high"
- sizes="(min-width: 1280px) 1184px, calc(100vw - 32px)"
- className="shot-in max-h-[74dvh] w-auto max-w-[calc(100vw-32px)] rounded-xl object-contain ring-1 ring-line drop-shadow-[0_24px_48px_rgba(0,0,0,0.24)]"
+ sizes={VIEWER_SIZES}
+ onLoad={(e) => {
+ const img = e.currentTarget;
+ const show = () => {
+ if (focusRef.current !== focus) return;
+ loadedRef.current = true;
+ setLoaded(true);
+ };
+ const decoded = typeof img.decode === "function" ? img.decode().catch(() => {}) : Promise.resolve();
+ void decoded.then(show);
+ }}
+ className={`relative z-10 max-h-[74dvh] w-auto max-w-[calc(100vw-32px)] rounded-xl object-contain ring-1 ring-line drop-shadow-[0_24px_48px_rgba(0,0,0,0.24)] transition-opacity duration-200 ease-out motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
  />
+ </div>
  <figcaption className="mt-4 hidden items-center gap-2 sm:flex">
  <span className="flex items-center gap-1 rounded-full bg-surface/85 p-1 ring-1 ring-line backdrop-blur-md dark:ring-white/10">
  <button
@@ -409,7 +513,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  <span className="rounded-full bg-surface/85 p-1 ring-1 ring-line backdrop-blur-md dark:ring-white/10">
  <button
  type="button"
- onClick={() => setFocus(null)}
+ onClick={() => closeViewer()}
  aria-label="Close viewer"
  data-tone="tap"
  className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
