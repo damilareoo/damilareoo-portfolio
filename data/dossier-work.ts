@@ -18,7 +18,7 @@ export type WorkCase = {
   extraLinks?: { label: string; href: string }[];
   oneLiner: string;
   quote?: string;
-  credits: string;
+  credits: { name: string; href?: string }[];
   summary: string[];
   sections: { k: string; v: string }[];
   gallery: { src: string; alt: string; caption: string; note?: string; kind?: "video"; poster?: string; tall?: boolean; motion?: "rainbow" | "chessever" | "hitman" | "sylvan" }[];
@@ -36,18 +36,20 @@ export const workCases: WorkCase[] = [
     site: { label: "hitmanslibrary.xyz", href: "https://hitmanslibrary.xyz/" },
     oneLiner:
       "A collection of cool experiences across the web. Currently building, so the case file stays open.",
-    credits:
-      "Damilare Osofisan, Florence Eze",
+    credits: [
+      { name: "Damilare Osofisan" },
+      { name: "Florence Eze", href: "https://florenceeze.com" },
+    ],
     quote:
       "Collect the experiences worth stealing from.",
     summary: [
-      "I was keeping sites in Excel sheets. Links down one column, notes beside them, and no way to actually look at any of it.",
+      "Florence and I were keeping sites in Excel sheets. Links down one column, notes beside them, and no way to actually look at any of it.",
       "Now every entry gets a screenshot, its own link, and a preview that loads the real page beside it.",
     ],
     sections: [
       {
         k: "Role & Contribution",
-        v: "Solo. Product, design and code.",
+        v: "Product, design and code, with Florence Eze.",
       },
       {
         k: "What Was Done",
@@ -55,7 +57,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "How",
-        v: "I wanted somewhere to keep the things I find interesting. Designed and built it all myself, structure to interface to code.",
+        v: "We wanted somewhere to keep the things we find interesting. Designed and built it together, structure to interface to code.",
       }
     ],
     gallery: [
@@ -143,7 +145,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-changelog.jpg",
         alt: "Changelog page",
         caption: "Changelog",
-        note: "A monthly rail of fixes and improvements, latest September 14, 2026.",
+        note: "A monthly rail of fixes and improvements, each signed by whoever made it.",
       },
       {
         src: "/dossier/work/hitman/hitman-mark.jpg",
@@ -164,8 +166,11 @@ export const workCases: WorkCase[] = [
     site: { label: "sylvanlabs.com", href: "https://sylvanlabs.com" },
     oneLiner:
       "Revenue intelligence that turns messy customer data into useful signals. I did brand, web and visual system.",
-    credits:
-      "Damilare Osofisan, Mario Prasetyo, HEX",
+    credits: [
+      { name: "Damilare Osofisan" },
+      { name: "Mario Prasetyo" },
+      { name: "HEX" },
+    ],
     quote:
       "Sylvan turns noise into signal.",
     summary: [
@@ -290,8 +295,11 @@ export const workCases: WorkCase[] = [
     ],
     oneLiner:
       "Following professional chess as it actually happens, across phone, desktop and web. I was the founding designer, from first sketches to launch.",
-    credits:
-      "Damilare Osofisan, Kenny Olajide, Vasif Durarbayli",
+    credits: [
+      { name: "Damilare Osofisan" },
+      { name: "Kenny Olajide" },
+      { name: "Vasif Durarbayli" },
+    ],
     quote:
       "Everything works exactly how you'd expect it to. No learning curve.",
     summary: [
@@ -305,7 +313,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "What Was Done",
-        v: "On the phone, live games with engine evaluation, full stats and head-to-heads, plus the games you follow and save. On desktop, the round goes big-screen and deep into the database. On the web, the essentials, a creator directory, memorial pages and news.",
+        v: "On the phone, live games with engine evaluation, full stats and head-to-heads, plus the games you follow and save. On desktop, the round goes big-screen and deep into the database. On the web, I worked on the first version of the experience: the essentials, a creator directory, memorial pages and news.",
       },
       {
         k: "How",
@@ -313,7 +321,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "Proof",
-        v: "4.9 stars on both stores. 120 reviews on Apple, 165 on Google Play, best in its segment. 200+ sign-ups daily since launch, and a top 10 finish in the TWIST Gamma pitch competition.",
+        v: "5.0 on the App Store with 45 ratings. 4.8 on Google Play with 193 reviews. 1,000+ weekly active users. Pitched at TWiST Gamma.",
       }
     ],
     gallery: [
@@ -421,8 +429,11 @@ export const workCases: WorkCase[] = [
     site: { label: "endgame.ai", href: "https://endgame.ai" },
     oneLiner:
       "I joined after Endgame.ai had already launched, to help restructure a live product and bring the mobile app up to the web.",
-    credits:
-      "Damilare Osofisan, Kenny Olajide, Hans Niemann",
+    credits: [
+      { name: "Damilare Osofisan" },
+      { name: "Kenny Olajide" },
+      { name: "Hans Niemann" },
+    ],
     summary: [
       "The two sides had drifted apart, and the phone was the one behind. Anyone on a phone got less of the product than anyone on a laptop, which is a strange thing to have shipped. Bringing mobile up to the web was the first real block of work.",
       "I joined after launch, so none of this started from a blank page. Once the two sides matched, the design work opened up into whatever came next.",
@@ -566,7 +577,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/endgame/endgame-pieces-1.jpg",
         alt: "Hopea piece set",
         caption: "Hopea",
-        note: "Hopea is named for an Indian wood type. Soft, rounded pieces on modern, playful boards.",
+        note: "Hopea, an Indian wood type. Soft, rounded pieces on modern, playful boards.",
       },
       {
         src: "/dossier/work/endgame/endgame-theme.mov",

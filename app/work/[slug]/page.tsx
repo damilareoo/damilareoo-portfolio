@@ -253,7 +253,24 @@ export default async function WorkCasePage({
  <div className="mx-auto w-full max-w-[600px] px-5 pb-10">
  <div>
  <p className="mt-2 text-pretty font-sans text-sm leading-normal text-ink-2">
- Credits: {c.credits}
+ Credits:{" "}
+ {c.credits.map((credit, i) => (
+ <span key={credit.name}>
+ {i > 0 && ", "}
+ {credit.href ? (
+ <a
+ href={credit.href}
+ target="_blank"
+ rel="noopener noreferrer"
+ className="link-sheen"
+ >
+ {credit.name}
+ </a>
+ ) : (
+ credit.name
+ )}
+ </span>
+ ))}
  </p>
  </div>
  {/* prev / next — visual cards, so the next project sells itself */}
