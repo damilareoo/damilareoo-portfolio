@@ -19,7 +19,7 @@ export const explorations: WorkCase[] = [
     ],
     oneLiner:
       "A pedometer that finishes the Nothing story — one tap takes the widget to the run to a shareable poster, all in the system's own language.",
-    credits: "Damilare Osofisan",
+    credits: [{ name: "Damilare Osofisan" }],
     quote: "Nothing new to learn; the story just continues.",
     summary: [
       "Nothing OS gives runners a daily count and a weekly view, and a monthly view too dense to read at a glance. The morning run — distance, splits, heart rate, elevation, route — has no home in the system's visual language. Strava answers the data question and abandons the aesthetic: the dot-matrix numerals, the restraint, the single red.",
