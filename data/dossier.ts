@@ -83,7 +83,7 @@ export const dossier = {
         },
         {
           k: "PROOF",
-          v: "4.9 stars on iOS and Android: 120 reviews on Apple, 165 on Google Play. 200+ sign-ups daily since launch. Top 10 finalist, TWIST Gamma pitch competition.",
+          v: "5.0 on the App Store with 45 ratings. 4.8 on Google Play with 193 reviews. 1,000+ weekly active users. Pitched at TWiST Gamma.",
         },
       ],
     },

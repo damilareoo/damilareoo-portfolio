@@ -321,7 +321,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "Proof",
-        v: "4.9 stars on both stores. 120 reviews on Apple, 165 on Google Play, best in its segment. 200+ sign-ups daily since launch, and a top 10 finish in the TWIST Gamma pitch competition.",
+        v: "5.0 on the App Store with 45 ratings. 4.8 on Google Play with 193 reviews. 1,000+ weekly active users. Pitched at TWiST Gamma.",
       }
     ],
     gallery: [
