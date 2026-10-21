@@ -14,8 +14,8 @@
 ## Selected work
 
 - Hitman's Library (2026, in progress) — a visual library collecting
-  the web's best experiences. Solo: product, design, and code.
-  https://hitmanslibrary.xyz/
+  the web's best experiences. Product, design, and code with
+  Florence Eze. https://hitmanslibrary.xyz/
 - Endgame (2026) — Product Designer at endgame.ai. Restructured the
   live product, brought web to mobile parity, designed Puzzle Run,
   Club, Watch, Coach, Learn, gamification, piece sets, and avatars.
