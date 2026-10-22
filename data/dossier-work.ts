@@ -14,8 +14,9 @@ export type WorkCase = {
   logo?: string;
   status: string;
   role: string;
-  site: { label: string; href: string };
-  extraLinks?: { label: string; href: string }[];
+  /** Where the case file sends you: the live site, or the store listings for
+      the apps. */
+  links: { label: string; href: string; sheen?: string }[];
   oneLiner: string;
   quote?: string;
   credits: { name: string; href?: string }[];
@@ -33,7 +34,7 @@ export const workCases: WorkCase[] = [
     logo: "/dossier/hitman-logo.png",
     status: "IN PROGRESS",
     role: "Design + build",
-    site: { label: "hitmanslibrary.xyz", href: "https://hitmanslibrary.xyz/" },
+    links: [{ label: "hitmanslibrary.xyz", href: "https://hitmanslibrary.xyz/" }],
     oneLiner:
       "A collection of cool experiences across the web. Currently building, so the case file stays open.",
     credits: [
@@ -163,7 +164,7 @@ export const workCases: WorkCase[] = [
     logo: "/dossier/sylvan-logo.png",
     status: "SHIPPED",
     role: "Brand design, logo design, web design, visual system",
-    site: { label: "sylvanlabs.com", href: "https://sylvanlabs.com" },
+    links: [{ label: "sylvanlabs.com", href: "https://sylvanlabs.com" }],
     oneLiner:
       "Revenue intelligence that turns messy customer data into useful signals. I did brand, web and visual system.",
     credits: [
@@ -288,10 +289,17 @@ export const workCases: WorkCase[] = [
     logo: "/dossier/work/chessever/chessever-icon.jpg",
     status: "SHIPPED",
     role: "Founding Designer",
-    site: { label: "chessever.com", href: "https://chessever.com" },
-    extraLinks: [
-      { label: "iOS", href: "https://apps.apple.com/us/app/chessever/id6752567269" },
-      { label: "ANDROID", href: "https://play.google.com/store/apps/details?id=com.chessEver.app" },
+    links: [
+      {
+        label: "App Store",
+        href: "https://apps.apple.com/us/app/chessever-follow-live-chess/id6752567269",
+        sheen: "sheen-chessever",
+      },
+      {
+        label: "Google Play",
+        href: "https://play.google.com/store/apps/details?id=com.chessEver.app",
+        sheen: "sheen-chessever",
+      },
     ],
     oneLiner:
       "Following professional chess as it actually happens, across phone, desktop and web. I was the founding designer, from first sketches to launch.",
@@ -426,7 +434,18 @@ export const workCases: WorkCase[] = [
     logo: "/dossier/endgame-logo.png",
     status: "SHIPPED",
     role: "Product Designer",
-    site: { label: "endgame.ai", href: "https://endgame.ai" },
+    links: [
+      {
+        label: "App Store",
+        href: "https://apps.apple.com/us/app/endgame-ai/id6755304651",
+        sheen: "sheen-endgame",
+      },
+      {
+        label: "Google Play",
+        href: "https://play.google.com/store/apps/details?id=com.endgame.mobile",
+        sheen: "sheen-endgame",
+      },
+    ],
     oneLiner:
       "I joined after Endgame.ai had already launched, to help restructure a live product and bring the mobile app up to the web.",
     credits: [

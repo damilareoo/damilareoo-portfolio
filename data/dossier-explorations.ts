@@ -13,8 +13,8 @@ export const explorations: WorkCase[] = [
     year: "2026",
     status: "CONCEPT",
     role: "Design + build",
-    site: { label: "nothing-pedometer.vercel.app", href: "https://nothing-pedometer.vercel.app/" },
-    extraLinks: [
+    links: [
+      { label: "nothing-pedometer.vercel.app", href: "https://nothing-pedometer.vercel.app/" },
       { label: "GitHub", href: "https://github.com/damilareoo/nothing-pedometer" },
     ],
     oneLiner:

@@ -110,6 +110,25 @@ export default async function WorkCasePage({
  <dt className="text-2xs tracking-wide text-ink-3">Role</dt>
  <dd className="mt-1 font-sans text-sm text-ink">{c.role}</dd>
  </div>
+ {c.links.length > 0 && (
+ <div>
+ <dt className="text-2xs tracking-wide text-ink-3">Links</dt>
+ <dd className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-sans text-sm">
+ {c.links.map((l) => (
+ <a
+ key={l.href}
+ href={l.href}
+ target="_blank"
+ rel="noopener noreferrer"
+ aria-label={`${c.name} — ${l.label}`}
+ className={`link-sheen ${l.sheen ?? ""}`}
+ >
+ {l.label}
+ </a>
+ ))}
+ </dd>
+ </div>
+ )}
  </dl>
 
  {c.summary.length > 0 && (
