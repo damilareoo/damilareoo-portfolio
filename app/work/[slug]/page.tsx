@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import { DFloor } from "@/components/dfooter";
 import { CaseRail } from "@/components/case-rail";
 import Pic from "@/components/pic";
@@ -49,8 +47,10 @@ export async function generateMetadata({
  * study marker, narrow title/lede/meta and a quick-scan brief — then the
  * cover, the story beats, and the rest of the run breaks wide, with a
  * fixed rail down long runs. Frames carry no labels, only their context
- * sentence. Only frames whose files have landed render; anything missing
- * stays an empty slot, no new type steps.
+ * sentence. Every frame in the record renders: the files are proved present
+ * at build time (data/dossier-work.test.ts), never by asking the runtime to
+ * read a disk. A Worker has no disk to read, and a check that cannot pass
+ * there silently blanks the whole run. No new type steps.
  */
 export default async function WorkCasePage({
  params,
@@ -65,20 +65,20 @@ export default async function WorkCasePage({
  const prev = workCases[(idx - 1 + workCases.length) % workCases.length];
  const next = workCases[(idx + 1) % workCases.length];
 
- const landed = c.gallery.filter((g) => existsSync(join(process.cwd(), "public", g.src.replace(/^\//, ""))));
+ const frames = c.gallery;
 
  /* Cover first, then the story, then the rest — sections are the beats
  between the cover and the run. Role & Contribution stays out: the
  header already carries the role. Numbering runs straight through. */
- const first = landed.slice(0, 1);
- const rest = landed.slice(1);
+ const first = frames.slice(0, 1);
+ const rest = frames.slice(1);
  const beats = c.sections.filter((s) => s.k !== "Role & Contribution");
 
  return (
  <main className="bg-bg text-ink">
  {/* the way back — fixed, always in reach, like the reference */}
  <WayBack />
- <CaseRail labels={landed.map((g) => g.caption || g.alt)} />
+ <CaseRail labels={frames.map((g) => g.caption || g.alt)} />
  {/* the story — narrow, quiet, like the reference prose */}
  <div id="top" className="mx-auto w-full max-w-[600px] scroll-mt-20 px-5 pb-10">
  <div className="pt-8">
@@ -146,8 +146,8 @@ export default async function WorkCasePage({
  </div>
  </div>
  {/* the frame run — wide cards under narrow words, like the reference.
- Only frames whose files have landed render; anything still missing
- stays an empty slot. Portrait work stays column-narrow. */}
+ A case with no frames at all keeps the three grey slots. Portrait work
+ stays column-narrow. */}
  <div className="mx-auto w-full max-w-[880px] px-5 pb-10">
  <div className="mt-2 space-y-12">
  {first.map((g) => (
@@ -259,7 +259,7 @@ export default async function WorkCasePage({
  </figure>
  );
  })}
- {landed.length === 0 &&
+ {frames.length === 0 &&
  [0, 1, 2].map((i) => (
  <div
  key={`slot-${i}`}

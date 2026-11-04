@@ -40,7 +40,9 @@ app/
   work/[slug]/        case-file pages with desktop rail + mobile pill
   api/now-playing/    Spotify currently-playing proxy (needs env, below)
   api/steps/          step-count proxy
-  icon.tsx            generated tab icon (cap, frame zero of the loop)
+  icon.png            static tab icon (cap, frame zero of the loop)
+  apple-icon.png      static home-screen icon, same crop at 180
+  opengraph-image.png static share card, with .alt.txt beside it
 components/
   coin.tsx            header coin — cap front, him back, tap to whip it
   coin-favicon.tsx    tab coin — the header flip at favicon scale (~30fps)
@@ -55,7 +57,7 @@ data/
   dossier-explorations.ts exploration data (route removed; kept for later)
   dossier.ts              shots, photos, socials, likes/dislikes
   site.ts               name, role, live URL — one edit moves domains
-public/dossier/       all artwork, films, case frames, og-image.png
+public/dossier/       all artwork, films, case frames
 ```
 
 ## Signature interactions
@@ -75,7 +77,10 @@ public/dossier/       all artwork, films, case frames, og-image.png
 
 ## Environment
 
-`.env.local` (gitignored, never committed) holds the two app credentials:
+`.env.local` (gitignored, never committed) holds the credentials. It is local
+only: a deployed Worker gets its copy from the platform's own variables, and
+nothing here travels with a `git push` — migrating hosts means re-entering all
+seven, which is how both live widgets went quiet in October 2026.
 
 ```
 SPOTIFY_CLIENT_ID=
@@ -83,6 +88,8 @@ SPOTIFY_CLIENT_SECRET=
 SPOTIFY_REFRESH_TOKEN=      # mint once via the authorize flow, reuse everywhere
 STEPS_WEBHOOK_SECRET=       # any long random string; must match the macro header
 STEPS_STRIDE_M=0.762        # metres per step; tunes steps → km
+KV_REST_API_URL=            # the steps store — required wherever the site is read
+KV_REST_API_TOKEN=
 ```
 
 Without Spotify values the music tile renders its idle state — the build
@@ -132,18 +139,41 @@ The poll is not the limiting factor on freshness — the relay's own sync
 interval is. Whatever the phone posts, the tile shows within a minute of it
 arriving.
 
-Storage is Vercel KV when `KV_REST_API_URL` + `KV_REST_API_TOKEN` are
-set (dashboard → Storage → Create KV → connect to the project — no code
-changes), otherwise a small JSON file (`data/steps.local.json` locally,
-`/tmp` on serverless). The file backend keeps the relay's Test button
-green end to end; KV makes readings survive restarts and redeploys.
+Storage is the KV store named by `KV_REST_API_URL` + `KV_REST_API_TOKEN`.
+`@vercel/kv` speaks Upstash's REST API over plain `fetch`, so the store works
+from any runtime that has those two variables — it does not need the site to
+be hosted on Vercel. Without them the routes fall back to
+`data/steps.local.json` (`STEPS_FILE` overrides the path), which is a local-dev
+convenience and nothing else: a Worker has no writable disk, so every write
+fails and every read comes back empty.
+
+Both routes now say which store answered. `GET /api/steps` carries
+`backend: "kv" | "file"`, and a POST carries it beside `persisted`, because a
+lone `{"configured": false}` is indistinguishable from a day with no walking.
 
 ## Deployment
 
-Vercel. `app/layout.tsx` resolves absolute metadata against `site.url`
+Cloudflare Workers, built through OpenNext (responses carry `x-opennext: 1`).
+The build itself is configured in the Cloudflare dashboard; nothing in this
+repo records it, which is the first thing to fix if this site moves again.
+`app/layout.tsx` resolves absolute metadata against `site.url`
 (`https://damilare.works`) — never `VERCEL_URL`, whose
 per-deployment host dies with the build and takes every share card with
 it. Whitelist the production Spotify redirect URI alongside localhost.
+
+Two consequences of the runtime are worth stating, because both were learned
+the hard way:
+
+- **Nothing reads the filesystem at request time.** A Worker is served from an
+  asset bundle, not a directory tree, so `existsSync` is false and `readFileSync`
+  throws for every one of `public/`'s 2,000 files. Case-study frames are proved
+  present at build time by `data/dossier-work.test.ts`, and the tab icon, home
+  icon and share card are static files in `app/` that Next hashes and serves.
+- **A missing variable fails quietly.** Re-enter the seven in the dashboard
+  after any move. What they look like when absent: `/api/now-playing` answers
+  `{"isPlaying": false, "reason": "no-credentials"}`, `/api/steps` answers
+  `{"configured": false, "backend": "file"}`, and a case-study page answers with
+  its prose intact and no frames at all.
 
 ## Conventions
 

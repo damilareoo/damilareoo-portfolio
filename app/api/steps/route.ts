@@ -5,6 +5,7 @@ import {
   normalizeReading,
   readSummary,
   saveDay,
+  stepsBackend,
   stepsToKm,
   sumBuckets,
 } from "@/lib/steps";
@@ -86,6 +87,10 @@ export async function POST(req: Request) {
   }
 
   const { persisted, totals } = await saveDay(reading.days);
+  /* `persisted: false` with `backend: "file"` is the shape of a deployment
+     that came up without KV credentials: the read succeeds, finds nothing,
+     and the tile sits idle looking like a quiet day. */
+  const backend = stepsBackend();
   const dates = Object.keys(totals).sort();
   const day = dates[dates.length - 1] ?? "";
   const steps = totals[day] ?? 0;
@@ -93,16 +98,17 @@ export async function POST(req: Request) {
     // `steps` is the day total after merging, not the increment this payload
     // carried — this body is what a relay shows in its delivery log, and an
     // increment there reads as though the day only rose by that much.
-    { ok: true, date: day, dates, steps, km: stepsToKm(steps), stored: totals, persisted },
+    { ok: true, date: day, dates, steps, km: stepsToKm(steps), stored: totals, persisted, backend },
     { headers: NO_CACHE },
   );
 }
 
 export async function GET() {
+  const backend = stepsBackend();
   try {
     const summary = await readSummary();
-    return NextResponse.json(summary, { headers: NO_CACHE });
+    return NextResponse.json({ ...summary, backend }, { headers: NO_CACHE });
   } catch {
-    return NextResponse.json({ configured: false }, { headers: NO_CACHE });
+    return NextResponse.json({ configured: false, backend }, { headers: NO_CACHE });
   }
 }

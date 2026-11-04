@@ -233,10 +233,18 @@ function store() {
   return _store;
 }
 
+/** Which store a reading lands in. Reported by both step routes because the
+    wrong answer used to be invisible: a deployment that comes up without KV
+    credentials falls to the file, a file cannot be written on a runtime with
+    no disk, and every read after that returns nothing while the tile simply
+    looks idle. */
+export function stepsBackend(): "kv" | "file" {
+  return hasKvStore() ? "kv" : "file";
+}
+
+/** Local dev fallback, and nothing more. `STEPS_FILE` overrides it. */
 function filePath(): string {
-  if (process.env.STEPS_FILE) return process.env.STEPS_FILE;
-  if (process.env.VERCEL) return join("/tmp", "steps.json");
-  return join(process.cwd(), "data", "steps.local.json");
+  return process.env.STEPS_FILE ?? join(process.cwd(), "data", "steps.local.json");
 }
 
 function readFile(): Record<string, DayEntry> {
