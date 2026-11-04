@@ -8,12 +8,13 @@ import {
   type DayBuckets,
   dayKey,
   forgetDay,
+  hourlyBuckets,
   isPlausibleDay,
   MAX_DAY_STEPS,
   normalizeReading,
   parseDayEntry,
-  readDayState,
   readDays,
+  readDayState,
   readSummary,
   saveDay,
   stepsBackend,
@@ -32,8 +33,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  process.env = { ...OLD_ENV };
   vi.unstubAllGlobals();
+  process.env = { ...OLD_ENV };
 });
 
 /** A relay interval, spelled the way HC Webhook spells one. */
@@ -143,10 +144,70 @@ describe("store round-trip", () => {
     expect(s.configured).toBe(true);
     expect(s.date).toBe("2026-10-05");
     expect(s.steps).toBe(9000);
+    expect(s.today).toBe(9000);
     // STRIDE_M is read at module load, so these assert the documented default
     // (0.75), not the 0.762 production sets via STEPS_STRIDE_M.
     expect(s.km).toBeCloseTo(6.75, 2);
     expect(s.averageKm).toBeCloseTo(5.25, 2);
+    expect(s.average7).toBe(7000);
+    expect(s.reportedDays).toBe(3);
+    expect(s.goal).toBe(10_000);
+    expect(s.days).toHaveLength(7);
+    expect(s.days?.at(0)).toEqual({ date: "2026-09-29", steps: null });
+    expect(s.days?.at(-1)).toEqual({ date: "2026-10-05", steps: 9000 });
+    // Three whole-day totals have no intervals inside them to distribute.
+    expect(s.hours).toBeNull();
+  });
+
+  it("keeps unreported days null and reports no steps for today", async () => {
+    await saveDay({ "2026-10-04": { [ADHOC_BUCKET]: 7000 } });
+    const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
+    expect(s.today).toBeNull();
+    expect(s.days?.at(-1)).toEqual({ date: "2026-10-05", steps: null });
+    expect(s.days?.at(-2)).toEqual({ date: "2026-10-04", steps: 7000 });
+    expect(s.average7).toBe(7000);
+    expect(s.reportedDays).toBe(1);
+    // The tile still shows the latest reported day rather than a zero.
+    expect(s.date).toBe("2026-10-04");
+    expect(s.steps).toBe(7000);
+  });
+
+  it("splits interval-backed days into real hourly buckets", async () => {
+    await saveDay(
+      normalizeReading({
+        steps: [
+          interval(600, "2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z"),
+          interval(450, "2026-10-05T09:00:00Z", "2026-10-05T10:00:00Z"),
+        ],
+      })!.days,
+    );
+    const s = await readSummary(new Date("2026-10-05T12:00:00Z"));
+    expect(s.source).toBe("intervals");
+    expect(s.hours).toHaveLength(24);
+    // 08:00 UTC is 09:00 in Lagos; 09:00 UTC is 10:00.
+    expect(s.hours?.[9]).toBe(600);
+    expect(s.hours?.[10]).toBe(450);
+    expect(s.hours?.reduce((a, b) => a + b, 0)).toBe(1050);
+  });
+
+  it("spreads a multi-hour interval across the hours it covers", () => {
+    const hours = hourlyBuckets(
+      { "2026-10-05T08:00:00Z|2026-10-05T10:00:00Z": 1200 },
+      "2026-10-05",
+    );
+    expect(hours?.[9]).toBe(600);
+    expect(hours?.[10]).toBe(600);
+    expect(hours?.reduce((a, b) => a + b, 0)).toBe(1200);
+  });
+
+  it("refuses to invent an hourly shape from a coarse interval", () => {
+    // A single 00:00–08:00 block says nothing about which hour was busy.
+    expect(
+      hourlyBuckets(
+        { "2026-10-21T00:00:00+01:00|2026-10-21T08:00:00+01:00": 5336 },
+        "2026-10-21",
+      ),
+    ).toBeNull();
   });
 
   it("reports unconfigured when empty", async () => {

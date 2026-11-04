@@ -544,36 +544,128 @@ export async function readDays(newest = 0): Promise<Record<string, DayEntry>> {
   return readFile();
 }
 
+/** One day in the trailing week. `steps: null` means nobody reported it —
+ *  distinct from a reported zero, and carried that way all the way out so a
+ *  consumer can render a hollow day instead of inventing a quiet one. */
+export type SummaryDay = { date: string; steps: number | null };
+
+/** The seven Lagos days ending on `now`, oldest first. */
+function trailingWeek(now: Date): string[] {
+  const out: string[] = [];
+  for (let i = 6; i >= 0; i--) {
+    out.push(dayKey(new Date(now.getTime() - i * 86_400_000)));
+  }
+  return out;
+}
+
+/** The lagos midnight opening a YYYY-MM-DD, as ms. Lagos is UTC+1 year-round. */
+function lagosMidnight(date: string): number {
+  return Date.parse(`${date}T00:00:00+01:00`);
+}
+
+/**
+ * Split a day's intervals into 24 hourly totals for the day chart.
+ *
+ * An interval is spread evenly across the hours it overlaps, so a two-hour
+ * record contributes to both hours it covers rather than dumping its whole
+ * count on its start hour. A `whole-day` total has no time inside it and
+ * returns null; so does any interval longer than two hours, because at that
+ * coarseness an "hourly" shape is a guess, not a reading. The caller shows the
+ * week instead of inventing a morning.
+ */
+const MAX_HOURLY_SPAN_MS = 2 * 60 * 60 * 1000;
+export function hourlyBuckets(buckets: DayBuckets | undefined, date: string): number[] | null {
+  if (!buckets) return null;
+  const dayStart = lagosMidnight(date);
+  if (!Number.isFinite(dayStart)) return null;
+  const dayEnd = dayStart + 86_400_000;
+  const hours = Array.from({ length: 24 }, () => 0);
+  let sawInterval = false;
+  for (const [key, count] of Object.entries(buckets)) {
+    if (key === ADHOC_BUCKET) continue;
+    const [rawStart, rawEnd] = key.split("|");
+    const start = Date.parse(rawStart ?? "");
+    const parsedEnd = Date.parse(rawEnd ?? "");
+    if (!Number.isFinite(start)) continue;
+    const end = Number.isFinite(parsedEnd) && parsedEnd > start ? parsedEnd : start + 1;
+    if (end - start > MAX_HOURLY_SPAN_MS) return null;
+    const from = Math.max(start, dayStart);
+    const to = Math.min(end, dayEnd);
+    if (to <= from) continue;
+    const perMs = count / (end - start);
+    let cursor = from;
+    while (cursor < to) {
+      const hour = Math.floor((cursor - dayStart) / 3_600_000);
+      const hourEnd = Math.min(to, dayStart + (hour + 1) * 3_600_000);
+      hours[hour] += perMs * (hourEnd - cursor);
+      cursor = hourEnd;
+    }
+    sawInterval = true;
+  }
+  return sawInterval ? hours.map((n) => Math.round(n)) : null;
+}
+
 /** Today plus the trailing 7-day mean, in whole steps.
  *
  *  `source` reports whether the day's figure came from relay intervals or a
  *  single posted total. It is not decoration: only an interval-backed day can
  *  correct itself, so the widget says which it is showing rather than
- *  presenting an unrecoverable number with the same confidence as a live one. */
+ *  presenting an unrecoverable number with the same confidence as a live one.
+ *
+ *  The summary is deliberately self-contained: `today`, `days`, `average7`,
+ *  and `hours` let a second surface (the Nothing pedometer concept) render the
+ *  same truth without reaching into the store or re-deriving the day. */
 export async function readSummary(now = new Date()): Promise<{
   configured: boolean;
   date?: string;
   steps?: number;
   km?: number;
   averageKm?: number;
+  average7?: number;
+  reportedDays?: number;
+  goal?: number;
+  today?: number | null;
+  days?: SummaryDay[];
+  hours?: number[] | null;
   updatedAt?: string;
   source?: DaySource;
 }> {
   const all = await readDays(STORED_WINDOW);
-  const days = Object.keys(all).sort();
-  if (days.length === 0) return { configured: false };
+  const storedDays = Object.keys(all).sort();
+  if (storedDays.length === 0) return { configured: false };
   const today = dayKey(now);
-  const last7 = days.slice(-7);
+  const last7 = storedDays.slice(-7);
   const sum = last7.reduce((a, d) => a + (all[d]?.steps ?? 0), 0);
-  const latest = all[today] ?? all[days[days.length - 1]];
-  const latestDay = all[today] ? today : days[days.length - 1];
+  const latest = all[today] ?? all[storedDays[storedDays.length - 1]];
+  const latestDay = all[today] ? today : storedDays[storedDays.length - 1];
+
+  /* Calendar week, not stored week: missing days stay null so a stale store
+     cannot masquerade as seven quiet ones. The average is over reported days
+     only, and `reportedDays` carries the denominator so nobody has to guess. */
+  const week: SummaryDay[] = trailingWeek(now).map((date) => ({
+    date,
+    steps: all[date]?.steps ?? null,
+  }));
+  const reported = week.filter((d): d is { date: string; steps: number } => d.steps !== null);
+  const average7 = reported.length
+    ? Math.round(reported.reduce((a, d) => a + d.steps, 0) / reported.length)
+    : 0;
+  const goal = Number(process.env.STEPS_GOAL ?? 10_000);
+  const intervalBacked = Boolean(latest.buckets && !(ADHOC_BUCKET in (latest.buckets ?? {})));
+
   return {
     configured: true,
     date: latestDay,
     steps: latest.steps,
     km: stepsToKm(latest.steps),
     averageKm: stepsToKm(Math.round(sum / last7.length)),
+    average7,
+    reportedDays: reported.length,
+    goal: Number.isFinite(goal) && goal > 0 ? Math.floor(goal) : 10_000,
+    today: all[today]?.steps ?? null,
+    days: week,
+    hours: intervalBacked ? hourlyBuckets(latest.buckets, latestDay) : null,
     updatedAt: latest.updatedAt,
-    source: latest.buckets && !(ADHOC_BUCKET in latest.buckets) ? "intervals" : "total",
+    source: intervalBacked ? "intervals" : "total",
   };
 }
