@@ -22,4 +22,10 @@ Deployed on Cloudflare Workers through OpenNext. No filesystem, and none of the
   exists for local development only.
 - The variables the live widgets need are listed under README → Environment.
   They live in the Cloudflare dashboard, not the repo, so a host migration
-  silently unsets all seven.
+  silently unsets all eight.
+- The steps store is Cloudflare KV reached over its REST API with three
+  variables, deliberately not a Worker binding: a binding would need dashboard
+  build settings that nothing in this repo records, and going over REST keeps
+  the store reachable from `next dev` and `vitest` too. Every KV read must
+  carry `cache: "no-store"` — with the default, Next replays the first, empty
+  read forever while writes keep landing.

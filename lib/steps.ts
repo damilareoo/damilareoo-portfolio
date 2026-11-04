@@ -1,4 +1,3 @@
-import { createClient } from "@vercel/kv";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
@@ -186,9 +185,9 @@ export type DayEntry = {
   buckets?: DayBuckets;
 };
 
-/** One stored day, tolerantly: the file backend keeps raw strings while the
-    KV client auto-parses JSON responses into objects. Either shape must
-    survive — a throw here silently drops the whole feed. */
+/** One stored day, tolerantly: the file backend keeps objects while KV hands
+    back the string it was given. Either shape must survive — a throw here
+    silently drops the whole feed. */
 export function parseDayEntry(v: unknown): DayEntry | null {
   try {
     const e = (typeof v === "string" ? JSON.parse(v) : v) as DayEntry;
@@ -213,24 +212,86 @@ export function parseDayEntry(v: unknown): DayEntry | null {
   }
 }
 
-function hasKvStore(): boolean {
-  return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+/** Cloudflare KV, spoken to over its REST API rather than a binding, so the
+    store works the same whether the runtime is a Worker, a Node server or
+    `vitest`. Three variables: which account, which namespace, and a token
+    scoped to KV read and write — nothing broader, because it lives in a
+    deployment others can read the configuration of. */
+type KvRest = { account: string; namespace: string; token: string };
+
+function kvRest(): KvRest | null {
+  const { CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_KV_NAMESPACE_ID, CLOUDFLARE_KV_API_TOKEN } =
+    process.env;
+  if (!CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_KV_NAMESPACE_ID || !CLOUDFLARE_KV_API_TOKEN) {
+    return null;
+  }
+  return {
+    account: CLOUDFLARE_ACCOUNT_ID,
+    namespace: CLOUDFLARE_KV_NAMESPACE_ID,
+    token: CLOUDFLARE_KV_API_TOKEN,
+  };
 }
 
-/** Own client with fetch caching off. The default export lets Next.js
-    cache KV reads (`cache: "default"`), so the first — empty — read
-    replays forever while writes land fine. Reads must always hit the
-    store. */
-let _store: ReturnType<typeof createClient> | null = null;
-function store() {
-  if (!_store) {
-    _store = createClient({
-      url: process.env.KV_REST_API_URL ?? "",
-      token: process.env.KV_REST_API_TOKEN ?? "",
-      cache: "no-store",
-    });
-  }
-  return _store;
+function hasKvStore(): boolean {
+  return kvRest() !== null;
+}
+
+const KV_BASE = (k: KvRest) =>
+  `https://api.cloudflare.com/client/v4/accounts/${k.account}/storage/kv/namespaces/${k.namespace}`;
+
+/** `cache: "no-store"` is load-bearing, not hygiene: without it Next replays
+    the first — empty — read forever while writes keep landing, so the tile
+    looks permanently idle on a store that is actually filling up. */
+async function kvFetch(k: KvRest, path: string, init: RequestInit = {}) {
+  const res = await fetch(`${KV_BASE(k)}${path}`, {
+    ...init,
+    cache: "no-store",
+    headers: { Authorization: `Bearer ${k.token}`, ...init.headers },
+  });
+  /* KV answers 404 for a missing key and 400 for a key that is not in the
+     bulk list either; neither is an outage, both mean "nothing stored here". */
+  if (!res.ok && res.status !== 404) throw new Error(`kv ${res.status} ${path}`);
+  return res;
+}
+
+async function kvGet(k: KvRest, key: string): Promise<string | null> {
+  const res = await kvFetch(k, `/values/${encodeURIComponent(key)}`);
+  return res.ok ? res.text() : null;
+}
+
+/** Days in one round trip. Keys absent from the namespace come back simply
+    not listed, which is the same answer as an empty value. */
+async function kvGetMany(k: KvRest, keys: string[]): Promise<Record<string, string>> {
+  if (keys.length === 0) return {};
+  const q = keys.map((key) => `keys=${encodeURIComponent(key)}`).join("&");
+  const res = await kvFetch(k, `/values/bulk?${q}`);
+  if (!res.ok) return {};
+  const body = (await res.json()) as { result?: { key: string; value: string }[] };
+  const out: Record<string, string> = {};
+  for (const item of body.result ?? []) out[item.key] = item.value;
+  return out;
+}
+
+async function kvPutMany(k: KvRest, pairs: Record<string, string>): Promise<void> {
+  const body = Object.entries(pairs).map(([key, value]) => ({ key, value }));
+  if (body.length === 0) return;
+  await kvFetch(k, "/bulk", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+async function kvDelete(k: KvRest, key: string): Promise<void> {
+  await kvFetch(k, `/values/${encodeURIComponent(key)}`, { method: "DELETE" });
+}
+
+/** Names only, which is a cheap way to ask "which days do we hold". */
+async function kvListKeys(k: KvRest, prefix: string): Promise<string[]> {
+  const res = await kvFetch(k, `/keys?prefix=${encodeURIComponent(prefix)}`);
+  if (!res.ok) return [];
+  const body = (await res.json()) as { result?: { name: string }[] };
+  return (body.result ?? []).map((r) => r.name);
 }
 
 /** Which store a reading lands in. Reported by both step routes because the
@@ -275,8 +336,13 @@ function writeFile(all: Record<string, DayEntry>): boolean {
  * The store is KV when connected, a small JSON file otherwise (local dev,
  * or prod before the store is attached). The file backend keeps the Test
  * Webhook button green end to end; KV makes readings survive restarts.
+ *
+ * One key per Lagos day rather than a single hash: KV has no hash type, and
+ * a day that lives on its own key is a day that can be read, replaced or
+ * forgotten without touching the rest of the history.
  */
-const KV_HASH = "portfolio:steps:days";
+const KEY_PREFIX = "steps:";
+const dayKeyOf = (day: string) => `${KEY_PREFIX}${day}`;
 
 /** Ceiling on a single day's step count. The most ever recorded in a day is
     around 115,000, so 150,000 sits above anything a phone can legitimately
@@ -364,8 +430,9 @@ function mergeDay(existing: DayEntry | null, incoming: DayEntry): DayEntry {
     onto a bad copy only compounds it. The phone has to re-read the range, and
     for that to work the store must be empty for the day first. */
 export async function forgetDay(day: string): Promise<boolean> {
-  if (hasKvStore()) {
-    await store().hdel(KV_HASH, day);
+  const k = kvRest();
+  if (k) {
+    await kvDelete(k, dayKeyOf(day));
     return true;
   }
   const all = readFile();
@@ -388,12 +455,21 @@ export async function saveDay(
 ): Promise<{ persisted: boolean; totals: Record<string, number> }> {
   const now = new Date().toISOString();
   const totals: Record<string, number> = {};
-  if (hasKvStore()) {
-    const s = store();
-    for (const day of Object.keys(days).sort()) {
+  const k = kvRest();
+  if (k) {
+    const ordered = Object.keys(days).sort();
+    /* Read the days this payload touches in one request, then write them back
+       in one more. Merging has to see what is stored, and a per-day round trip
+       would put the relay's own latency budget into the phone's hands. */
+    const stored = await kvGetMany(
+      k,
+      ordered.map((day) => dayKeyOf(day)),
+    );
+    const out: Record<string, string> = {};
+    for (const day of ordered) {
       let existing: DayEntry | null = null;
       try {
-        existing = parseDayEntry(await s.hget<string | DayEntry>(KV_HASH, day));
+        existing = parseDayEntry(stored[dayKeyOf(day)] ?? null);
       } catch {
         /* An unreadable day is replaced rather than dropped — a stale total
            is a smaller lie than a feed that stops. */
@@ -401,8 +477,9 @@ export async function saveDay(
       const incoming: DayEntry = { steps: sumBuckets(days[day]), updatedAt: now, buckets: days[day] };
       const merged = mergeDay(existing, incoming);
       totals[day] = merged.steps;
-      await s.hset(KV_HASH, { [day]: JSON.stringify(merged) });
+      out[dayKeyOf(day)] = JSON.stringify(merged);
     }
+    await kvPutMany(k, out);
     return { persisted: true, totals };
   }
   const all = readFile();
@@ -416,14 +493,14 @@ export async function saveDay(
 }
 
 export async function readDays(): Promise<Record<string, DayEntry>> {
-  if (hasKvStore()) {
-    const raw = await store().hgetall<Record<string, string>>(KV_HASH);
+  const k = kvRest();
+  if (k) {
+    const names = await kvListKeys(k, KEY_PREFIX);
+    const raw = await kvGetMany(k, names);
     const out: Record<string, DayEntry> = {};
-    if (raw) {
-      for (const [k, v] of Object.entries(raw)) {
-        const e = parseDayEntry(v);
-        if (e) out[k] = e;
-      }
+    for (const [key, v] of Object.entries(raw)) {
+      const e = parseDayEntry(v);
+      if (e) out[key.slice(KEY_PREFIX.length)] = e;
     }
     return out;
   }

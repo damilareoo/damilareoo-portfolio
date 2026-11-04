@@ -80,7 +80,7 @@ public/dossier/       all artwork, films, case frames
 `.env.local` (gitignored, never committed) holds the credentials. It is local
 only: a deployed Worker gets its copy from the platform's own variables, and
 nothing here travels with a `git push` — migrating hosts means re-entering all
-seven, which is how both live widgets went quiet in October 2026.
+eight, which is how both live widgets went quiet in October 2026.
 
 ```
 SPOTIFY_CLIENT_ID=
@@ -88,17 +88,26 @@ SPOTIFY_CLIENT_SECRET=
 SPOTIFY_REFRESH_TOKEN=      # mint once via the authorize flow, reuse everywhere
 STEPS_WEBHOOK_SECRET=       # any long random string; must match the macro header
 STEPS_STRIDE_M=0.762        # metres per step; tunes steps → km
-KV_REST_API_URL=            # the steps store — required wherever the site is read
-KV_REST_API_TOKEN=
+CLOUDFLARE_ACCOUNT_ID=      # the steps store — required wherever the site is read
+CLOUDFLARE_KV_NAMESPACE_ID=
+CLOUDFLARE_KV_API_TOKEN=
 ```
 
 Without Spotify values the music tile renders its idle state — the build
 does not need them. To wire live playback: create an app at
-`developer.spotify.com/dashboard`, whitelist
-`http://localhost:3002/spotify-callback` (plus
-`https://<domain>/spotify-callback` in production), complete the
+`developer.spotify.com/dashboard`, register a redirect URI of the exact form
+`http://127.0.0.1:3000/callback`, request
+`user-read-currently-playing user-read-recently-played`, complete the
 authorization-code flow once, and store the resulting refresh token.
-The same token serves every environment.
+The exact string matters — to Spotify, `localhost` and `127.0.0.1` are two
+different registrations, and a mismatch fails before your code ever sees a
+code. The refresh token is what lasts; the authorization code is single-use
+and expires in minutes, so each attempt mints a fresh one.
+
+Apps still in Spotify's Development Mode are refused
+`user-read-currently-playing`, so the tile falls back to the last finished
+track. `{"isPlaying":false,"lastPlayed":true}` is that fallback working, not
+a failure — it updates when a track ends rather than the instant it starts.
 
 ### Daily steps (Health Connect → webhook)
 
@@ -139,10 +148,16 @@ The poll is not the limiting factor on freshness — the relay's own sync
 interval is. Whatever the phone posts, the tile shows within a minute of it
 arriving.
 
-Storage is the KV store named by `KV_REST_API_URL` + `KV_REST_API_TOKEN`.
-`@vercel/kv` speaks Upstash's REST API over plain `fetch`, so the store works
-from any runtime that has those two variables — it does not need the site to
-be hosted on Vercel. Without them the routes fall back to
+Storage is the Cloudflare KV namespace named by `CLOUDFLARE_ACCOUNT_ID` +
+`CLOUDFLARE_KV_NAMESPACE_ID`, written with `CLOUDFLARE_KV_API_TOKEN`.
+`lib/steps.ts` speaks KV's REST API over plain `fetch` rather than a Worker
+binding, so the same three variables make the store work from a Worker, from
+`next dev`, and from `vitest` — no binding to configure, and the token can be
+scoped to KV read-and-write instead of whatever a binding's account allows.
+One key per Lagos day (`steps:YYYY-MM-DD`), holding that day's intervals as
+JSON: KV has no hash type, and a day on its own key is a day that can be
+read, corrected or forgotten without touching the rest of the history.
+Without them the routes fall back to
 `data/steps.local.json` (`STEPS_FILE` overrides the path), which is a local-dev
 convenience and nothing else: a Worker has no writable disk, so every write
 fails and every read comes back empty.

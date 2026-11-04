@@ -1,7 +1,7 @@
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   absorbOverlaps,
   ADHOC_BUCKET,
@@ -13,8 +13,10 @@ import {
   normalizeReading,
   parseDayEntry,
   readDayState,
+  readDays,
   readSummary,
   saveDay,
+  stepsBackend,
   stepsToKm,
   sumBuckets,
 } from "./steps";
@@ -23,13 +25,15 @@ const OLD_ENV = { ...process.env };
 
 beforeEach(() => {
   process.env.STEPS_FILE = join(mkdtempSync(join(tmpdir(), "steps-")), "steps.json");
-  delete process.env.KV_REST_API_URL;
-  delete process.env.KV_REST_API_TOKEN;
+  delete process.env.CLOUDFLARE_ACCOUNT_ID;
+  delete process.env.CLOUDFLARE_KV_NAMESPACE_ID;
+  delete process.env.CLOUDFLARE_KV_API_TOKEN;
   delete process.env.STEPS_STRIDE_M;
 });
 
 afterEach(() => {
   process.env = { ...OLD_ENV };
+  vi.unstubAllGlobals();
 });
 
 /** A relay interval, spelled the way HC Webhook spells one. */
@@ -362,5 +366,139 @@ describe("parseDayEntry", () => {
     expect(parseDayEntry("[object Object]")).toBeNull();
     expect(parseDayEntry(null)).toBeNull();
     expect(parseDayEntry({ steps: "many" })).toBeNull();
+  });
+});
+
+/** A stand-in for Cloudflare's KV REST API, answering the way the real one
+    does: raw text for a single value, a `success`/`result` envelope for bulk
+    and listing, 404 for a key that is not there. It exists because a wrong URL
+    in that client is not an error anyone sees — it is a feed that stops. */
+function mockKv() {
+  const ns = new Map<string, string>();
+  const calls: { method: string; path: string; init: RequestInit }[] = [];
+  const base = "/client/v4/accounts/acct1/storage/kv/namespaces/ns1";
+  const fetchImpl = async (input: string, init: RequestInit = {}) => {
+    const u = new URL(input);
+    const method = init.method ?? "GET";
+    const json = (result: unknown, status = 200) =>
+      new Response(JSON.stringify({ success: status < 400, result, errors: status >= 400 ? [{}] : [] }), {
+        status,
+        headers: { "content-type": "application/json" },
+      });
+    if (!u.pathname.startsWith(base)) return json(null, 400);
+    const rest = u.pathname.slice(base.length);
+    calls.push({ method, path: `${rest}${u.search}`, init });
+
+    if (method === "GET" && rest === "/keys") {
+      const prefix = u.searchParams.get("prefix") ?? "";
+      return json([...ns.keys()].filter((k) => k.startsWith(prefix)).map((name) => ({ name })));
+    }
+    if (method === "GET" && rest === "/values/bulk") {
+      const keys = u.searchParams.getAll("keys");
+      return json(keys.filter((key) => ns.has(key)).map((key) => ({ key, value: ns.get(key) })));
+    }
+    if (method === "PUT" && rest === "/bulk") {
+      for (const p of JSON.parse(String(init.body)) as { key: string; value: string }[]) {
+        ns.set(p.key, p.value);
+      }
+      return json({});
+    }
+    if (rest.startsWith("/values/")) {
+      const key = decodeURIComponent(rest.slice("/values/".length));
+      if (method === "DELETE") {
+        ns.delete(key);
+        return json({});
+      }
+      const value = ns.get(key);
+      return value === undefined
+        ? new Response("not found", { status: 404 })
+        : new Response(value, { status: 200 });
+    }
+    return json(null, 400);
+  };
+  return { ns, calls, fetchImpl };
+}
+
+describe("Cloudflare KV backend", () => {
+  const DAY = "2026-10-05";
+  const bucket = (start: string, end: string, count: number): DayBuckets => ({
+    [`${start}|${end}`]: count,
+  });
+
+  beforeEach(() => {
+    process.env.CLOUDFLARE_ACCOUNT_ID = "acct1";
+    process.env.CLOUDFLARE_KV_NAMESPACE_ID = "ns1";
+    process.env.CLOUDFLARE_KV_API_TOKEN = "tok1";
+  });
+
+  it("is the reported backend only when all three variables are present", () => {
+    expect(stepsBackend()).toBe("kv");
+    delete process.env.CLOUDFLARE_KV_API_TOKEN;
+    expect(stepsBackend()).toBe("file");
+  });
+
+  it("round-trips a day through the REST API", async () => {
+    const kv = mockKv();
+    vi.stubGlobal("fetch", kv.fetchImpl);
+    const { persisted, totals } = await saveDay({ [DAY]: bucket("2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z", 600) });
+    expect(persisted).toBe(true);
+    expect(totals[DAY]).toBe(600);
+    expect(kv.ns.get(`steps:${DAY}`)).toContain('"steps":600');
+
+    const all = await readDays();
+    expect(all[DAY]?.steps).toBe(600);
+    expect(all[DAY]?.buckets).toEqual({ "2026-10-05T08:00:00Z|2026-10-05T09:00:00Z": 600 });
+  });
+
+  it("accumulates a second payload onto the stored day", async () => {
+    const kv = mockKv();
+    vi.stubGlobal("fetch", kv.fetchImpl);
+    await saveDay({ [DAY]: bucket("2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z", 600) });
+    const { totals } = await saveDay({
+      [DAY]: bucket("2026-10-05T09:00:00Z", "2026-10-05T10:00:00Z", 450),
+    });
+    // The merge has to read what is stored, so the day is 600 + 450, not 450.
+    expect(totals[DAY]).toBe(1050);
+    expect((await readDays())[DAY]?.steps).toBe(1050);
+  });
+
+  it("reads the days a payload touches in one request, not one per day", async () => {
+    const kv = mockKv();
+    vi.stubGlobal("fetch", kv.fetchImpl);
+    await saveDay({
+      "2026-10-04": bucket("2026-10-04T08:00:00Z", "2026-10-04T09:00:00Z", 100),
+      "2026-10-05": bucket("2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z", 200),
+    });
+    const bulkReads = kv.calls.filter((c) => c.method === "GET" && c.path.startsWith("/values/bulk"));
+    expect(bulkReads).toHaveLength(1);
+    expect(bulkReads[0].path).toContain("keys=steps%3A2026-10-04");
+    expect(kv.calls.filter((c) => c.method === "PUT" && c.path === "/bulk")).toHaveLength(1);
+  });
+
+  it("never lets Next cache a read, and authenticates every call", async () => {
+    const kv = mockKv();
+    vi.stubGlobal("fetch", kv.fetchImpl);
+    await saveDay({ [DAY]: bucket("2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z", 600) });
+    await readDays();
+    for (const call of kv.calls) {
+      expect(call.init.cache).toBe("no-store");
+      expect((call.init.headers as Record<string, string>).Authorization).toBe("Bearer tok1");
+    }
+  });
+
+  it("forgets a day by deleting its key", async () => {
+    const kv = mockKv();
+    vi.stubGlobal("fetch", kv.fetchImpl);
+    await saveDay({ [DAY]: bucket("2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z", 600) });
+    expect(await forgetDay(DAY)).toBe(true);
+    expect(kv.ns.size).toBe(0);
+    expect(await readDays()).toEqual({});
+  });
+
+  it("survives an empty namespace", async () => {
+    const kv = mockKv();
+    vi.stubGlobal("fetch", kv.fetchImpl);
+    expect(await readDays()).toEqual({});
+    expect((await readSummary()).configured).toBe(false);
   });
 });
