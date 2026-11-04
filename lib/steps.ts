@@ -248,8 +248,9 @@ async function kvFetch(k: KvRest, path: string, init: RequestInit = {}) {
     cache: "no-store",
     headers: { Authorization: `Bearer ${k.token}`, ...init.headers },
   });
-  /* KV answers 404 for a missing key and 400 for a key that is not in the
-     bulk list either; neither is an outage, both mean "nothing stored here". */
+  /* A 404 is the store saying "this day has never been reported", which is an
+     answer, not an outage. Anything else throws, because a 401 or 503 treated
+     as an empty store is a tile that goes quiet while the pipeline looks fine. */
   if (!res.ok && res.status !== 404) throw new Error(`kv ${res.status} ${path}`);
   return res;
 }
@@ -259,39 +260,63 @@ async function kvGet(k: KvRest, key: string): Promise<string | null> {
   return res.ok ? res.text() : null;
 }
 
-/** Days in one round trip. Keys absent from the namespace come back simply
-    not listed, which is the same answer as an empty value. */
+/** Days read in parallel, one request each.
+ *
+    There is no bulk read on KV's REST API. `GET /values/{name}` takes exactly
+    one key, and a path like `/values/bulk?keys=…` is not a batch endpoint — it
+    is answered as a lookup for a key literally named `bulk`, which does not
+    exist, so every such request comes back `key not found`. Writes are bulk;
+    reads are not. Issuing them together keeps the wall clock at one round trip
+    and makes a missing day answer as itself: a 404 for one day is not a 404 for
+    the feed, and a stored day can never be read as empty. */
 async function kvGetMany(k: KvRest, keys: string[]): Promise<Record<string, string>> {
-  if (keys.length === 0) return {};
-  const q = keys.map((key) => `keys=${encodeURIComponent(key)}`).join("&");
-  const res = await kvFetch(k, `/values/bulk?${q}`);
-  if (!res.ok) return {};
-  const body = (await res.json()) as { result?: { key: string; value: string }[] };
+  const found = await Promise.all(
+    keys.map(async (key) => [key, await kvGet(k, key)] as const),
+  );
   const out: Record<string, string> = {};
-  for (const item of body.result ?? []) out[item.key] = item.value;
+  for (const [key, v] of found) if (v !== null) out[key] = v;
   return out;
 }
 
+/** A write that the store refuses still answers HTTP 200, with the rejected
+    keys listed in the body — so the envelope has to be read, or a relay gets a
+    2xx for a reading that never landed and stops sending it. */
 async function kvPutMany(k: KvRest, pairs: Record<string, string>): Promise<void> {
   const body = Object.entries(pairs).map(([key, value]) => ({ key, value }));
   if (body.length === 0) return;
-  await kvFetch(k, "/bulk", {
+  const res = await kvFetch(k, "/bulk", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
+  const env = (await res.json()) as {
+    success?: boolean;
+    result?: { unsuccessful_keys?: string[] };
+  };
+  const bad = env.result?.unsuccessful_keys ?? [];
+  if (!env.success || bad.length > 0) throw new Error(`kv write rejected: ${bad.join(",")}`);
 }
 
 async function kvDelete(k: KvRest, key: string): Promise<void> {
   await kvFetch(k, `/values/${encodeURIComponent(key)}`, { method: "DELETE" });
 }
 
-/** Names only, which is a cheap way to ask "which days do we hold". */
-async function kvListKeys(k: KvRest, prefix: string): Promise<string[]> {
-  const res = await kvFetch(k, `/keys?prefix=${encodeURIComponent(prefix)}`);
+/** Names only, which is a cheap way to ask "which days do we hold".
+    `newest` lists backwards, because day keys sort chronologically and the
+    listing endpoint will hand them back in reverse — one page is then the
+    recent window, no matter how much history the namespace has accumulated. */
+async function kvListKeys(k: KvRest, prefix: string, newest = 0): Promise<string[]> {
+  const q = [`prefix=${encodeURIComponent(prefix)}`];
+  if (newest > 0) {
+    /* KV rejects a limit under 10, so the page is slightly wider than asked
+       for; the caller slices. */
+    q.push("direction=desc", `limit=${Math.max(10, newest)}`);
+  }
+  const res = await kvFetch(k, `/keys?${q.join("&")}`);
   if (!res.ok) return [];
   const body = (await res.json()) as { result?: { name: string }[] };
-  return (body.result ?? []).map((r) => r.name);
+  const names = (body.result ?? []).map((r) => r.name);
+  return newest > 0 ? names.slice(0, newest) : names;
 }
 
 /** Which store a reading lands in. Reported by both step routes because the
@@ -342,6 +367,12 @@ function writeFile(all: Record<string, DayEntry>): boolean {
  * forgotten without touching the rest of the history.
  */
 const KEY_PREFIX = "steps:";
+
+/** How many days a summary is allowed to look at. Reads are one request per
+    day — KV has no bulk read — and the tile polls every minute, so an
+    unbounded read prices the whole history into every page view. Ten covers
+    the seven-day window plus slack for a day the phone reports late. */
+const STORED_WINDOW = 10;
 const dayKeyOf = (day: string) => `${KEY_PREFIX}${day}`;
 
 /** Ceiling on a single day's step count. The most ever recorded in a day is
@@ -458,9 +489,10 @@ export async function saveDay(
   const k = kvRest();
   if (k) {
     const ordered = Object.keys(days).sort();
-    /* Read the days this payload touches in one request, then write them back
-       in one more. Merging has to see what is stored, and a per-day round trip
-       would put the relay's own latency budget into the phone's hands. */
+    /* Read the days this payload touches, in parallel, then write them back in
+       one bulk call. Merging has to see what is stored — a relay's second
+       payload of a day is incremental, and treating a stored day as empty is
+       how a day loses every interval the phone already delivered. */
     const stored = await kvGetMany(
       k,
       ordered.map((day) => dayKeyOf(day)),
@@ -492,11 +524,16 @@ export async function saveDay(
   return { persisted: writeFile(all), totals };
 }
 
-export async function readDays(): Promise<Record<string, DayEntry>> {
+export async function readDays(newest = 0): Promise<Record<string, DayEntry>> {
   const k = kvRest();
   if (k) {
-    const names = await kvListKeys(k, KEY_PREFIX);
-    const raw = await kvGetMany(k, names);
+    const names = await kvListKeys(k, KEY_PREFIX, newest);
+    /* Listing lags a write by a few seconds — it is the one part of KV that is
+       eventually consistent. Today is the number the tile puts in its headline,
+       so ask for it by name rather than waiting for the index to notice it. */
+    const wanted = new Set(names);
+    wanted.add(dayKeyOf(dayKey()));
+    const raw = await kvGetMany(k, [...wanted]);
     const out: Record<string, DayEntry> = {};
     for (const [key, v] of Object.entries(raw)) {
       const e = parseDayEntry(v);
@@ -522,7 +559,7 @@ export async function readSummary(now = new Date()): Promise<{
   updatedAt?: string;
   source?: DaySource;
 }> {
-  const all = await readDays();
+  const all = await readDays(STORED_WINDOW);
   const days = Object.keys(all).sort();
   if (days.length === 0) return { configured: false };
   const today = dayKey(now);

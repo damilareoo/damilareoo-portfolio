@@ -29,3 +29,12 @@ Deployed on Cloudflare Workers through OpenNext. No filesystem, and none of the
   the store reachable from `next dev` and `vitest` too. Every KV read must
   carry `cache: "no-store"` — with the default, Next replays the first, empty
   read forever while writes keep landing.
+- KV's REST API has **no bulk read**. `GET /values/{key}` takes one key, and a
+  URL like `/values/bulk?keys=…` is answered as a lookup for a key literally
+  named `bulk` — `key not found`, every time. Writes and deletes do have bulk
+  endpoints, so a payload is stored in one request and read in several.
+- KV reads are eventually consistent: Cloudflare documents up to 60 seconds and
+  a rewrite measured here stayed invisible to reads for 7+. A day is one key,
+  so two relay payloads that land inside that window merge onto a stale copy
+  and the first one's intervals are gone. The remedy is not in the store — it
+  is `forgetDay` plus a re-read of that range on the phone.

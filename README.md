@@ -156,7 +156,14 @@ binding, so the same three variables make the store work from a Worker, from
 scoped to KV read-and-write instead of whatever a binding's account allows.
 One key per Lagos day (`steps:YYYY-MM-DD`), holding that day's intervals as
 JSON: KV has no hash type, and a day on its own key is a day that can be
-read, corrected or forgotten without touching the rest of the history.
+read, corrected or forgotten without touching the rest of the history. There
+is no bulk read on this API, so a summary asks for the newest ten days one
+request at a time rather than pricing the whole history into every poll. And
+a day is read-then-rewritten whole: two payloads that land inside KV's
+consistency window (Cloudflare documents up to 60 seconds) merge onto a stale
+copy, and the first one's intervals are lost. The way back is `DELETE
+/api/steps/recover` for that day, then a re-read of the range in HC Webhook —
+only the phone can rebuild a day it has already counted as delivered.
 Without them the routes fall back to
 `data/steps.local.json` (`STEPS_FILE` overrides the path), which is a local-dev
 convenience and nothing else: a Worker has no writable disk, so every write

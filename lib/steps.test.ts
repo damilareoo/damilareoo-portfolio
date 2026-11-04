@@ -391,17 +391,18 @@ function mockKv() {
 
     if (method === "GET" && rest === "/keys") {
       const prefix = u.searchParams.get("prefix") ?? "";
-      return json([...ns.keys()].filter((k) => k.startsWith(prefix)).map((name) => ({ name })));
-    }
-    if (method === "GET" && rest === "/values/bulk") {
-      const keys = u.searchParams.getAll("keys");
-      return json(keys.filter((key) => ns.has(key)).map((key) => ({ key, value: ns.get(key) })));
+      const desc = u.searchParams.get("direction") === "desc";
+      const limit = Number(u.searchParams.get("limit") ?? "1000");
+      const names = [...ns.keys()].filter((k) => k.startsWith(prefix)).sort();
+      const window = (desc ? names.reverse() : names).slice(0, limit);
+      return json(window.map((name) => ({ name })));
     }
     if (method === "PUT" && rest === "/bulk") {
-      for (const p of JSON.parse(String(init.body)) as { key: string; value: string }[]) {
-        ns.set(p.key, p.value);
-      }
-      return json({});
+      const pairs = JSON.parse(String(init.body)) as { key: string; value: string }[];
+      const bad = pairs.filter((p) => typeof p.value !== "string").map((p) => p.key);
+      for (const p of pairs) if (!bad.includes(p.key)) ns.set(p.key, p.value);
+      /* A rejected key still answers 200, so the envelope is the only truth. */
+      return json({ successful_key_count: pairs.length - bad.length, unsuccessful_keys: bad });
     }
     if (rest.startsWith("/values/")) {
       const key = decodeURIComponent(rest.slice("/values/".length));
@@ -462,17 +463,81 @@ describe("Cloudflare KV backend", () => {
     expect((await readDays())[DAY]?.steps).toBe(1050);
   });
 
-  it("reads the days a payload touches in one request, not one per day", async () => {
+  it("never asks the API for a bulk read, because there is none", async () => {
+    /* Live KV answers `GET /values/bulk?keys=…` as a lookup for a key literally
+       named "bulk": HTTP 404, `key not found`. A client that read that as an
+       empty store would overwrite days it had already accumulated. */
     const kv = mockKv();
     vi.stubGlobal("fetch", kv.fetchImpl);
     await saveDay({
       "2026-10-04": bucket("2026-10-04T08:00:00Z", "2026-10-04T09:00:00Z", 100),
       "2026-10-05": bucket("2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z", 200),
     });
-    const bulkReads = kv.calls.filter((c) => c.method === "GET" && c.path.startsWith("/values/bulk"));
-    expect(bulkReads).toHaveLength(1);
-    expect(bulkReads[0].path).toContain("keys=steps%3A2026-10-04");
+    expect(kv.calls.some((c) => c.path.includes("/values/bulk"))).toBe(false);
+    const reads = kv.calls.filter((c) => c.method === "GET" && c.path.startsWith("/values/"));
+    expect(reads.map((c) => c.path).sort()).toEqual([
+      "/values/steps%3A2026-10-04",
+      "/values/steps%3A2026-10-05",
+    ]);
     expect(kv.calls.filter((c) => c.method === "PUT" && c.path === "/bulk")).toHaveLength(1);
+  });
+
+  it("finds today even when the index has not caught up with it", async () => {
+    /* A relay POST lands and the page polls a second later. `/keys` is the one
+       part of KV that is eventually consistent, so a listing-only read answers
+       "no data today" for a store that has today — the headline number, gone.
+       Today is therefore asked for by name, not waited on. */
+    const kv = mockKv();
+    const today = dayKey();
+    kv.ns.set(
+      `steps:${today}`,
+      JSON.stringify({ steps: 800, updatedAt: "2026-11-04T09:00:00Z", buckets: { "a|b": 800 } }),
+    );
+    vi.stubGlobal("fetch", async (input: string, init: RequestInit = {}) => {
+      if (new URL(input).pathname.endsWith("/keys")) {
+        return new Response(JSON.stringify({ success: true, result: [], errors: [] }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      }
+      return kv.fetchImpl(input, init);
+    });
+    expect((await readDays(10))[today]?.steps).toBe(800);
+  });
+
+  it("reads only a window of the history, newest first", async () => {
+    const kv = mockKv();
+    vi.stubGlobal("fetch", kv.fetchImpl);
+    for (let d = 1; d <= 20; d++) {
+      const day = `2026-10-${String(d).padStart(2, "0")}`;
+      await saveDay({ [day]: bucket(`${day}T08:00:00Z`, `${day}T09:00:00Z`, 100) });
+    }
+    kv.calls.length = 0;
+    const recent = await readDays(10);
+    expect(Object.keys(recent)).toHaveLength(10);
+    expect(recent["2026-10-20"]?.steps).toBe(100);
+    expect(recent["2026-10-01"]).toBeUndefined();
+    const list = kv.calls.find((c) => c.path.startsWith("/keys"));
+    expect(list?.path).toContain("direction=desc");
+  });
+
+  it("keeps a stored day when the same payload also opens a new one", async () => {
+    /* The trap the live API exposed: a bulk read of [known day, new day]
+       answers 404, not a partial list. Read as "nothing stored", the known
+       day's intervals would be overwritten by the payload alone — silently
+       losing every step the phone had already delivered for it. */
+    const kv = mockKv();
+    vi.stubGlobal("fetch", kv.fetchImpl);
+    await saveDay({ [DAY]: bucket("2026-10-05T08:00:00Z", "2026-10-05T09:00:00Z", 600) });
+    const { totals } = await saveDay({
+      [DAY]: bucket("2026-10-05T09:00:00Z", "2026-10-05T10:00:00Z", 450),
+      "2026-10-06": bucket("2026-10-06T07:00:00Z", "2026-10-06T08:00:00Z", 300),
+    });
+    expect(totals[DAY]).toBe(1050);
+    expect(totals["2026-10-06"]).toBe(300);
+    const all = await readDays();
+    expect(all[DAY]?.steps).toBe(1050);
+    expect(all["2026-10-06"]?.steps).toBe(300);
   });
 
   it("never lets Next cache a read, and authenticates every call", async () => {
