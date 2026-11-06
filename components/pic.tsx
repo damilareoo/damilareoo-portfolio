@@ -1,8 +1,9 @@
 /**
- * An image that serves WebP when the browser takes it, the original file
- * otherwise. Every static raster under /dossier ships a full-resolution
- * `.webp` companion (Pillow, quality 90, no downscale) plus narrower
- * `-480/-768/-1200/-1800` companions from scripts/make-responsive.py.
+ * An image that serves AVIF where the browser takes it, WebP next, and the
+ * original file otherwise. Every static raster under /dossier ships a
+ * full-resolution `.webp` and `.avif` companion (Pillow, quality 90 and 55,
+ * no downscale) plus narrower `-480/-768/-1200/-1800` companions of each, all
+ * from scripts/make-responsive.py.
  *
  * The widths come from the generated manifest rather than being hardcoded,
  * because a srcSet entry pointing at a file that was never generated is a 404,
@@ -11,11 +12,21 @@
  * has no companions and must fall back to its single original. The manifest is
  * regenerated whenever the companions are, so it cannot drift from disk.
  *
+ * AVIF and WebP get separate width lists for the same reason: an AVIF that
+ * was never encoded is not implied by its WebP existing, and advertising one
+ * would let the browser pick a source that 404s.
+ *
  * This component is bundled for the browser, so it must not reach for node:fs
  * to check that itself — doing so fails the build. See pic-manifest.ts.
  */
 import React from "react";
-import { PIC_CANDIDATES, PIC_FULL, SHOT_SIZES } from "./pic-manifest";
+import {
+  PIC_AVIF_CANDIDATES,
+  PIC_AVIF_FULL,
+  PIC_CANDIDATES,
+  PIC_FULL,
+  SHOT_SIZES,
+} from "./pic-manifest";
 
 export { PIC_WIDTHS, SHOT_SIZES, FILL_SIZES } from "./pic-manifest";
 export type { PicWidth } from "./pic-manifest";
@@ -65,6 +76,16 @@ const Pic = React.forwardRef(function Pic(
   }
 
   const origExt = src.split(".").pop();
+  /* AVIF carries the same width ladder at roughly half the bytes of the WebP
+     at the same width, so it leads the `<picture>`. Its list is the manifest's
+     own, not the WebP's: a width with no `.avif` on disk is left out rather
+     than assumed, for the same reason the WebP list is read rather than
+     hardcoded. */
+  const avifWidths = PIC_AVIF_CANDIDATES[src] ?? [];
+  const avifCandidates = avifWidths.map((w) => `${base}-${w}.avif ${w}w`);
+  const avifFullWidth = PIC_AVIF_FULL[src];
+  if (avifFullWidth) avifCandidates.push(`${base}.avif ${avifFullWidth}w`);
+  const avifSet = avifCandidates.join(", ");
   const webpCandidates = widths.map((w) => `${base}-${w}.webp ${w}w`);
   /* The generated widths stop at 1800 and many sources are 1600 or 1920, so a
      wide 2x box had nothing big enough and upscaled the 1200/1800 file. Offer
@@ -87,6 +108,7 @@ const Pic = React.forwardRef(function Pic(
 
   return (
     <picture>
+      {avifSet && <source type="image/avif" srcSet={avifSet} sizes={sizes} />}
       <source type="image/webp" srcSet={webpSet} sizes={sizes} />
       <img
         ref={ref}

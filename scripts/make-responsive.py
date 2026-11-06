@@ -25,6 +25,12 @@ Encoding is unchanged (quality 90, as already shipped): the existing WebP
 measures 0.31 mean absolute error against its source, far below the ~2.0
 where loss becomes visible. Sharpness was never the encoder's fault — the
 absence of candidates was.
+
+AVIF rides alongside WebP rather than replacing it. Measured on this corpus
+at 768px, an AVIF is 0.48 the bytes of the same-frame WebP at quality 55 —
+worth 52% on a wall that loads 71 tiles at once. The WebP source stays in the
+`<picture>` because the AVIF one is only a preference: a browser that rejects
+it must still get a right-sized file, not the 2400px original.
 """
 
 from PIL import Image
@@ -34,6 +40,7 @@ import re
 import glob
 
 QUALITY = 90
+AVIF_QUALITY = 55
 # Halving past 1200 wastes bytes nobody can resolve; 1800 covers a 840px
 # column at DPR 2, which is the widest this site's shot layout gets.
 WIDTHS = [480, 768, 1200, 1800]
@@ -81,6 +88,15 @@ for f in sources:
         else:
             skipped += 1
 
+        avif = f"{base}-{tw}.avif"
+        if not (os.path.exists(avif) and os.path.getmtime(avif) >= os.path.getmtime(f)):
+            out = im.resize((tw, max(1, round(im.size[1] * tw / w))), Image.LANCZOS)
+            # AVIF encodes only RGB/RGBA; a palette PNG would otherwise raise.
+            out.convert("RGBA" if has_alpha else "RGB").save(
+                avif, "AVIF", quality=AVIF_QUALITY
+            )
+            made += 1
+
         # A browser that ignores the WebP source still benefits from a
         # right-sized original rather than the full-size file.
         orig = f"{base}-{tw}.{ext}"
@@ -101,6 +117,11 @@ for f in sources:
         im.save(full, "WEBP", quality=QUALITY, method=5)
         made += 1
 
+    full_avif = f"{base}.avif"
+    if not (os.path.exists(full_avif) and os.path.getmtime(full_avif) >= os.path.getmtime(f)):
+        im.convert("RGBA" if has_alpha else "RGB").save(full_avif, "AVIF", quality=AVIF_QUALITY)
+        made += 1
+
 print(f"sources (generated files excluded): {len(sources)}")
 print(f"companions written: {made}   already current: {skipped}")
 
@@ -109,7 +130,9 @@ print(f"companions written: {made}   already current: {skipped}")
 # build — so the list of real candidates has to be a build-time fact instead of
 # an assumption. Regenerated on every run, so it cannot drift from disk.
 manifest = {}
+avifs = {}
 fulls = {}
+avif_fulls = {}
 for f in sources:
     try:
         w = Image.open(f).size[0]
@@ -121,14 +144,20 @@ for f in sources:
         t for t in WIDTHS
         if t < w and os.path.exists(f"{base}-{t}.webp") and os.path.exists(f"{base}-{t}.{ext}")
     ]
+    # Independently listed: an AVIF that failed to encode, or was never
+    # generated, must not be advertised just because its WebP exists.
+    avif_widths = [t for t in WIDTHS if t < w and os.path.exists(f"{base}-{t}.avif")]
     key = "/" + f[len("public/"):]
     manifest[key] = widths
+    avifs[key] = avif_widths
     # The companion is generated from the source with no downscale, so the
     # source width is the honest descriptor. (Reading the WebP instead once
     # shipped a stale, 1920-wide companion as the width of a 1600-wide JPG;
     # the fallback then lied about its own pixels.)
     if os.path.exists(f"{base}.webp"):
         fulls[key] = w
+    if os.path.exists(f"{base}.avif"):
+        avif_fulls[key] = w
 
 MANIFEST = "components/pic-manifest.ts"
 lines = [
@@ -159,6 +188,18 @@ for key in sorted(manifest):
 lines += [
     "};",
     "",
+    "/** src -> the widths that have a real .avif companion. Listed separately",
+    "    from PIC_CANDIDATES because the two encoders can disagree: the AVIF",
+    "    source is offered only over widths named here, so a missing AVIF is",
+    "    never a 404 that the browser has to discover. */",
+    "export const PIC_AVIF_CANDIDATES: Record<string, readonly number[]> = {",
+]
+for key in sorted(avifs):
+    widths = ", ".join(str(x) for x in avifs[key])
+    lines.append(f"  {json.dumps(key)}: [{widths}],")
+lines += [
+    "};",
+    "",
     "/** src -> the source raster's width. The full-size WebP companion (no",
     "    width suffix) is generated from that source without downscale, so this",
     "    is both the ceiling and the honest descriptor for the original",
@@ -170,6 +211,17 @@ lines += [
 for key in sorted(fulls):
     if fulls[key]:
         lines.append(f"  {json.dumps(key)}: {fulls[key]},")
+lines += [
+    "};",
+    "",
+    "/** src -> the source raster's width, where a full-size .avif exists.",
+    "    The ceiling term for the AVIF source, same honest descriptor as",
+    "    PIC_FULL. */",
+    "export const PIC_AVIF_FULL: Record<string, number> = {",
+]
+for key in sorted(avif_fulls):
+    if avif_fulls[key]:
+        lines.append(f"  {json.dumps(key)}: {avif_fulls[key]},")
 lines += [
     "};",
     "",

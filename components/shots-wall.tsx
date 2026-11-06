@@ -1,161 +1,97 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type TouchEvent } from "react";
+import { WALL_SEED, orderGroups, projectOf } from "@/lib/wall-order";
 import Pic from "./pic";
-import { PIC_FULL } from "./pic-manifest";
+import { SHOT_DIMENSIONS } from "./shot-dimensions";
 import { WarpShot } from "./warp-shot";
 
-type Shot = { src: string; alt: string; caption?: string; fit?: "contain" };
-
-/** Project groups with at least this many studies open the wall with a
- double-size lead tile — rhythm with an editorial reason, not decoration. */
-export const LEAD_MIN = 3;
-
-/** A lead is twice the size of a tile, so it needs real pixels: a 900px cover
-    blown up to 874px at 2x was the softest thing on the wall. The lead is the
-    first study in the group at least this wide, falling back to the first. */
-export const LEAD_WIDTH_MIN = 1600;
-
-export function projectOf(s: { alt: string; caption?: string }): string {
- return (s.caption ?? s.alt).split("—")[0].trim().toLowerCase();
-}
-
-/** The wall's shuffle. Each project keeps its studies in order, but the
- *  projects are dealt out against each other rather than run end to end, so
- *  the grid mixes studios instead of showing seven Vienna tiles in a row and
- *  then seven Intempus ones.
- *
- *  Two rules, both of them about evenness rather than taste:
- *
- *    Deterministic. Random at render would split server from client, so the
- *    seed is written down — same wall for everyone, every visit.
- *
- *    Deal the biggest remaining pile that is not the project you just used.
- *    Largest-first spreads the long groups evenly instead of letting them
- *    clump, and the no-repeat rule is what stops two studies from the same
- *    project landing side by side. It only gives in when the same project is
- *    genuinely the only one left, which is what a group larger than half the
- *    wall would force.
- */
-export const WALL_SEED = 1234;
-
-function mulberry32(seed: number): () => number {
-  let a = seed >>> 0;
-  return () => {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-export function orderGroups<T extends { alt: string; caption?: string }>(shots: T[], seed = WALL_SEED): T[] {
-  const groups = new Map<string, T[]>();
-  for (const s of shots) {
-    const p = projectOf(s);
-    if (!groups.has(p)) groups.set(p, []);
-    groups.get(p)!.push(s);
-  }
-
-  const piles = [...groups.values()];
-  const rand = mulberry32(seed);
-  for (let i = piles.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [piles[i], piles[j]] = [piles[j], piles[i]];
-  }
-
-  const cursor = new Array<number>(piles.length).fill(0);
-  const out: T[] = [];
-  let last = -1;
-
-  while (out.length < shots.length) {
-    /* Candidates are every project with studies left, minus the one we have
-       just used — that exclusion is what stops two studies from the same
-       project landing side by side. It is dropped only when the same project
-       is genuinely all that remains, which a group of more than half the wall
-       would force. */
-    let candidates = piles.map((_, i) => i).filter((i) => piles[i].length - cursor[i] > 0 && i !== last);
-    if (candidates.length === 0) {
-      candidates = piles.map((_, i) => i).filter((i) => piles[i].length - cursor[i] > 0);
-    }
-    if (candidates.length === 0) break;
-
-    /* Weighted by what each project still has left, so a long group appears
-       more often across the wall but never twice in a row. Picking the
-       outright biggest every time would be even but mechanical: it opens
-       sylvan, intempus, sylvan, intempus... */
-    const total = candidates.reduce((n, i) => n + (piles[i].length - cursor[i]), 0);
-    let roll = rand() * total;
-    let pick = candidates[candidates.length - 1];
-    for (const i of candidates) {
-      roll -= piles[i].length - cursor[i];
-      if (roll <= 0) {
-        pick = i;
-        break;
-      }
-    }
-
-    out.push(piles[pick][cursor[pick]++]);
-    last = pick;
-  }
-
-  return out;
-}
-
-/** One boolean per shot: true for the lead tile of each qualifying group. */
-export function leadsFor(
- shots: { alt: string; caption?: string; src?: string }[],
- min = LEAD_MIN,
- widthOf: (s: { src?: string }) => number = () => Number.POSITIVE_INFINITY,
-): boolean[] {
- const counts = new Map<string, number>();
- for (const s of shots) counts.set(projectOf(s), (counts.get(projectOf(s)) ?? 0) + 1);
- const first = new Map<string, number>();
- const chosen = new Map<string, number>();
- for (let i = 0; i < shots.length; i++) {
- const p = projectOf(shots[i]);
- if ((counts.get(p) ?? 0) < min) continue;
- if (!first.has(p)) first.set(p, i);
- if (!chosen.has(p) && widthOf(shots[i]) >= LEAD_WIDTH_MIN) chosen.set(p, i);
- }
- for (const [p, i] of first) if (!chosen.has(p)) chosen.set(p, i);
- return shots.map((s, i) => chosen.get(projectOf(s)) === i);
-}
-
-/** What a tile actually measures, per breakpoint, against the grid below:
-   two columns under 640px, three to 1024px, four inside a max-w-[1240px]
-   container above it. A normal tile is one cell; a lead spans two in both
-   directions and so needs roughly double.
-
-   These have to be the real numbers. They were previously declared as
-   "50vw, 280px" for every tile, which was wrong in both directions: on a
-   phone a tile is about 46vw of the viewport rather than 50 of a
-   half-width, and a lead is twice that, so the browser was choosing a 768px
-   file for a box that needed 1188px on a laptop and 1050px on a phone. The
-   screenshots looked soft until you clicked one and the viewer loaded the
-   full-size original. */
-export const TILE_SIZES =
-  "(min-width: 2200px) 431px, (min-width: 1800px) 381px, (max-width: 639px) 46vw, (max-width: 1023px) 31vw, 310px";
-export const LEAD_SIZES =
-  "(min-width: 2200px) 874px, (min-width: 1800px) 774px, (max-width: 639px) 94vw, (max-width: 1023px) 62vw, 594px";
-const VIEWER_SIZES = "(min-width: 1280px) 1184px, calc(100vw - 32px)";
+type Shot = {
+  src: string;
+  alt: string;
+  caption?: string;
+  fit?: "contain";
+  /** Animated covers carry their own pixels; stills read the manifest. */
+  width?: number;
+  height?: number;
+};
 
 /**
- * The wall — studies filed by project, click-to-open. One intro line,
- * a jump list, then a section per project with the same bracket labels
- * the site already uses. Same masonry tiles, same viewer; the sections
- * only say what the clusters already were.
+ * The three density steps. Each is a column count per breakpoint, and the
+ * only thing the control moves: which is the whole reason it is allowed to
+ * exist. The site's old dial changed type size, which overrode the text size
+ * the visitor had already set in their browser — see the note on `html` in
+ * globals.css. How many studies fit across a wall is not a preference of
+ * theirs in the same way; it is how much of ours they want to see at once.
+ */
+export type WallSize = "l" | "m" | "s";
+export const WALL_SIZES: readonly WallSize[] = ["l", "m", "s"];
+
+export const WALL_COLUMNS: Record<WallSize, string> = {
+  l: "columns-1 sm:columns-2 lg:columns-3",
+  m: "columns-2 sm:columns-3 lg:columns-4",
+  /* Three on a phone, not two. At two columns the small step was an exact
+     copy of the medium one — same columns, same requested pixels — so the
+     densest setting did nothing on the one screen where screen space is
+     scarcest. */
+  s: "columns-3 sm:columns-4 lg:columns-6",
+};
+
+/** What a tile actually measures, per step and breakpoint, against the wall
+   below: the grid sits inside `max-w-[1240px] px-5`, so the column field is
+   1200px, 1560px at the 1800 breakpoint and 1760px at 2200, with a 12px gutter
+   taken out of each row. `m` carries the numbers the old fixed four-column
+   grid had; `l` and `s` are the same arithmetic at three and six columns.
+
+   These have to be the real numbers. They were previously declared as
+   "50vw, 280px" for every tile, which was wrong in both directions: the
+   browser was choosing a 768px file for a box that needed 1188px on a laptop,
+   and the screenshots looked soft until you clicked one and the viewer loaded
+   the full-size original. */
+export const TILE_SIZES: Record<WallSize, string> = {
+  l: "(min-width: 2200px) 579px, (min-width: 1800px) 512px, (max-width: 639px) 92vw, (max-width: 1023px) 47vw, 392px",
+  m: "(min-width: 2200px) 431px, (min-width: 1800px) 381px, (max-width: 639px) 46vw, (max-width: 1023px) 31vw, 291px",
+  /* 30vw, not 46: three columns at 640 and below. The gutter is 12px and the
+     page padding 20px either side, so (100vw - 52px) / 3 lands just under
+     30vw. Requesting the two-column file here is how a dense wall goes soft. */
+  s: "(min-width: 2200px) 283px, (min-width: 1800px) 250px, (max-width: 639px) 30vw, (max-width: 1023px) 23vw, 190px",
+};
+const VIEWER_SIZES = "(min-width: 1280px) 1184px, calc(100vw - 32px)";
+
+/** The plate's own shape, from the manifest the importer writes. A tile with
+    no entry still renders — it just cannot reserve its box, so the column
+    reflows when the image lands. */
+export function shotBox(src: string): { width: number; height: number } | null {
+  const d = SHOT_DIMENSIONS[src];
+  return d ? { width: d[0], height: d[1] } : null;
+}
+
+/**
+ * The wall — every study at its own shape.
+ *
+ * The plates are art-directed, not screenshots: a card centred on a dotted
+ * ground, a device on white, a full-bleed poster. The composition *is* the
+ * design, so the grid cannot crop it. This used to force `aspect-video` on
+ * all of them, which cut the margins that make a plate look deliberate and
+ * sliced the portrait and square studies down to a strip. Multicolumn keeps
+ * each ratio and still packs a dense, even field.
+ *
+ * What a tile is, it says on hover — the caption used to live only inside the
+ * viewer, so 71 studies went past unlabelled. On a device that cannot hover
+ * the caption would have to sit on every tile at once, which on a three-column
+ * phone wall is a caption over the art rather than a label for it; there it
+ * waits for the tap instead and is drawn in the viewer.
  */
 export function ShotsWall({ shots }: { shots: Shot[] }) {
  const [focus, setFocus] = useState<number | null>(null);
  const [previous, setPrevious] = useState<number | null>(null);
  const [loaded, setLoaded] = useState(false);
+ const [size, setSize] = useState<WallSize>("m");
  const focusRef = useRef<number | null>(null);
  const loadedRef = useRef(false);
  const [seed, setSeed] = useState(WALL_SEED);
  const ordered = useMemo(() => orderGroups(shots, seed), [shots, seed]);
- const leads = leadsFor(ordered, LEAD_MIN, (s) => (s.src ? PIC_FULL[s.src] ?? 0 : 0));
+ const projectCount = useMemo(() => new Set(ordered.map(projectOf)).size, [ordered]);
 
  const openShot = useCallback((i: number) => {
  focusRef.current = i;
@@ -310,25 +246,54 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  return (
  <div className="pt-8">
  <p className="text-xs tracking-wide text-ink-3">[Playground]</p>
- <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+ <div className="mt-2 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
  <p className="font-sans text-sm text-ink-2">
- Interface studies, visual experiments, and ideas in progress. Click any tile to open.
+ {shots.length} studies across {projectCount} projects, each at the shape it was
+ drawn in. Hover a tile for what it is; click to open.
  </p>
- {process.env.NODE_ENV !== "production" && (
+ {/* Full width on a phone, where the description has already taken the row
+     and a left-clustered control block reads as a stray. Shuffle pulls to the
+     far edge instead. */}
+ <div className="flex w-full shrink-0 items-center justify-between gap-2 sm:w-auto sm:justify-start">
+ <span aria-hidden className="font-sans text-2xs tracking-wide text-ink-3">SIZE</span>
+ <span
+ role="radiogroup"
+ aria-label="Tile size"
+ className="flex items-center gap-0.5 rounded-full p-1 ring-1 ring-line"
+ >
+ {WALL_SIZES.map((z) => (
+ <button
+ key={z}
+ type="button"
+ role="radio"
+ aria-checked={size === z}
+ onClick={() => setSize(z)}
+ aria-label={`${z === "l" ? "Large" : z === "m" ? "Medium" : "Small"} tiles`}
+ data-tone="tap"
+ className={`grid min-h-8 min-w-8 cursor-pointer place-items-center rounded-full font-sans text-xs transition-colors [@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:min-w-11 ${
+ size === z ? "bg-ink text-bg" : "text-ink-2 hover:text-ink"
+ }`}
+ >
+ {z.toUpperCase()}
+ </button>
+ ))}
+ </span>
  <button
  type="button"
  onClick={() => setSeed(Math.floor(Math.random() * 0xffffffff))}
  aria-label="Shuffle the wall"
  data-tone="tap"
- className="shrink-0 cursor-pointer rounded-full px-3 py-1.5 font-mono text-xs text-ink-2 ring-1 ring-line transition-colors hover:text-ink"
+ className="ml-1 flex shrink-0 cursor-pointer items-center rounded-full px-3 py-1.5 font-sans text-xs text-ink-2 ring-1 ring-line transition-colors [@media(pointer:coarse)]:min-h-11 hover:text-ink"
  >
  Shuffle
  </button>
- )}
+ </div>
  </div>
 
- <div className="mt-6 grid grid-cols-2 grid-flow-dense gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
- {ordered.map((s, i) => (
+ <div className={`mt-6 gap-3 ${WALL_COLUMNS[size]}`}>
+ {ordered.map((s, i) => {
+ const box = s.width && s.height ? { width: s.width, height: s.height } : shotBox(s.src);
+ return (
  <button
  key={s.src}
  type="button"
@@ -336,25 +301,40 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  returnFocus.current = e.currentTarget;
  openShot(i);
  }}
- aria-label={`Open ${s.alt}`}
+ aria-label={`Open ${s.alt}${s.caption ? ` — ${s.caption}` : ""}`}
  data-tone="tap"
- className={`block w-full cursor-zoom-in overflow-hidden bg-surface-2 text-left ring-1 ring-line ${leads[i] ? "col-span-2 row-span-2" : ""}`}
+ className="group relative mb-3 block w-full cursor-zoom-in break-inside-avoid overflow-hidden bg-surface-2 text-left"
  >
- <span className={`pointer-events-none block w-full ${leads[i] ? "h-full" : "aspect-video"}`}>
  <WarpShot
-              src={s.src}
-              alt={s.alt}
-              eager={i < 4}
-              index={i}
-              fit={s.fit}
-              sizes={leads[i] ? LEAD_SIZES : TILE_SIZES}
-            />
+                  src={s.src}
+                  alt={s.alt}
+                  eager={i < 6}
+                  index={i}
+                  fit={s.fit}
+                  sizes={TILE_SIZES[size]}
+                  {...box}
+                />
+ {s.caption && (
+ <span
+ aria-hidden
+ className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center px-2 pb-2 opacity-0 mix-blend-difference transition-opacity duration-150 ease-out motion-reduce:transition-none group-hover:opacity-100 group-focus-visible:opacity-100 sm:px-3"
+ >
+ {/* No plate behind it: the caption sits on the artwork, so white under
+     `difference` inverts against whatever is beneath and stays legible on
+     a white plate and a black one alike. On the three-column phone wall
+     there is no room to wrap, so it truncates — the full line is in the
+     tile's label and in the viewer. */}
+ <span className="truncate font-sans text-xs text-white">{s.caption}</span>
  </span>
+ )}
  </button>
- ))}
+ );
+ })}
  </div>
 
- {/* the viewer — captionless: washed stage, counter, arrows, Esc */}
+ {/* the viewer — washed stage, counter, arrows, Esc. The tile's caption is
+     drawn here instead of over the art, so a label is something you ask for
+     by opening a shot, not something every tile wears at once. */}
  {current !== null && focus !== null && (
  <div
  ref={dialogRef}
@@ -425,12 +405,17 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  </div>
  )}
  <div
- className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between px-4 py-4 sm:hidden"
+ className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col items-start gap-2 px-4 py-4 sm:hidden"
  style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}
  >
- <span className="rounded-full bg-surface/85 px-2.5 py-1 font-mono text-xs text-ink-2 ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
+ <span className="rounded-full bg-surface/85 px-2.5 py-1 font-sans text-xs text-ink-2 ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
  {focus + 1} / {ordered.length}
  </span>
+ {current.caption && (
+ <span className="max-w-[80vw] truncate rounded-full bg-surface/85 px-2.5 py-1 font-sans text-xs text-ink-2 ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
+ {current.caption}
+ </span>
+ )}
  </div>
  <figure
  onTouchStart={onTouchStart}
@@ -475,6 +460,11 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  />
  </div>
  <figcaption className="mt-4 hidden items-center gap-2 sm:flex">
+ {current.caption && (
+ <span className="max-w-[40ch] truncate rounded-full bg-surface/85 px-3 py-1.5 font-sans text-xs text-ink-2 ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
+ {current.caption}
+ </span>
+ )}
  <span className="flex items-center gap-1 rounded-full bg-surface/85 p-1 ring-1 ring-line backdrop-blur-md dark:ring-white/10">
  <button
  type="button"

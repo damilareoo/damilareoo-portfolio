@@ -4,6 +4,7 @@ import { DFooter } from "@/components/dfooter";
 import { DNav } from "@/components/dnav";
 import { ExplorationsRail } from "@/components/explorations-rail";
 import { webp } from "@/components/pic";
+import { dossier } from "@/data/dossier";
 
 export const metadata: Metadata = {
  title: { absolute: "Damilare Osofisan — Software Designer" },
@@ -18,54 +19,7 @@ export const metadata: Metadata = {
  },
 };
 
-const WORK = [
- {
- slug: "hitmans-library",
- title: "Hitman's Library",
- sub: "A growing collection of web experiences",
- img: "/dossier/work/hitman/hitman-cover.gif",
- poster: "/dossier/work/hitman/hitman-cover-poster.jpg",
- alt: "Hitman's Library shelf mark and wordmark",
- still: true,
- fit: "contain",
- bg: "#ececec",
- width: 1600,
- height: 1000,
- },
- {
- slug: "sylvan",
- title: "Sylvan",
- sub: "Revenue intelligence for modern teams",
- img: "/dossier/work/sylvan/sylvan-cover.gif",
- poster: "/dossier/work/sylvan/sylvan-cover-poster.jpg",
- alt: "Sylvan signal marks",
- still: true,
- width: 1600,
- height: 1000,
- },
- {
- slug: "endgame",
- title: "Endgame",
- sub: "Product design",
- img: "/dossier/work/endgame/endgame-cover.gif",
- poster: "/dossier/work/endgame/endgame-cover-poster.jpg",
- alt: "Endgame E mark in stars and stripes",
- still: true,
- width: 1600,
- height: 1000,
- },
- {
- slug: "chessever",
- title: "ChessEver",
- sub: "Live tournaments, players & standings",
- img: "/dossier/work/chessever/chessever-cover.gif",
- poster: "/dossier/work/chessever/chessever-cover-poster.jpg",
- alt: "ChessEver rookie rook mark",
- still: true,
- width: 1920,
- height: 1200,
- },
-];
+const WORK = dossier.workCovers;
 
 export default function Home() {
  return (
@@ -75,10 +29,12 @@ export default function Home() {
  {/* ── header ── */}
  <header className="mt-6">
  <h1 className="sr-only">Damilare Osofisan — Software Designer</h1>
- <p className="font-sans text-sm font-medium text-ink">I like figuring things out.</p>
+ <p className="font-sans text-sm font-medium text-ink">
+ Product designer building 0–1 products.
+ </p>
  <p className="mt-4 text-pretty font-sans text-sm leading-normal">
- I design and build digital products on web and mobile.
- I&apos;ve worked across product, brand and web design at{" "}
+ I like figuring things out. I design and build digital products on web and mobile,
+ and I&apos;ve worked across product, brand and web design at{" "}
  <a
  href="https://hex.inc"
  target="_blank"
@@ -105,6 +61,13 @@ export default function Home() {
  endgame.ai
  </a>
  .
+ </p>
+ <p className="mt-4 font-sans text-sm leading-normal text-ink-2">
+ Currently building{" "}
+ <Link href="/work/hitmans-library" className="link-sheen">
+ Hitman&apos;s Library
+ </Link>
+ {" "}— open to new work.
  </p>
  <p className="mt-4 text-pretty font-sans text-sm leading-normal text-ink-2">
  <a

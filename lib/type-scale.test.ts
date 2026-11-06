@@ -129,4 +129,14 @@ describe("the type scale", () => {
       expect(tracking(step)).toBeLessThanOrEqual(0);
     }
   });
+
+  it("sets the site in one typeface", () => {
+    /* BDO Grotesk is the only face the owner wants. `--font-mono` survives as
+       an alias for the lab pages that still name it, so it has to resolve to
+       the same files as `--font-sans` — otherwise those pages quietly fall
+       through to the system's monospace. */
+    expect(css.match(/--font-mono:\s*([^;]+);/)?.[1].trim()).toBe("var(--font-bdo), system-ui, sans-serif");
+    const mixed = GOVERNED.filter((f) => readFileSync(resolve(root, f), "utf8").includes("font-mono"));
+    expect(mixed).toEqual([]);
+  });
 });

@@ -133,75 +133,165 @@ export const dossier = {
     { src: "/dossier/watchfaces/watchfaces-sheet.jpg", alt: "Dot-matrix watch faces", caption: "watch faces — time, weather, portrait, stats." },
   ] as { src: string; alt: string; caption: string }[],
   shots: [
-    { src: "/dossier/shots/110.png", alt: "Vienna study 1", caption: "vienna — study 01." },
-    { src: "/dossier/shots/116.png", alt: "Vienna study 2", caption: "vienna — study 02." },
-    { src: "/dossier/shots/119.png", alt: "Vienna study 3", caption: "vienna — study 03." },
-    { src: "/dossier/shots/vienna.png", alt: "Vienna study 4", caption: "vienna — study 04." },
-    { src: "/dossier/shots/vienna-2.png", alt: "Vienna study 5", caption: "vienna — study 05." },
-    { src: "/dossier/shots/vienna-3.png", alt: "Vienna study 6", caption: "vienna — study 06." },
-    { src: "/dossier/work/sylvan/sylvan-cover-sm.webp", alt: "Sylvan signal marks cover", caption: "sylvan — study 01." },
-    { src: "/dossier/shots/2088.png", alt: "Sylvan study 2", caption: "sylvan — study 02." },
-    { src: "/dossier/shots/2095.png", alt: "Sylvan study 3", caption: "sylvan — study 03." },
-    { src: "/dossier/shots/2097.png", alt: "Sylvan study 4", caption: "sylvan — study 04." },
-    { src: "/dossier/shots/2101.png", alt: "Sylvan study 5", caption: "sylvan — study 05." },
-    { src: "/dossier/shots/2107.png", alt: "Sylvan study 6", caption: "sylvan — study 06." },
-    { src: "/dossier/shots/2114.png", alt: "Sylvan study 7", caption: "sylvan — study 07." },
-    { src: "/dossier/shots/2115.png", alt: "Sylvan study 8", caption: "sylvan — study 08." },
-    { src: "/dossier/shots/2116.png", alt: "Sylvan study 9", caption: "sylvan — study 09." },
-    { src: "/dossier/work/chessever/chessever-cover-sm.webp", alt: "ChessEver rookie rook cover", caption: "chessever — study 01." },
-    { src: "/dossier/shots/frame-34.png", alt: "ChessEver study 2", caption: "chessever — study 02." },
-    { src: "/dossier/shots/thumbnail.png", alt: "ChessEver study 3", caption: "chessever — study 03." },
-    { src: "/dossier/shots/chessever-rookie-rook.png", alt: "ChessEver study 4", caption: "chessever — study 04." },
-    { src: "/dossier/shots/chessever-games.jpg", alt: "ChessEver round 4 games list", caption: "chessever — games." },
-    { src: "/dossier/work/hitman/hitman-cover-poster.jpg", alt: "Hitman's Library cover", caption: "hitman's library — study 01.", fit: "contain" },
-    { src: "/dossier/shots/2125.png", alt: "Hitman's Library study 2", caption: "hitman's library — study 02." },
-    { src: "/dossier/shots/2127.png", alt: "Hitman's Library study 3", caption: "hitman's library — study 03." },
-    { src: "/dossier/shots/131.png", alt: "Remi study 1", caption: "remi — study 01." },
-    { src: "/dossier/shots/2036.png", alt: "Remi study 2", caption: "remi — study 02." },
-    { src: "/dossier/shots/remi.png", alt: "Remi study 3", caption: "remi — study 03." },
-    { src: "/dossier/shots/remi-1.png", alt: "Remi study 4", caption: "remi — study 04." },
-    { src: "/dossier/shots/1512.png", alt: "Mederva study 1", caption: "mederva — study 01." },
-    { src: "/dossier/shots/2012.png", alt: "Mederva study 2", caption: "mederva — study 02." },
-    { src: "/dossier/shots/2013.png", alt: "Mederva study 3", caption: "mederva — study 03." },
-    { src: "/dossier/shots/123.png", alt: "Glint study 1", caption: "glint — study 01." },
-    { src: "/dossier/shots/124.png", alt: "Glint study 2", caption: "glint — study 02." },
-    { src: "/dossier/shots/2062.png", alt: "Glint study 3", caption: "glint — study 03." },
-    { src: "/dossier/shots/2104.png", alt: "Intempus study 1", caption: "intempus — study 01." },
-    { src: "/dossier/shots/intempus.png", alt: "Intempus study 2", caption: "intempus — study 02." },
-    { src: "/dossier/shots/intempus-1.png", alt: "Intempus study 3", caption: "intempus — study 03." },
-    { src: "/dossier/shots/intempus-2.png", alt: "Intempus study 4", caption: "intempus — study 04." },
-    { src: "/dossier/shots/intempus-rugby.jpg", alt: "Intempus rugby shirt, front and back", caption: "intempus — study 05." },
-    { src: "/dossier/shots/intempus-magentas.jpg", alt: "Intempus emotion color study — magentas", caption: "intempus — study 06." },
-    { src: "/dossier/shots/intempus-purples.jpg", alt: "Intempus emotion color study — purples", caption: "intempus — study 07." },
-    { src: "/dossier/shots/frame-2147237416.png", alt: "Sequence study 1", caption: "sequence — study 01." },
-    { src: "/dossier/shots/frame-2147237418.png", alt: "Sequence study 2", caption: "sequence — study 02." },
-    { src: "/dossier/shots/frame-2147255601.png", alt: "Sequence study 3", caption: "sequence — study 03." },
-    { src: "/dossier/shots/sequence.png", alt: "Sequence study 5", caption: "sequence — study 05." },
-    { src: "/dossier/shots/zlink.png", alt: "Zlink study", caption: "zlink — study." },
-    { src: "/dossier/shots/96.png", alt: "Pintours study 1", caption: "pintours — study 01." },
-    { src: "/dossier/shots/2079.png", alt: "Pintours study 2", caption: "pintours — study 02." },
-    { src: "/dossier/shots/frame-2147255600.png", alt: "Pintours study 3", caption: "pintours — study 03." },
-    { src: "/dossier/shots/2049.png", alt: "Inunity study 2", caption: "inunity — study 02." },
-    { src: "/dossier/shots/2129.png", alt: "Inunity study 3", caption: "inunity — study 03." },
-    { src: "/dossier/shots/2033.png", alt: "Textedly study 1", caption: "textedly — study 01." },
-    { src: "/dossier/shots/2050.png", alt: "Textedly study 2", caption: "textedly — study 02." },
-    { src: "/dossier/shots/2075.png", alt: "Textedly study 3", caption: "textedly — study 03." },
-    { src: "/dossier/shots/1537.png", alt: "Seal12 study 1", caption: "seal12 — study 01." },
-    { src: "/dossier/shots/2085.png", alt: "Seal12 study 2", caption: "seal12 — study 02." },
-    { src: "/dossier/shots/wb1.png", alt: "Seal12 study 3", caption: "seal12 — study 03." },
-    { src: "/dossier/shots/2014.png", alt: "SmallGPT study 1", caption: "smallgpt — study 01." },
-    { src: "/dossier/shots/2031.png", alt: "SmallGPT study 2", caption: "smallgpt — study 02." },
-    { src: "/dossier/shots/1511.png", alt: "Strix study", caption: "strix — study." },
-    { src: "/dossier/shots/2032.png", alt: "Axion study", caption: "axion — study." },
-    { src: "/dossier/shots/113.png", alt: "Prayer Pause app store concept", caption: "prayer pause — app store concept." },
-    { src: "/dossier/shots/2084.png", alt: "WhoSampled track concept", caption: "whosampled — track concept." },
+    /* sylvan */
+    { src: "/dossier/shots/sylvan.jpg", alt: "Sylvan study 1", caption: "sylvan \u2014 study 01." },
+    { src: "/dossier/shots/sylvan-1.jpg", alt: "Sylvan study 2", caption: "sylvan \u2014 study 02." },
+    { src: "/dossier/shots/sylvan-2.jpg", alt: "Sylvan study 3", caption: "sylvan \u2014 study 03." },
+    { src: "/dossier/shots/sylvan-3.jpg", alt: "Sylvan study 4", caption: "sylvan \u2014 study 04." },
+    { src: "/dossier/shots/sylvan-4.jpg", alt: "Sylvan study 5", caption: "sylvan \u2014 study 05." },
+    { src: "/dossier/shots/sylvan-5.jpg", alt: "Sylvan study 6", caption: "sylvan \u2014 study 06." },
+    { src: "/dossier/shots/sylvan-6.jpg", alt: "Sylvan study 7", caption: "sylvan \u2014 study 07." },
+    { src: "/dossier/shots/sylvan-7.jpg", alt: "Sylvan study 8", caption: "sylvan \u2014 study 08." },
+    /* vienna */
+    { src: "/dossier/shots/vienna.jpg", alt: "Vienna study 1", caption: "vienna \u2014 study 01." },
+    { src: "/dossier/shots/vienna-1.jpg", alt: "Vienna study 2", caption: "vienna \u2014 study 02." },
+    { src: "/dossier/shots/vienna-2.jpg", alt: "Vienna study 3", caption: "vienna \u2014 study 03." },
+    { src: "/dossier/shots/vienna-3.jpg", alt: "Vienna study 4", caption: "vienna \u2014 study 04." },
+    { src: "/dossier/shots/vienna-4.jpg", alt: "Vienna study 5", caption: "vienna \u2014 study 05." },
+    { src: "/dossier/shots/vienna-5.jpg", alt: "Vienna study 6", caption: "vienna \u2014 study 06." },
+    /* remi was pulled: two of its plates rendered wrong in the viewer and the
+       project has no other study to stand behind them. */
+    /* intempus */
+    { src: "/dossier/shots/intempus.jpg", alt: "Intempus study 1", caption: "intempus \u2014 study 01." },
+    { src: "/dossier/shots/intempus-1.jpg", alt: "Intempus study 2", caption: "intempus \u2014 study 02." },
+    { src: "/dossier/shots/intempus-2.jpg", alt: "Intempus study 3", caption: "intempus \u2014 study 03." },
+    { src: "/dossier/shots/intempus-emotions.jpg", alt: "Intempus study 4", caption: "intempus \u2014 study 04." },
+    /* pintours */
+    { src: "/dossier/shots/pintours.jpg", alt: "Pintours study 1", caption: "pintours \u2014 study 01." },
+    { src: "/dossier/shots/pintours-1.jpg", alt: "Pintours study 2", caption: "pintours \u2014 study 02." },
+    { src: "/dossier/shots/pintours-2.jpg", alt: "Pintours study 3", caption: "pintours \u2014 study 03." },
+    { src: "/dossier/shots/pintours-3.jpg", alt: "Pintours study 4", caption: "pintours \u2014 study 04." },
+    /* chessever */
+    { src: "/dossier/shots/chessever.jpg", alt: "Chessever study 1", caption: "chessever \u2014 study 01." },
+    { src: "/dossier/shots/chessever-1.jpg", alt: "Chessever study 2", caption: "chessever \u2014 study 02." },
+    { src: "/dossier/shots/chessever-2.jpg", alt: "Chessever study 3", caption: "chessever \u2014 study 03." },
+    /* hitman's library */
+    { src: "/dossier/shots/hitmans-library.jpg", alt: "Hitman's Library study 1", caption: "hitman's library \u2014 study 01." },
+    { src: "/dossier/shots/hitmans-library-1.jpg", alt: "Hitman's Library study 2", caption: "hitman's library \u2014 study 02." },
+    /* inunity */
+    { src: "/dossier/shots/inunity.jpg", alt: "Inunity study 1", caption: "inunity \u2014 study 01." },
+    { src: "/dossier/shots/inunity-1.jpg", alt: "Inunity study 2", caption: "inunity \u2014 study 02." },
+    { src: "/dossier/shots/inunity-2.jpg", alt: "Inunity study 3", caption: "inunity \u2014 study 03." },
+    /* glint */
+    { src: "/dossier/shots/glint.jpg", alt: "Glint study 1", caption: "glint \u2014 study 01." },
+    { src: "/dossier/shots/glint-1.jpg", alt: "Glint study 2", caption: "glint \u2014 study 02." },
+    { src: "/dossier/shots/glint-2.jpg", alt: "Glint study 3", caption: "glint \u2014 study 03." },
+    /* seal2 — the wordmark on the plates is "Seal2"; the masters are filed
+       as sea12, which read as a second project and doubled the group. */
+    { src: "/dossier/shots/sea12.jpg", alt: "Seal2 study 1", caption: "seal2 \u2014 study 01." },
+    { src: "/dossier/shots/sea12-1.jpg", alt: "Seal2 study 2", caption: "seal2 \u2014 study 02." },
+    { src: "/dossier/shots/sea12-2.jpg", alt: "Seal2 study 3", caption: "seal2 \u2014 study 03." },
+    /* superr */
+    { src: "/dossier/shots/superr.jpg", alt: "Superr study 1", caption: "superr \u2014 study 01." },
+    { src: "/dossier/shots/superr-1.jpg", alt: "Superr study 2", caption: "superr \u2014 study 02." },
+    { src: "/dossier/shots/superr-2.jpg", alt: "Superr study 3", caption: "superr \u2014 study 03." },
+    /* sequence */
+    { src: "/dossier/shots/sequence.jpg", alt: "Sequence study 1", caption: "sequence \u2014 study 01." },
+    { src: "/dossier/shots/sequence-1.jpg", alt: "Sequence study 2", caption: "sequence \u2014 study 02." },
+    /* chronicle labs */
+    { src: "/dossier/shots/chronicle-labs.jpg", alt: "Chronicle Labs study 1", caption: "chronicle labs \u2014 study 01." },
+    { src: "/dossier/shots/chronicle-labs-1.jpg", alt: "Chronicle Labs study 2", caption: "chronicle labs \u2014 study 02." },
+    { src: "/dossier/shots/chronicle-labs-trace.jpg", alt: "Chronicle Labs study 3", caption: "chronicle labs \u2014 study 03." },
+    /* mederva */
+    { src: "/dossier/shots/mederva.jpg", alt: "Mederva study 1", caption: "mederva \u2014 study 01." },
+    { src: "/dossier/shots/mederva-2.jpg", alt: "Mederva study 2", caption: "mederva \u2014 study 02." },
+    /* nothing pedometer */
+    { src: "/dossier/shots/nothing-pedometer.jpg", alt: "Nothing Pedometer study 1", caption: "nothing pedometer \u2014 study 01." },
+    { src: "/dossier/shots/nothing-pedometer-1.jpg", alt: "Nothing Pedometer study 2", caption: "nothing pedometer \u2014 study 02." },
+    /* textedly */
+    { src: "/dossier/shots/textedly.jpg", alt: "Textedly study 1", caption: "textedly \u2014 study 01." },
+    /* SMALLGPT */
+    { src: "/dossier/shots/smallgpt.jpg", alt: "SMALLGPT study 1", caption: "SMALLGPT \u2014 study 01." },
+    /* strix */
+    { src: "/dossier/shots/strix.jpg", alt: "Strix study 1", caption: "strix \u2014 study 01." },
+    /* axion */
+    { src: "/dossier/shots/axion.jpg", alt: "Axion study 1", caption: "axion \u2014 study 01." },
+    /* zlink */
+    { src: "/dossier/shots/zlink.jpg", alt: "Zlink study 1", caption: "zlink \u2014 study 01." },
+    /* whosampled */
+    { src: "/dossier/shots/whosampled.jpg", alt: "WhoSampled study 1", caption: "whosampled \u2014 study 01." },
+    /* prayerpause */
+    { src: "/dossier/shots/prayerpause.jpg", alt: "Prayer Pause study 1", caption: "prayer pause \u2014 study 01." },
+    /* arpelos */
+    { src: "/dossier/shots/arpelos.jpg", alt: "Arpelos study 1", caption: "arpelos \u2014 study 01." },
+    /* ciego */
+    { src: "/dossier/shots/ciego.jpg", alt: "Ciego study 1", caption: "ciego \u2014 study 01." },
+    /* volvo */
+    { src: "/dossier/shots/volvo.jpg", alt: "Volvo study 1", caption: "volvo \u2014 study 01." },
+    /* Studies with no re-export yet - kept so nothing disappears.
+       1537.png, 2085.png and wb1.png were dropped from this list: they are
+       the same three Seal2 plates as the sea12 masters above, at lower
+       resolution, and the wall showed each study twice. */
     { src: "/dossier/shots/2124.png", alt: "Car climate app concept", caption: "car climate — app concept." },
-    { src: "/dossier/shots/2087.png", alt: "Metro photo grid", caption: "photos — metro grid." },
+    { src: "/dossier/shots/2087.png", alt: "friend.com metro campaign photo grid", caption: "friend.com \u2014 metro exploration." },
     { src: "/dossier/shots/gander.jpg", alt: "Gander verified news claim screen", caption: "gander — verdict." },
     { src: "/dossier/shots/abstract.jpg", alt: "Abstract title cover on a dark technical grid", caption: "abstract — cover." },
     { src: "/dossier/shots/trieuth-capital.jpg", alt: "TrieuthCapital gradient brand cover", caption: "trieuth capital — cover." },
-    { src: "/dossier/shots/chronicle-labs.jpg", alt: "Chronicle Labs seed deck title slide", caption: "chronicle labs — title slide." },
   ] as { src: string; alt: string; caption: string; fit?: "contain" }[],
+  /* The four animated covers the home page leads with. They live here rather
+     than inside app/page.tsx so the playground can show the same plates as the
+     studies — one list, one place to change a cover. `width`/`height` are the
+     GIF's own pixels, so a wall tile can reserve its box before it decodes. */
+  workCovers: [
+    {
+      slug: "hitmans-library",
+      title: "Hitman's Library",
+      sub: "A growing collection of web experiences",
+      img: "/dossier/work/hitman/hitman-cover.gif",
+      poster: "/dossier/work/hitman/hitman-cover-poster.jpg",
+      alt: "Hitman's Library shelf mark and wordmark",
+      still: true,
+      fit: "contain",
+      bg: "#ececec",
+      width: 1600,
+      height: 1000,
+    },
+    {
+      slug: "sylvan",
+      title: "Sylvan",
+      sub: "Revenue intelligence for modern teams",
+      img: "/dossier/work/sylvan/sylvan-cover.gif",
+      poster: "/dossier/work/sylvan/sylvan-cover-poster.jpg",
+      alt: "Sylvan signal marks",
+      still: true,
+      width: 1600,
+      height: 1000,
+    },
+    {
+      slug: "endgame",
+      title: "Endgame",
+      sub: "Product design",
+      img: "/dossier/work/endgame/endgame-cover.gif",
+      poster: "/dossier/work/endgame/endgame-cover-poster.jpg",
+      alt: "Endgame E mark in stars and stripes",
+      still: true,
+      width: 1600,
+      height: 1000,
+    },
+    {
+      slug: "chessever",
+      title: "ChessEver",
+      sub: "Live tournaments, players & standings",
+      img: "/dossier/work/chessever/chessever-cover.gif",
+      poster: "/dossier/work/chessever/chessever-cover-poster.jpg",
+      alt: "ChessEver rookie rook mark",
+      still: true,
+      width: 1920,
+      height: 1200,
+    },
+  ] as {
+    slug: string;
+    title: string;
+    sub: string;
+    img: string;
+    poster: string;
+    alt: string;
+    still: boolean;
+    fit?: "contain";
+    bg?: string;
+    width: number;
+    height: number;
+  }[],
   elsewhere: [
     { label: "EMAIL", mark: "@", handle: "dosofisan7@gmail.com", href: "mailto:dosofisan7@gmail.com" },
     { label: "X", mark: "X", handle: "@damilareoo", href: "https://x.com/damilareoo" },

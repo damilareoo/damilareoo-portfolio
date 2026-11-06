@@ -12,9 +12,12 @@ import "./globals.css";
 /**
  * The site is set in BDO Grotesk throughout — the owner's own files, served
  * locally from `public/fonts` so nothing is fetched at runtime. Regular (400)
- * carries body and display, Medium (500) the headlines, Suisse Mono the
- * instrument numerals. The CSS variable names are unchanged, so nothing
- * downstream knows or cares which files back them.
+ * carries body and display, Medium (500) the headlines.
+ *
+ * There is no second typeface. Suisse Mono used to carry the instrument
+ * numerals; it is gone, and `--font-mono` in globals.css now resolves to BDO
+ * so the places that still ask for it (the lab experiments) render in the
+ * brand typeface rather than falling back to the system's monospace.
  */
 const sans = localFont({
   src: [
@@ -22,12 +25,6 @@ const sans = localFont({
     { path: "../public/fonts/BDOGrotesk-Medium.otf", weight: "500" },
   ],
   variable: "--font-bdo",
-  display: "swap",
-});
-
-const mono = localFont({
-  src: "../public/fonts/SuisseIntl-Mono.ttf",
-  variable: "--font-suisse-mono",
   display: "swap",
 });
 
@@ -102,7 +99,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${sans.variable} ${mono.variable} h-full`}
+      className={`${sans.variable} h-full`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">

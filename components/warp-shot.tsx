@@ -24,6 +24,8 @@ export function WarpShot({
   square,
   fit,
   sizes,
+  width,
+  height,
 }: {
   src: string;
   alt: string;
@@ -32,6 +34,12 @@ export function WarpShot({
   square?: boolean;
   fit?: "contain";
   sizes: string;
+  /** The plate's own pixels. Given, the tile reserves that box and the
+      `object-cover` below crops nothing, because the box already matches the
+      image. Omitted, the frame fills whatever the parent decided — which is
+      what a fixed-ratio grid wants and a masonry wall must not. */
+  width?: number;
+  height?: number;
 }) {
  const frameRef = useRef<HTMLElement>(null);
  const imgRef = useRef<HTMLImageElement>(null);
@@ -68,10 +76,12 @@ export function WarpShot({
  };
  }, []);
 
+ const intrinsic = width !== undefined && height !== undefined;
+
  return (
  <figure
  ref={frameRef}
- className="shot-in block h-full w-full break-inside-avoid overflow-hidden ring-1 ring-line motion-reduce:animate-none"
+ className={`shot-in block w-full break-inside-avoid overflow-hidden ring-1 ring-line motion-reduce:animate-none ${intrinsic ? "" : "h-full"}`}
  style={{ perspective: "600px", animationDelay: `${Math.min(index, 10) * 40}ms` }}
  >
  <Pic
@@ -82,8 +92,10 @@ export function WarpShot({
  fetchPriority={index < 2 ? "high" : undefined}
  decoding="async"
  sizes={sizes}
+ width={width}
+ height={height}
  draggable={false}
- className={`h-full w-full will-change-transform ${fit === "contain" ? "object-contain" : "object-cover"} ${square ? "aspect-square" : ""}`}
+ className={`${intrinsic ? "h-auto" : "h-full"} w-full will-change-transform ${fit === "contain" ? "object-contain" : "object-cover"} ${square ? "aspect-square" : ""}`}
 />
  </figure>
  );

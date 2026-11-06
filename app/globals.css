@@ -174,7 +174,10 @@
   --text-lg: var(--text-lg);
   --text-xl: var(--text-xl);
   --font-sans: var(--font-bdo), system-ui, sans-serif;
-  --font-mono: var(--font-suisse-mono), ui-monospace, monospace;
+  /* One typeface on the whole site. Kept as a token because the lab pages
+     still ask for `font-mono`; without this they would fall through to the
+     system's monospace and quietly disagree with everything else. */
+  --font-mono: var(--font-bdo), system-ui, sans-serif;
 }
 
 /* Size-specific tracking, after Apple's Human Interface Guidelines: small
