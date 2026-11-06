@@ -9,7 +9,7 @@ import { dossier } from "@/data/dossier";
 export const metadata: Metadata = {
  title: { absolute: "Damilare Osofisan — Software Designer" },
  description:
- "Damilare Osofisan — product designer building 0–1 products. Currently building Hitman's Library. Previously Endgame.ai, ChessEver, HEX.",
+ "Damilare Osofisan — software designer building 0–1 products. Currently building Hitman's Library. Previously Endgame.ai, ChessEver, HEX.",
  openGraph: {
  type: "website",
  siteName: "Damilare Osofisan",
@@ -30,7 +30,7 @@ export default function Home() {
  <header className="mt-6">
  <h1 className="sr-only">Damilare Osofisan — Software Designer</h1>
  <p className="font-sans text-sm font-medium text-ink">
- Product designer building 0–1 products.
+ Software designer building 0–1 products.
  </p>
  <p className="mt-4 text-pretty font-sans text-sm leading-normal">
  I like figuring things out. I design and build digital products on web and mobile,
