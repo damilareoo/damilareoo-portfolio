@@ -792,9 +792,20 @@ const ROUTE_END = 3.9;
 const STATS_Y = 284;
 const MONO = "var(--font-bdo), system-ui, sans-serif";
 
+/** The footer keeps a fixed shelf, so the tile cannot start blank while the
+    store is silent. It opens on the concept's own measured run — 5.2 km,
+    32:14, 268 kcal — and any stored or live reading replaces it. If the
+    store never answers, the last cached reading (or this sample) stands. */
+const LAST_READING: StepsReading = {
+ km: RUN_BASE_KM,
+ averageKm: RUN_BASE_KM,
+ steps: Math.round((RUN_BASE_KM * 1000) / 0.75),
+ date: "",
+};
+
 export function StepsTile() {
  const runnerRef = useRef<SVGCircleElement>(null);
- const [data, setData] = useState<StepsReading>(null);
+ const [data, setData] = useState<StepsReading>(LAST_READING);
  /* Theme-bound canvas: black tile on light pages, white on dark. */
  const pal = canvasForTheme(useDark() ? "dark" : undefined);
 
@@ -831,7 +842,9 @@ export function StepsTile() {
  matches it, and adds the poll the README already promised. */
  const load = async () => {
  try {
- const cached = sessionStorage.getItem(KEY);
+ /* localStorage holds the last readable value across visits; the
+ sessionStorage fallback picks up a reading cached before this moved. */
+ const cached = localStorage.getItem(KEY) ?? sessionStorage.getItem(KEY);
  if (cached) {
  const j = JSON.parse(cached);
  if (j && typeof j.km === "number") {
@@ -848,7 +861,8 @@ export function StepsTile() {
  const reading: StepsReading = { km: j.km, averageKm: j.averageKm ?? j.km, steps: j.steps ?? 0, date: j.date ?? "" };
  show(reading);
  try {
- sessionStorage.setItem(KEY, JSON.stringify(reading));
+ localStorage.setItem(KEY, JSON.stringify(reading));
+ sessionStorage.removeItem(KEY);
  } catch {
  /* private mode */
  }
@@ -899,17 +913,17 @@ export function StepsTile() {
  return () => cancelAnimationFrame(raf);
  }, [data, pal]);
 
- /* No reading yet: draw the tile's own idle face rather than removing it.
- The footer is a fixed shelf of four instruments, so a null here left a
- hole the visitor could only read as broken. The matrix and route sit at
- their unlit floor and the caption says what it is; the moment a reading
- lands, the same face lights up. */
+ /* There is always a reading to draw: the cached one, the sample it opens
+ on, or the store's answer. `live` only decides whether the matrix and
+ route are lit; the footer never has an empty cell again. */
  const live = Boolean(data);
 
  /* The mini-poster: live kilometres as dot-matrix, the shared trace with
  its endpoints, and figures scaled off the distance — the adequate-size
  composition, exactly. */
  const km = data?.km ?? 0;
+ const steps = data?.steps ?? 0;
+ const averageKm = data?.averageKm ?? km;
  const dist = km.toFixed(1);
  const time = runTimeForKm(km);
  const kcal = kcalForKm(km);
@@ -919,11 +933,11 @@ export function StepsTile() {
  return (
  <Tile
  label={
- data
- ? `Run ${data.date}: ${fmtKm(data.km)} kilometres in ${time}, ${kcal} kilocalories, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres, on the ${pal.name} canvas.`
- : "Run tile — no reading yet."
+ data?.date
+ ? `Run ${data.date}: ${fmtKm(km)} kilometres in ${time}, ${kcal} kilocalories, ${steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(averageKm)} kilometres, on the ${pal.name} canvas.`
+ : `Last reading: ${fmtKm(km)} kilometres in ${time}, ${kcal} kilocalories, ${steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(averageKm)} kilometres, on the ${pal.name} canvas.`
  }
- value={data ? `${fmtKm(data.km)} km · ${fmtSteps(data.steps)}` : "No reading yet"}
+ value={`${fmtKm(km)} km · ${fmtSteps(steps)}`}
  faceStyle={{ background: pal.bg }}
  >
  <svg viewBox={`0 0 ${FACE} ${FACE}`} aria-hidden className="block h-full w-full">
