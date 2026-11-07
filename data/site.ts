@@ -13,7 +13,7 @@ export const site = {
      `data/site.test.ts` holds it to a host that answers so the same mistake
      cannot land twice. */
   url: "https://damilare.works",
-  email: "dosofisan7@gmail.com",
+  email: "hello@damilare.works",
   linkedin: "https://www.linkedin.com/in/damilareoo",
 };
 

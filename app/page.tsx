@@ -71,7 +71,7 @@ export default function Home() {
  </p>
  <p className="mt-4 text-pretty font-sans text-sm leading-normal text-ink-2">
  <a
- href="mailto:dosofisan7@gmail.com"
+ href="mailto:hello@damilare.works"
  className="link-sheen"
  >
  email
