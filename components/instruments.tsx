@@ -899,9 +899,12 @@ export function StepsTile() {
  return () => cancelAnimationFrame(raf);
  }, [data, pal]);
 
- /* Unconfigured: nothing server-side, nothing before data — a dead
- tile must not cost a caption flash nor a second request. */
- if (!data) return null;
+ /* No reading yet: draw the tile's own idle face rather than removing it.
+ The footer is a fixed shelf of four instruments, so a null here left a
+ hole the visitor could only read as broken. The matrix and route sit at
+ their unlit floor and the caption says what it is; the moment a reading
+ lands, the same face lights up. */
+ const live = Boolean(data);
 
  /* The mini-poster: live kilometres as dot-matrix, the shared trace with
  its endpoints, and figures scaled off the distance — the adequate-size
@@ -910,14 +913,17 @@ export function StepsTile() {
  const dist = km.toFixed(1);
  const time = runTimeForKm(km);
  const kcal = kcalForKm(km);
- const live = Boolean(data);
  const routeX = (nx: number) => ROUTE_TX + nx * 360 * ROUTE_SC;
  const routeY = (ny: number) => ROUTE_TY + ny * 250 * ROUTE_SC;
 
  return (
  <Tile
- label={`Run ${data.date}: ${fmtKm(data.km)} kilometres in ${time}, ${kcal} kilocalories, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres, on the ${pal.name} canvas.`}
- value={`${fmtKm(data.km)} km · ${fmtSteps(data.steps)}`}
+ label={
+ data
+ ? `Run ${data.date}: ${fmtKm(data.km)} kilometres in ${time}, ${kcal} kilocalories, ${data.steps.toLocaleString("en-US")} steps. 7-day average ${fmtKm(data.averageKm)} kilometres, on the ${pal.name} canvas.`
+ : "Run tile — no reading yet."
+ }
+ value={data ? `${fmtKm(data.km)} km · ${fmtSteps(data.steps)}` : "No reading yet"}
  faceStyle={{ background: pal.bg }}
  >
  <svg viewBox={`0 0 ${FACE} ${FACE}`} aria-hidden className="block h-full w-full">
