@@ -6,6 +6,7 @@ import { StrayCap } from "@/components/stray-cap";
 import { EasterEgg } from "@/components/easter-egg";
 import { SoundBind } from "@/components/sound";
 import { CoinFavicon } from "@/components/coin-favicon";
+import { NoWidows } from "@/components/no-widows";
 import { site } from "@/data/site";
 import "./globals.css";
 
@@ -114,6 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <StrayCap />
           <SoundBind />
           <CoinFavicon />
+          <NoWidows />
         </ThemeProvider>
         <Analytics />
         <script
