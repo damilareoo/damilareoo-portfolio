@@ -260,7 +260,7 @@ export const dossier = {
     {
       slug: "endgame",
       title: "Endgame",
-      sub: "Chess platform on web and mobile · Product designer",
+      sub: "Chess platform with 200+ players online at any moment · Product designer",
       img: "/dossier/work/endgame/endgame-cover.gif",
       poster: "/dossier/work/endgame/endgame-cover-poster.jpg",
       alt: "Endgame E mark in stars and stripes",

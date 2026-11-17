@@ -68,12 +68,11 @@ export default async function WorkCasePage({
  const frames = c.gallery;
 
  /* Cover first, then the story, then the rest — sections are the beats
- between the cover and the run. Role & Contribution stays out of
- the run: it sits in the header under the role, so ownership reads first. Numbering runs straight through. */
+ between the cover and the run. Role & Contribution stays out: the
+ header already carries the role. Numbering runs straight through. */
  const first = frames.slice(0, 1);
  const rest = frames.slice(1);
  const beats = c.sections.filter((s) => s.k !== "Role & Contribution");
- const contribution = c.sections.find((s) => s.k === "Role & Contribution")?.v;
 
  return (
  <main className="bg-bg text-ink">
@@ -131,15 +130,6 @@ export default async function WorkCasePage({
  </div>
  )}
  </dl>
-
- {contribution && (
- <div className="mt-6">
- <p className="text-2xs tracking-wide text-ink-3">Contribution</p>
- <p className="mt-1 text-pretty font-sans text-sm leading-normal text-ink">
- {contribution}
- </p>
- </div>
- )}
 
  {c.summary.length > 0 && (
  <div className="mt-6 space-y-4">
