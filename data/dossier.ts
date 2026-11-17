@@ -21,7 +21,7 @@ export const dossier = {
       link: { label: "hitmanslibrary.xyz", href: "https://hitmanslibrary.xyz/" },
       visual: "/dossier/work/hitman/hitman-og.png",
       visualAlt: "Hitman's Library — collection of web experiences",
-      video: "/dossier/work/hitman/hitmans-library-tour-2026-11.mp4",
+      video: "/dossier/work/hitman/hitmans-library-tour-v2.mp4",
       oneLiner:
         "A collection of cool experiences across the web. Currently building, so the case file stays open until it ships.",
       rows: [
@@ -249,7 +249,7 @@ export const dossier = {
     {
       slug: "sylvan",
       title: "Sylvan",
-      sub: "Brand and website for a revenue intelligence platform · Brand designer at HEX",
+      sub: "Brand and website for a revenue intelligence platform",
       img: "/dossier/work/sylvan/sylvan-cover.gif",
       poster: "/dossier/work/sylvan/sylvan-cover-poster.jpg",
       alt: "Sylvan signal marks",
