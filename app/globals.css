@@ -13,6 +13,14 @@
 @custom-variant short (@media (max-height: 540px));
 @custom-variant short-wide (@media (max-height: 540px) and (min-width: 600px));
 
+/* No widows, anywhere. text-wrap is inherited, so one rule on body reaches
+   every paragraph, caption, note and label; headings balance instead. It sits
+   in the base layer so a text-balance or text-nowrap utility still wins. */
+@layer base {
+  body { text-wrap: pretty; }
+  h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+}
+
 :root {
   /* Spacing and radii. These were the density dial's three steps and are now
      one, at the value it shipped in the middle of — the dial went and the

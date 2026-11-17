@@ -171,7 +171,7 @@ export default async function WorkCasePage({
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `aspect-[16/10] w-full object-cover ${g.motion ? "" : "ring-1 ring-line"}`
+ : `h-auto w-full ${g.motion ? "" : "ring-1 ring-line"}`
  }
  />
  ) : (
@@ -184,7 +184,7 @@ export default async function WorkCasePage({
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `aspect-[16/10] w-full bg-surface-2 object-cover ${g.motion ? "" : "ring-1 ring-line"}`
+ : `h-auto w-full bg-surface-2 ${g.motion ? "" : "ring-1 ring-line"}`
  }
  />
  )}
@@ -236,7 +236,7 @@ export default async function WorkCasePage({
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `aspect-[16/10] w-full object-cover ${g.motion ? "" : "ring-1 ring-line"}`
+ : `h-auto w-full ${g.motion ? "" : "ring-1 ring-line"}`
  }
  />
  ) : (
@@ -248,7 +248,7 @@ export default async function WorkCasePage({
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `aspect-[16/10] w-full bg-surface-2 object-cover ${g.motion ? "" : "ring-1 ring-line"}`
+ : `h-auto w-full bg-surface-2 ${g.motion ? "" : "ring-1 ring-line"}`
  }
  />
  )}

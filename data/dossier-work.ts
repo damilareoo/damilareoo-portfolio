@@ -83,10 +83,10 @@ export const workCases: WorkCase[] = [
         note: "Links with notes like “the image hover thing”. A collection with no way to look at any of it.",
       },
       {
-        src: "/dossier/work/hitman/hitman-k-library.jpg",
-        alt: "A mosaic of the library's screens: cards, search, colours and fonts",
+        src: "/dossier/work/hitman/hitman-library-347.jpg",
+        alt: "The library's home page: a grid of website cards, newest first",
         caption: "The library today",
-        note: "343 well-designed websites in one place. Every one photographed, with its colours and fonts pulled out.",
+        note: "347 well-designed websites in one place. Every one photographed, with its colours and fonts pulled out.",
       },
       {
         src: "/dossier/work/hitman/hitman-k-card.jpg",
@@ -115,8 +115,8 @@ export const workCases: WorkCase[] = [
         note: "Every colour the site uses, pulled out for you. Tap one to copy its code.",
       },
       {
-        src: "/dossier/work/hitman/hitman-k-refine.jpg",
-        alt: "The Refine panel with palette, font and readable-text filters",
+        src: "/dossier/work/hitman/hitman-refine-open.jpg",
+        alt: "The library with the Refine panel open: palette, font and readable-text filters",
         caption: "Refine",
         note: "Narrow the library by colour, by font, or by how readable the text is.",
       },
@@ -153,8 +153,8 @@ export const workCases: WorkCase[] = [
         note: "The whole library works on a phone, not just a smaller copy of the desktop.",
       },
       {
-        src: "/dossier/work/hitman/hitman-k-skins.jpg",
-        alt: "A mosaic of the library's screens in dark mode",
+        src: "/dossier/work/hitman/hitman-library-dark-347.jpg",
+        alt: "The library's home page in dark mode",
         caption: "Both skins",
         note: "Every screen comes in light and dark, and everything still reads clearly.",
       },
