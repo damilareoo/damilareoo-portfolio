@@ -52,6 +52,8 @@ components/
   case-rail.tsx       desktop progress rail + mobile bottom pill
   dfooter.tsx         sign-off, socials, live widget strip
   floor-controls.tsx  speaker + theme controls
+  contact-links.tsx   email / x / github / linkedin / are.na row (home + about)
+  stray-cap.tsx       the wandering cap, kept to the gutters beside the content
 data/
   dossier-work.ts         the four case files + galleries
   dossier-explorations.ts exploration data (route removed; kept for later)
@@ -66,6 +68,9 @@ public/dossier/       all artwork, films, case frames
   on tap (with sound, mutable). The tab icon runs the same linear flip on
   canvas at the same speed. Reduced motion freezes both — header on him,
   tab on the static cap.
+- **Stray cap** — the coin's twin crawls the side gutters and darts from
+  the pointer. It never crosses the reading column (960px), and is off below
+  1120px and under reduced motion.
 - **Shots wall** — three-icon sticky pill (wall / deck / shuffle), click for
   a captionless viewer (arrows + Esc work, no hint text), drag-to-deal deck.
 - **Harbour wipe** — procedural canvas frost (speckle, beaded drops, drip

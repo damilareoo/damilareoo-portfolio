@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ContactLinks } from "@/components/contact-links";
 import { DFloor } from "@/components/dfooter";
 import { HarbourReveal } from "@/components/harbour-reveal";
 import { PhotoDeck } from "@/components/photo-deck";
@@ -85,6 +86,11 @@ export default function AboutPage() {
  &ldquo;A ship in harbor is safe, but that is not what ships are
  built for.&rdquo;
  </p>
+ </div>
+
+ <div className="mt-8 space-y-2">
+ <p className="font-sans text-sm text-ink">I&apos;m open to new work.</p>
+ <ContactLinks />
  </div>
 
  <section aria-label="Harbour" className="mt-6">

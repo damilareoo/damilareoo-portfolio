@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DFooter } from "@/components/dfooter";
+import { ContactLinks } from "@/components/contact-links";
 import { DNav } from "@/components/dnav";
 import { ExplorationsRail } from "@/components/explorations-rail";
 import { webp } from "@/components/pic";
@@ -69,50 +70,7 @@ export default function Home() {
  </Link>
  {" "}— open to new work.
  </p>
- <p className="mt-4 text-pretty font-sans text-sm leading-normal text-ink-2">
- <a
- href="mailto:hello@damilare.works"
- className="link-sheen"
- >
- email
- </a>
- {" / "}
- <a
- href="https://x.com/damilareoo"
- target="_blank"
- rel="noopener noreferrer"
- className="link-sheen"
- >
- x
- </a>
- {" / "}
- <a
- href="https://github.com/damilareoo"
- target="_blank"
- rel="noopener noreferrer"
- className="link-sheen"
- >
- github
- </a>
- {" / "}
- <a
- href="https://www.linkedin.com/in/damilareoo"
- target="_blank"
- rel="noopener noreferrer"
- className="link-sheen"
- >
- linkedin
- </a>
- {" / "}
- <a
- href="https://www.are.na/damilare-osofisan"
- target="_blank"
- rel="noopener noreferrer"
- className="link-sheen"
- >
- are.na
- </a>
- </p>
+ <ContactLinks className="mt-4" />
  </header>
 
  {/* ── work ── */}

@@ -41,7 +41,7 @@ const base = site.url;
 export const metadata: Metadata = {
   metadataBase: new URL(base),
   title: { default: `${site.name} — ${site.role}`, template: `%s — ${site.name}` },
-  description: "Product designer working on chess software.",
+  description: "Software designer building 0–1 products on web and mobile.",
   openGraph: {
     type: "website",
     siteName: site.name,

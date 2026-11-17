@@ -6,12 +6,29 @@ import Pic from "./pic";
 const SIZE = 24;
 const MARGIN = 20;
 const SCARE = 70;
+/* The widest reading column (the case frame run, 880px) plus air. The cap
+   lives in the gutters either side of it and never crosses the words or the
+   work; without a gutter worth crawling in, it stays home. */
+const COLUMN = 960;
+const WIDE = `(min-width: ${COLUMN + 160}px)`;
+
+/** Left and right gutter bands for the current viewport. */
+function gutters(w: number) {
+  const inner = (w - COLUMN) / 2;
+  return {
+    left: [MARGIN, inner - MARGIN] as const,
+    right: [w - inner + MARGIN, w - MARGIN] as const,
+    colL: inner,
+    colR: w - inner,
+  };
+}
 
 /**
  * The stray cap — the avatar coin's restless twin. Crawls around
  * the viewport, darts off when your pointer gets close, and does
  * a celebratory spin when tapped. Never dies; never touches the
- * original. Gone entirely under reduced motion.
+ * original. Keeps to the gutters beside the content. Gone entirely
+ * under reduced motion, and on viewports too narrow to leave a gutter.
  */
 export function StrayCap() {
   const [on, setOn] = useState(false);
@@ -21,7 +38,11 @@ export function StrayCap() {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    setOn(true);
+    const wide = window.matchMedia(WIDE);
+    const sync = () => setOn(wide.matches);
+    sync();
+    wide.addEventListener("change", sync);
+    return () => wide.removeEventListener("change", sync);
   }, []);
 
   useEffect(() => {
@@ -29,8 +50,14 @@ export function StrayCap() {
     const el = elRef.current;
     if (!el) return;
 
+    const inGutter = () => {
+      const g = gutters(window.innerWidth);
+      const [a, b] = Math.random() < 0.5 ? g.left : g.right;
+      return a + Math.random() * (b - a);
+    };
+
     const pos = {
-      x: MARGIN + Math.random() * (window.innerWidth - MARGIN * 2),
+      x: inGutter(),
       y: MARGIN + 100 + Math.random() * (window.innerHeight - MARGIN * 2 - 100),
     };
     let heading = Math.random() * Math.PI * 2;
@@ -44,7 +71,7 @@ export function StrayCap() {
 
     const pickTarget = (now: number) => {
       target = {
-        x: MARGIN + Math.random() * (window.innerWidth - MARGIN * 2),
+        x: inGutter(),
         y: MARGIN + Math.random() * (window.innerHeight - MARGIN * 2),
       };
       nextRetarget = now + 6000 + Math.random() * 6000;
@@ -99,6 +126,13 @@ export function StrayCap() {
       if (pos.x < MARGIN || pos.x > w - MARGIN || pos.y < MARGIN || pos.y > h - MARGIN) {
         heading = Math.atan2(h / 2 - pos.y, w / 2 - pos.x);
         speed = Math.max(speed, 120);
+      }
+      // and back out of the column, toward whichever gutter is nearer
+      const g = gutters(w);
+      if (pos.x > g.colL - SIZE / 2 && pos.x < g.colR + SIZE / 2) {
+        heading = pos.x - g.colL < g.colR - pos.x ? Math.PI : 0;
+        speed = Math.max(speed, 160);
+        if (target.x > g.colL && target.x < g.colR) pickTarget(now);
       }
 
       pos.x += Math.cos(heading) * speed * dt;

@@ -50,7 +50,7 @@ export const workCases: WorkCase[] = [
     sections: [
       {
         k: "Role & Contribution",
-        v: "Product, design and code, with Florence Eze.",
+        v: "I designed and built it. Florence Eze contributed to the design and the build.",
       },
       {
         k: "What Was Done",
@@ -182,7 +182,7 @@ export const workCases: WorkCase[] = [
     sections: [
       {
         k: "Role & Contribution",
-        v: "Brand, logo, web design and visual direction.",
+        v: "I designed the brand, logo, website and visual system. Mario Prasetyo built the site, hand-drew the illustrations and contributed designs. Made at HEX, the studio.",
       },
       {
         k: "What Was Done",
@@ -317,7 +317,7 @@ export const workCases: WorkCase[] = [
     sections: [
       {
         k: "Role & Contribution",
-        v: "Founding designer. Research, product and interface work across iOS, Android, desktop and web.",
+        v: "I designed the product and interface across iOS, Android, desktop and web. Kenny Olajide gave UX direction. Vasif Durarbayli is the founder.",
       },
       {
         k: "What Was Done",
@@ -460,7 +460,7 @@ export const workCases: WorkCase[] = [
     sections: [
       {
         k: "Role & Contribution",
-        v: "Product design across web and mobile. UX, interaction, UI and new features end to end.",
+        v: "I designed across web and mobile: UX, interaction, UI and new features. Kenny Olajide gave UX direction. Hans Niemann is the founder.",
       },
       {
         k: "What Was Done",
