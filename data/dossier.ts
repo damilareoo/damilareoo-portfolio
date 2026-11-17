@@ -21,7 +21,7 @@ export const dossier = {
       link: { label: "hitmanslibrary.xyz", href: "https://hitmanslibrary.xyz/" },
       visual: "/dossier/work/hitman/hitman-og.png",
       visualAlt: "Hitman's Library — collection of web experiences",
-      video: "/dossier/work/hitman/hitmans-library-showcase.mp4",
+      video: "/dossier/work/hitman/hitmans-library-tour-2026-11.mp4",
       oneLiner:
         "A collection of cool experiences across the web. Currently building, so the case file stays open until it ships.",
       rows: [

@@ -63,7 +63,7 @@ export const workCases: WorkCase[] = [
     ],
     gallery: [
       {
-        src: "/dossier/work/hitman/hitmans-library-showcase.mp4",
+        src: "/dossier/work/hitman/hitmans-library-tour-2026-11.mp4",
         alt: "A tour of Hitman's Library: browsing, opening a site, its colours and fonts, search, and dark mode",
         caption: "Showcase",
         note: "A quick tour. Browse the shelf, open a site, see its colours and fonts, search, then switch to dark.",
