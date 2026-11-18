@@ -24,15 +24,18 @@ export function projectOf(s: { alt: string; caption?: string }): string {
  *    genuinely the only one left, which is what a group larger than half the
  *    wall would force.
  */
-/* 18746 is the seed whose opening reads best. Multicol fills column by column,
+/* 17162 is the seed whose opening reads best. Multicol fills column by column,
    so the top edge is the four column heads rather than the first four tiles
-   dealt. Here those heads are the dark Pintours plate, the Mederva portrait,
-   the Sylvan library page and the Intempus wordmark: four studios, four
-   palettes. The row under them adds the sylvan cover and the TrieuthCapital
-   gradient, so the fold keeps moving instead of settling into one tone. The
-   seed matters because this edge is the only part of the wall every visitor
-   sees. */
-export const WALL_SEED = 18746;
+   dealt. Here those heads are the Intempus wordmarks, the Prayer Pause phone,
+   the Hitman's Library 404 and the TrieuthCapital gradient: four studios,
+   four palettes, no dense UI. On a two-column phone the same seed opens on
+   Intempus beside the 404. It was chosen by emulating the browser's column
+   balance over 200,000 seeds, keeping only openings where no project repeats
+   in the first screen and every column head is a bold plate, then picking
+   by eye. Adding or removing a plate moves the column breaks, so the search
+   has to be run again whenever the wall changes. The seed matters because
+   this edge is the only part of the wall every visitor sees. */
+export const WALL_SEED = 17162;
 
 /** How many of the latest picks a project must sit out before it is dealt
     again. Three keeps any two studies of one project at least four tiles

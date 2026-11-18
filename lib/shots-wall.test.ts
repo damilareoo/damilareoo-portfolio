@@ -49,6 +49,9 @@ describe("the wall rhythm", () => {
     const covers = dossier.workCovers.map((c) => ({ alt: c.alt, caption: `${c.title.toLowerCase()} — cover.` }));
     const out = orderGroups([...covers, ...dossier.shots]).map(projectOf);
     for (let i = 0; i < out.length; i++) {
+      // the window may only give way in the tail, once fewer projects are left
+      // to deal than the gap needs to fill
+      if (new Set(out.slice(i)).size <= RECENT_GAP) continue;
       expect(out.slice(Math.max(0, i - RECENT_GAP), i)).not.toContain(out[i]);
     }
   });
