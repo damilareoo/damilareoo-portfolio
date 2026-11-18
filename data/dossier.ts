@@ -168,6 +168,17 @@ export const dossier = {
     /* hitman's library */
     { src: "/dossier/shots/hitmans-library.jpg", alt: "Hitman's Library study 1", caption: "hitman's library \u2014 study 01." },
     { src: "/dossier/shots/hitmans-library-1.jpg", alt: "Hitman's Library study 2", caption: "hitman's library \u2014 study 02." },
+    /* Stills and motion alternate inside the group, so wherever the deal
+       lands two of them near each other, one is moving and one is not. The
+       gallery ships as its original GIF: every frame scrolls, and no WebP
+       quality beat the GIF's bytes without visibly shifting its colours. */
+    { src: "/dossier/shots/hitmans-library-gallery.gif", alt: "Hitman's Library gallery, scrolling site cards", caption: "hitman's library \u2014 study 03." },
+    { src: "/dossier/shots/hitmans-library-404.jpg", alt: "Hitman's Library 404, set in a dot-matrix gradient", caption: "hitman's library \u2014 study 04." },
+    { src: "/dossier/shots/hitmans-library-procard.webp", alt: "Hitman's Library Pro membership card", caption: "hitman's library \u2014 study 05." },
+    { src: "/dossier/shots/hitmans-library-grid.jpg", alt: "Hitman's Library grid of site cards with palettes", caption: "hitman's library \u2014 study 06." },
+    { src: "/dossier/shots/hitmans-library-refine.webp", alt: "Hitman's Library Refine filter, sorting and site chips", caption: "hitman's library \u2014 study 07." },
+    { src: "/dossier/shots/hitmans-library-keys.jpg", alt: "Hitman's Library keyboard actions: Reset, Show sites, Close", caption: "hitman's library \u2014 study 08." },
+    { src: "/dossier/shots/hitmans-library-mobile.jpg", alt: "Hitman's Library site sheet in mobile preview", caption: "hitman's library \u2014 study 09." },
     /* inunity */
     { src: "/dossier/shots/inunity.jpg", alt: "Inunity study 1", caption: "inunity \u2014 study 01." },
     { src: "/dossier/shots/inunity-1.jpg", alt: "Inunity study 2", caption: "inunity \u2014 study 02." },

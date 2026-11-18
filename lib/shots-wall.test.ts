@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { TILE_SIZES, WALL_COLUMNS, WALL_SIZES, shotBox } from "@/components/shots-wall";
-import { orderGroups, projectOf } from "@/lib/wall-order";
+import { RECENT_GAP, orderGroups, projectOf } from "@/lib/wall-order";
 import { SHOT_DIMENSIONS } from "@/components/shot-dimensions";
 import { dossier } from "@/data/dossier";
 
@@ -40,6 +40,16 @@ describe("the wall rhythm", () => {
     const project = (alt: string) => alt.split(" ")[0];
     for (let i = 1; i < once.length; i++) {
       expect(project(once[i])).not.toBe(project(once[i - 1]));
+    }
+  });
+
+  it("keeps a project's studies RECENT_GAP picks apart on the real wall", () => {
+    // multicol stacks consecutive picks down one column, so a gap of one let
+    // a big group own a column; the dealt wall must hold the wider gap
+    const covers = dossier.workCovers.map((c) => ({ alt: c.alt, caption: `${c.title.toLowerCase()} — cover.` }));
+    const out = orderGroups([...covers, ...dossier.shots]).map(projectOf);
+    for (let i = 0; i < out.length; i++) {
+      expect(out.slice(Math.max(0, i - RECENT_GAP), i)).not.toContain(out[i]);
     }
   });
 

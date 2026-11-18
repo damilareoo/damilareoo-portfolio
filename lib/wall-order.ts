@@ -34,6 +34,11 @@ export function projectOf(s: { alt: string; caption?: string }): string {
    sees. */
 export const WALL_SEED = 18746;
 
+/** How many of the latest picks a project must sit out before it is dealt
+    again. Three keeps any two studies of one project at least four tiles
+    apart down a column. */
+export const RECENT_GAP = 3;
+
 function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
   return () => {
@@ -62,17 +67,29 @@ export function orderGroups<T extends { alt: string; caption?: string }>(shots: 
 
   const cursor = new Array<number>(piles.length).fill(0);
   const out: T[] = [];
-  let last = -1;
+  const recent: number[] = [];
 
   while (out.length < shots.length) {
-    /* Candidates are every project with studies left, minus the one we have
-       just used — that exclusion is what stops two studies from the same
-       project landing side by side. It is dropped only when the same project
-       is genuinely all that remains, which a group of more than half the wall
-       would force. */
-    let candidates = piles.map((_, i) => i).filter((i) => piles[i].length - cursor[i] > 0 && i !== last);
-    if (candidates.length === 0) {
-      candidates = piles.map((_, i) => i).filter((i) => piles[i].length - cursor[i] > 0);
+    /* Candidates are every project with studies left, minus the ones used in
+       the last RECENT_GAP picks. The wall is CSS multicol, which fills each
+       column top to bottom, so consecutive picks stack vertically. Excluding
+       only the previous pick let a nine-plate project land every other tile
+       and own a whole column. The window is relaxed from the oldest end when
+       nothing else is left, so a group larger than the wall can spread still
+       deals rather than stalls. */
+    const left = (i: number) => piles[i].length - cursor[i] > 0;
+    /* The gap is capped by what the biggest remaining pile can afford: it
+       needs `gap` other studies between each of its own, so a wider window
+       than that would spend the small projects early and then force the big
+       one into a run at the end. */
+    const remaining = shots.length - out.length;
+    const biggest = Math.max(...piles.map((p, i) => p.length - cursor[i]));
+    const affordable = biggest > 1 ? Math.floor((remaining - biggest) / (biggest - 1)) : RECENT_GAP;
+    const gap = Math.max(1, Math.min(RECENT_GAP, affordable));
+    let candidates: number[] = [];
+    for (let w = Math.min(gap, recent.length); w >= 0 && candidates.length === 0; w--) {
+      const blocked = recent.slice(recent.length - w);
+      candidates = piles.map((_, i) => i).filter((i) => left(i) && !blocked.includes(i));
     }
     if (candidates.length === 0) break;
 
@@ -92,7 +109,7 @@ export function orderGroups<T extends { alt: string; caption?: string }>(shots: 
     }
 
     out.push(piles[pick][cursor[pick]++]);
-    last = pick;
+    recent.push(pick);
   }
 
   return out;
