@@ -28,7 +28,7 @@ export function DFloor() {
  <span className="fx-roll inline-block -rotate-2 rounded-lg bg-[#ffd60a] px-4 py-2 font-sans text-sm font-medium text-[#0a0a0a] shadow-[0_8px_20px_rgba(0,0,0,0.18)]">
  Built with love and music by{" "}
  <a
- href="https://x.com/damilareoo"
+ href="https://x.com/damilare_oo"
  target="_blank"
  rel="noopener noreferrer"
  className="underline"

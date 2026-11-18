@@ -4,7 +4,7 @@ import { site } from "@/data/site";
 
 const LINKS = [
   { label: "email", href: `mailto:${site.email}` },
-  { label: "x", href: "https://x.com/damilareoo" },
+  { label: "x", href: "https://x.com/damilare_oo" },
   { label: "github", href: "https://github.com/damilareoo" },
   { label: "linkedin", href: site.linkedin },
   { label: "are.na", href: "https://www.are.na/damilare-osofisan" },

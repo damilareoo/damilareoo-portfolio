@@ -294,7 +294,7 @@ export const dossier = {
   }[],
   elsewhere: [
     { label: "EMAIL", mark: "@", handle: "hello@damilare.works", href: "mailto:hello@damilare.works" },
-    { label: "X", mark: "X", handle: "@damilareoo", href: "https://x.com/damilareoo" },
+    { label: "X", mark: "X", handle: "@damilare_oo", href: "https://x.com/damilare_oo" },
     { label: "GITHUB", mark: "GH", handle: "damilareoo", href: "https://github.com/damilareoo" },
     { label: "LINKEDIN", mark: "IN", handle: "damilareoo", href: "https://www.linkedin.com/in/damilareoo" },
     { label: "V0", mark: "V0", handle: "@damilareoo", href: "https://v0.app/@damilareoo" },

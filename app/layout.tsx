@@ -74,7 +74,7 @@ const personSchema = {
  address: { "@type": "PostalAddress", addressLocality: "Lagos", addressCountry: "NG" },
  email: `mailto:${site.email}`,
  sameAs: [
- "https://x.com/damilareoo",
+ "https://x.com/damilare_oo",
  "https://github.com/damilareoo",
  "https://layers.to/damilareoo",
  site.linkedin,
