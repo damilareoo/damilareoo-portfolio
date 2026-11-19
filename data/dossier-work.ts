@@ -257,7 +257,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "What I did",
-        v: "Brand, logo, website and visual system, made at HEX. Mario Prasetyo built the site, hand-drew the illustrations and contributed designs.",
+        v: "Brand, logo, website and visual system, made at HEX. Mario Prasetyo built the site and contributed designs.",
       },
       {
         k: "Decisions",
@@ -286,7 +286,7 @@ export const workCases: WorkCase[] = [
       },
       {
         title: "Data, drawn like nature.",
-        body: "The illustrations are ASCII trees: data and nature in the same characters, growing from small signals the way the product grows revenue. Mario Prasetyo hand-drew them.",
+        body: "The illustrations are ASCII trees: data and nature in the same characters, growing from small signals the way the product grows revenue. I made them with an ASCII tool I built.",
         frames: [9, [10, 11]],
       },
       {
