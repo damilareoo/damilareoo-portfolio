@@ -141,6 +141,35 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  [ordered.length],
  );
 
+ /* Straight to a shot from the strip. Pointer-driven, so it keeps the fade. */
+ const jump = useCallback((i: number) => {
+ const f = focusRef.current;
+ if (f === null || i === f) return;
+ focusRef.current = i;
+ if (loadedRef.current) setPrevious(f);
+ loadedRef.current = false;
+ setInstant(false);
+ setLoaded(false);
+ setFocus(i);
+ }, []);
+
+ /* The cursor label. Position is written straight to the element's transform
+    on every move — a state update per pointer event would re-render the whole
+    viewer — and only the word itself, which changes when the pointer crosses
+    the middle, goes through React. */
+ const cueRef = useRef<HTMLSpanElement>(null);
+ const [cue, setCue] = useState<"back" | "next">("next");
+ const moveCue = (e: { clientX: number; clientY: number; pointerType: string }, side: "back" | "next") => {
+ const el = cueRef.current;
+ if (!el || e.pointerType !== "mouse") return;
+ el.style.transform = `translate(${e.clientX + 14}px, ${e.clientY + 14}px)`;
+ el.style.opacity = "1";
+ if (side !== cue) setCue(side);
+ };
+ const hideCue = () => {
+ if (cueRef.current) cueRef.current.style.opacity = "0";
+ };
+
  /* A phone has no arrow keys, so the same moves are a horizontal swipe and a
     downward swipe to close. The page behind is already scroll-locked, which
     is what makes the vertical gesture unambiguous. */
@@ -372,6 +401,9 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  aria-label={`${current.alt} — ${focus + 1} of ${ordered.length}`}
  tabIndex={-1}
  onKeyDown={onDialogKeyDown}
+ onTouchStart={onTouchStart}
+ onTouchEnd={onTouchEnd}
+ onTouchCancel={() => { touchStart.current = null; }}
  className="fixed inset-0 z-50 flex h-dvh items-center justify-center overflow-hidden overscroll-contain outline-none"
  >
  <div
@@ -446,10 +478,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  </div>
  )}
  <figure
- onTouchStart={onTouchStart}
- onTouchEnd={onTouchEnd}
- onTouchCancel={() => { touchStart.current = null; }}
- className="relative z-10 flex max-h-[86dvh] w-full flex-col items-center px-4"
+ className="pointer-events-none relative z-10 flex max-h-[86dvh] w-full flex-col items-center px-4"
  >
  <div className="relative flex w-full items-center justify-center">
  {previousShot !== null && (
@@ -489,11 +518,35 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  />
  </div>
  </figure>
- {/* The viewer's chrome, as one band along the foot of the stage: what the
-     shot is on the left, where you are in the middle, the way on to the
-     right. Plain type over the wash rather than a row of outlined pills —
-     the image is the object here, the controls only frame it. Close sits
-     where it does on every other page, top right. */}
+ {/* Navigation is the stage itself. Each half of the screen is a way
+     through — left goes back, right goes on — and on a pointer that can
+     hover, a small label rides the cursor to say which. Taps on a phone
+     do the same, alongside the swipes. Keys are unchanged. */}
+ <button
+ type="button"
+ tabIndex={-1}
+ aria-hidden
+ onClick={() => step(-1)}
+ onPointerMove={(e) => moveCue(e, "back")}
+ onPointerLeave={hideCue}
+ className="absolute inset-y-0 left-0 z-[15] w-1/2 cursor-pointer [@media(pointer:fine)]:cursor-none"
+ />
+ <button
+ type="button"
+ tabIndex={-1}
+ aria-hidden
+ onClick={() => step(1)}
+ onPointerMove={(e) => moveCue(e, "next")}
+ onPointerLeave={hideCue}
+ className="absolute inset-y-0 right-0 z-[15] w-1/2 cursor-pointer [@media(pointer:fine)]:cursor-none"
+ />
+ <span
+ ref={cueRef}
+ aria-hidden
+ className="pointer-events-none fixed left-0 top-0 z-30 hidden whitespace-nowrap font-sans text-xs text-ink opacity-0 transition-opacity duration-150 ease-out [@media(pointer:fine)]:block"
+ >
+ {cue === "back" ? "← back" : "next →"}
+ </span>
  <button
  type="button"
  onClick={() => closeViewer()}
@@ -506,11 +559,18 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
  </svg>
  </button>
+ {/* The foot: what the shot is, and the strip. The strip is the case
+     study's frame rail turned on its side — one tick per shot, the one
+     you are on standing taller in ink, and the rest of this project's
+     studies in a half tone, so you can see where the project continues
+     through a wall that deals projects against each other. Hover a tick
+     for its caption; click to go there. */}
  <div
- className="absolute inset-x-0 bottom-0 z-20 grid grid-cols-[1fr_auto_1fr] items-end gap-4 px-5 pt-4"
+ className="absolute inset-x-0 bottom-0 z-20 flex flex-col gap-3 px-5 pt-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-end sm:gap-6"
  style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))" }}
  >
- <div className="min-w-0 font-sans text-sm">
+ <div className="flex min-w-0 items-end justify-between gap-4 font-sans text-sm">
+ <div className="min-w-0">
  {(() => {
  const [project, detail] = splitCaption(current.caption ?? current.alt);
  return (
@@ -521,28 +581,47 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  );
  })()}
  </div>
- <p className="pb-0.5 font-sans text-xs tabular-nums text-ink-3" aria-live="polite">
+ <p className="shrink-0 pb-0.5 text-xs tabular-nums text-ink-3 sm:hidden" aria-live="polite">
  {focus + 1} / {ordered.length}
  </p>
- <div className="flex justify-end gap-2">
- {([
- { dir: -1, label: "Previous shot", d: "M13 8H3m4-4L3 8l4 4" },
- { dir: 1, label: "Next shot", d: "M3 8h10M9 4l4 4-4 4" },
- ] as const).map((b) => (
- <button
- key={b.label}
- type="button"
- onClick={() => step(b.dir)}
- aria-label={b.label}
- data-tone="tap"
- className="grid h-11 w-11 cursor-pointer place-items-center rounded-full bg-ink/[0.06] text-ink-2 transition-[color,background-color,transform] duration-150 ease-out hover:bg-ink/[0.12] hover:text-ink active:scale-[0.96] dark:bg-ink/10 dark:hover:bg-ink/20"
- >
- <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
- <path d={b.d} />
- </svg>
- </button>
- ))}
  </div>
+ <nav aria-label="Shots" className="flex h-6 items-end justify-center gap-[2px] sm:gap-[3px]">
+ {ordered.map((shot, i) => {
+ const here = i === focus;
+ const kin = !here && projectOf(shot) === projectOf(current);
+ return (
+ <button
+ key={shot.src}
+ type="button"
+ tabIndex={here ? 0 : -1}
+ onClick={() => jump(i)}
+ aria-label={`Shot ${i + 1} of ${ordered.length}: ${shot.caption ?? shot.alt}`}
+ aria-current={here ? "true" : undefined}
+ className="group/tick relative flex h-6 cursor-pointer items-end"
+ >
+ <span
+ aria-hidden
+ className={`block w-[2px] rounded-full transition-[height,background-color] duration-150 ease-out sm:w-[3px] ${
+ here
+ ? "h-5 bg-ink"
+ : kin
+ ? "h-3 bg-ink/45 group-hover/tick:h-4"
+ : "h-3 bg-ink/15 group-hover/tick:h-4 group-hover/tick:bg-ink/40"
+ }`}
+ />
+ <span
+ aria-hidden
+ className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 whitespace-nowrap font-sans text-xs text-ink-2 opacity-0 transition-opacity duration-150 group-hover/tick:opacity-100 [@media(hover:hover)]:block"
+ >
+ {shot.caption ?? shot.alt}
+ </span>
+ </button>
+ );
+ })}
+ </nav>
+ <p className="hidden justify-self-end pb-0.5 font-sans text-xs tabular-nums text-ink-3 sm:block" aria-live="polite">
+ {focus + 1} / {ordered.length}
+ </p>
  </div>
  </div>
  )}
