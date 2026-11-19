@@ -149,7 +149,7 @@ export default async function WorkCasePage({
  A case with no frames at all keeps the three grey slots. Portrait work
  stays column-narrow. */}
  <div className="mx-auto w-full max-w-[880px] px-5 pb-10">
- <div className="mt-2 space-y-12">
+ <div className="frame-run mt-2 space-y-12">
  {first.map((g) => (
  <figure key={g.src} id="frame-1" data-frame={0} className="scroll-mt-24">
  {g.note && (
@@ -157,29 +157,21 @@ export default async function WorkCasePage({
  {g.note}
  </p>
  )}
- <div className={g.motion ? "relative overflow-hidden bg-surface-2 ring-1 ring-line" : g.tall ? "mx-auto max-w-[400px] bg-surface p-3 ring-1 ring-line" : "bg-surface-2 ring-1 ring-line"}>
+ <div className={`frame relative overflow-hidden ${g.tall ? "mx-auto max-w-[400px] bg-surface p-3" : "bg-surface-2"}`}>
  {g.kind === "video" ? (
  <CaseVideo
  src={g.src}
  poster={g.poster}
  alt={g.alt}
  lead={true}
- className={
- g.tall
- ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `h-auto w-full ${g.motion ? "" : "ring-1 ring-line"}`
- }
+ className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full"}
  />
  ) : (
  <CaseImage
  src={g.src}
  alt={g.alt}
  lead={true}
- className={
- g.tall
- ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `h-auto w-full bg-surface-2 ${g.motion ? "" : "ring-1 ring-line"}`
- }
+ className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full bg-surface-2"}
  />
  )}
  {g.motion && (
@@ -216,29 +208,21 @@ export default async function WorkCasePage({
  {g.note}
  </p>
  )}
- <div className={g.motion ? "relative overflow-hidden bg-surface-2 ring-1 ring-line" : g.tall ? "mx-auto max-w-[400px] bg-surface p-3 ring-1 ring-line" : "bg-surface-2 ring-1 ring-line"}>
+ <div className={`frame relative overflow-hidden ${g.tall ? "mx-auto max-w-[400px] bg-surface p-3" : "bg-surface-2"}`}>
  {g.kind === "video" ? (
  <CaseVideo
  src={g.src}
  poster={g.poster}
  alt={g.alt}
  lead={false}
- className={
- g.tall
- ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `h-auto w-full ${g.motion ? "" : "ring-1 ring-line"}`
- }
+ className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full"}
  />
  ) : (
  <CaseImage
  src={g.src}
  alt={g.alt}
  lead={false}
- className={
- g.tall
- ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
- : `h-auto w-full bg-surface-2 ${g.motion ? "" : "ring-1 ring-line"}`
- }
+ className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full bg-surface-2"}
  />
  )}
  {g.motion && (

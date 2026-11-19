@@ -365,6 +365,31 @@ body {
   }
 }
 
+/* A case-study frame. Most plates are exported with their corners already
+   rounded (about 1.7% of the plate's width) and white behind them, so a
+   square frame showed white slivers at each corner inside a square stroke.
+   The frame's radius tracks the run's width — 1.8% of it, never under
+   10px — so it always clips just past the baked corner, at any size. One
+   hairline, drawn inside the edge and above the art, replaces the two
+   rings (frame and image) that used to sit a pixel apart. */
+.frame-run {
+  container-type: inline-size;
+}
+
+.frame {
+  --frame-r: max(10px, 1.8cqw);
+  border-radius: var(--frame-r);
+}
+
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--color-line);
+  pointer-events: none;
+}
+
 /* The About timeline's line, which is the same arrival one layer down.
 
    `.arrive` moves a whole element into place; this draws a hairline along a
