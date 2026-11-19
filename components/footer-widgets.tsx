@@ -67,7 +67,7 @@ function columnsFor(text: string): boolean[][] {
 
 /* The tiles' face and ink, so the footer is one more instrument, not a
    different object. Dark skin follows the tiles: the surface token. */
-const FACE = "relative w-full overflow-hidden rounded-xl bg-[#141414] dark:bg-surface dark:ring-1 dark:ring-white/10";
+const FACE = "relative overflow-hidden bg-[#141414] dark:bg-surface dark:ring-1 dark:ring-white/10";
 const LIT = "rgba(255,255,255,0.92)";
 const UNLIT = "rgba(255,255,255,0.08)";
 
@@ -104,7 +104,7 @@ function Ticker({ text }: { text: string }) {
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
-      const pitch = Math.max(6, Math.min(12, (h * 0.42) / 7));
+      const pitch = Math.max(3.5, Math.min(8, (h * 0.62) / 7));
       const cols = Math.floor((w - pitch) / pitch);
       const x0 = (w - cols * pitch) / 2 + pitch / 2;
       const y0 = (h - 7 * pitch) / 2 + pitch / 2;
@@ -149,7 +149,7 @@ function Ticker({ text }: { text: string }) {
   }, [text]);
 
   return (
-    <div ref={box} className={`${FACE} aspect-[2/1] sm:aspect-auto sm:min-h-0 sm:flex-1`}>
+    <div ref={box} className={`${FACE} h-14 min-w-0 flex-1 rounded-xl`}>
       <canvas ref={canvas} aria-hidden className="absolute inset-0 h-full w-full" />
     </div>
   );
@@ -180,7 +180,7 @@ function TopTile() {
       onClick={up}
       aria-label="Back to top"
       data-tone="tap"
-      className={`${FACE} group aspect-square cursor-pointer transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.97]`}
+      className={`${FACE} group h-14 w-14 shrink-0 cursor-pointer rounded-xl transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.97]`}
     >
       <svg viewBox="0 0 90 90" aria-hidden className="absolute inset-0 h-full w-full p-[22%]">
         {ARROW.flatMap((row, r) =>
@@ -212,27 +212,17 @@ export function FooterWidgets() {
     ? ` · ${track.isPlaying ? "NOW" : "LAST"}: ${track.title}${track.artist ? ` — ${track.artist}` : ""}`
     : "";
   const message = `BUILT WITH ♥ AND MUSIC${heard}`;
-  const caption = track?.title
-    ? `${track.isPlaying ? "now playing" : "last played"} · ${track.title}`
-    : "built with love and music";
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
-      {/* On wide screens the ticker takes the square tile's height exactly:
-          the figure stretches to the row, and the face fills what the
-          caption leaves, so the two faces line up like the tiles above. */}
-      <figure className="col-span-2 flex flex-col sm:col-span-3">
+    <div>
+      {/* One slim row: the ticker as a band, the arrow as a small square at
+          its end. No label: the display already says what it is. */}
+      <div className="flex gap-2 sm:gap-3">
         <Ticker text={message} />
-        <figcaption className="mt-2 truncate text-center font-sans text-xs text-ink-2">{caption}</figcaption>
-        <span className="sr-only">{message}</span>
-      </figure>
-      <figure>
         <TopTile />
-        <figcaption className="mt-2 text-center font-sans text-xs text-ink-2">back to top</figcaption>
-      </figure>
-      <p className="col-span-2 mt-4 font-sans text-xs text-ink-3 sm:col-span-4">
-        © {new Date().getFullYear()} Damilare Osofisan
-      </p>
+      </div>
+      <span className="sr-only">{message}</span>
+      <p className="mt-2 font-sans text-xs text-ink-3">© {new Date().getFullYear()} Damilare Osofisan</p>
     </div>
   );
 }

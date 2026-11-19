@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { DFloor } from "@/components/dfooter";
 import { ShotsWall } from "@/components/shots-wall";
 import { WayBack } from "@/components/way-back";
 import { dossier } from "@/data/dossier";
@@ -33,9 +32,6 @@ export default function ShotsPage() {
  <ShotsWall shots={[...covers, ...dossier.shots]} />
  </div>
 
- <div className="mx-auto w-full max-w-[1240px] px-5 pb-10 min-[1800px]:max-w-[1600px] min-[2200px]:max-w-[1800px]">
- <DFloor />
- </div>
  </main>
  );
 }

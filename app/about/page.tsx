@@ -25,7 +25,7 @@ export default function AboutPage() {
  <PhotoDeck />
  </div>
 
- <div className="mt-8 space-y-5 text-pretty font-sans text-sm leading-normal">
+ <div className="mt-8 space-y-4 text-pretty font-sans text-sm leading-normal">
  <p className="font-medium text-ink">
  I&apos;m Damilare Osofisan.
  </p>
@@ -93,11 +93,11 @@ export default function AboutPage() {
  <ContactLinks />
  </div>
 
- <section aria-label="Harbour" className="mt-6">
+ <section aria-label="Harbour" className="mt-12">
  <HarbourReveal />
  </section>
 
- <footer className="mt-10">
+ <footer>
  <DFloor />
  </footer>
  </div>

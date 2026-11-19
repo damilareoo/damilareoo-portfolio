@@ -43,7 +43,7 @@ export const workCases: WorkCase[] = [
     role: "Design + build",
     links: [{ label: "hitmanslibrary.xyz", href: "https://hitmanslibrary.xyz/" }],
     oneLiner:
-      "A visual library of 347 well-designed websites, each with its colours and fonts pulled out.",
+      "A visual library of well-designed websites, each with its colours and fonts pulled out.",
     credits: [
       { name: "Damilare Osofisan" },
       { name: "Florence Eze", href: "https://florenceeze.com" },
@@ -66,7 +66,7 @@ export const workCases: WorkCase[] = [
       },
       {
         k: "Outcome",
-        v: "Live at hitmanslibrary.xyz with 347 sites, and still growing.",
+        v: "Live at hitmanslibrary.xyz, and still growing.",
       },
     ],
     chapters: [
@@ -106,7 +106,7 @@ export const workCases: WorkCase[] = [
         frames: [18, [16, 17]],
       },
     ],
-    outcome: "Live at hitmanslibrary.xyz with 347 sites, and still growing.",
+    outcome: "Live at hitmanslibrary.xyz, and still growing.",
     gallery: [
       {
         src: "/dossier/work/hitman/hitmans-library-tour-v2.mp4",
@@ -132,7 +132,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/hitman/hitman-library-347.jpg",
         alt: "The library's home page: a grid of website cards, newest first",
         caption: "The library today",
-        note: "347 well-designed websites in one place. Every one photographed, with its colours and fonts pulled out.",
+        note: "Well-designed websites in one place. Every one photographed, with its colours and fonts pulled out.",
       },
       {
         src: "/dossier/work/hitman/hitman-k-card.jpg",
