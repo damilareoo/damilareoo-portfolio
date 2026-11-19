@@ -45,6 +45,24 @@ describe("case-file frames", () => {
   });
 });
 
+describe("case-file chapters", () => {
+  /* The story is told in chapters beside the frames that show it. A frame
+     no chapter claims would silently vanish from the page; one claimed
+     twice would show twice. The lead frame (0) sits above every chapter. */
+  it("places every frame but the lead in exactly one chapter", () => {
+    for (const c of workCases) {
+      if (!c.chapters) continue;
+      const placed = c.chapters.flatMap((ch) => ch.frames).sort((a, b) => a - b);
+      const expected = c.gallery.map((_, i) => i).slice(1);
+      expect(placed, `${c.name} chapters`).toEqual(expected);
+      for (const ch of c.chapters) {
+        expect(ch.title.trim(), `${c.name} has an untitled chapter`).toBeTruthy();
+        expect(ch.frames.length, `${c.name} — "${ch.title}" shows nothing`).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+
 describe("case-file links", () => {
   /* Every exhibit needs a way out of the case study. The records have carried
      links from the start, but nothing ever drew them, so the only route to a

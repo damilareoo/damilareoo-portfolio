@@ -22,6 +22,12 @@ export type WorkCase = {
   credits: { name: string; href?: string }[];
   summary: string[];
   sections: { k: string; v: string }[];
+  /** The story, told beside the work. Each chapter is a claim, a line or
+      two behind it, and the gallery frames (by index) that show it. The
+      lead frame (index 0) sits above the chapters and belongs to none. */
+  chapters?: { title: string; body: string; frames: number[] }[];
+  /** Where it landed, said plainly. Closes the story. */
+  outcome?: string;
   gallery: { src: string; alt: string; caption: string; note?: string; kind?: "video"; poster?: string; tall?: boolean; motion?: "rainbow" | "chessever" | "hitman" | "sylvan" }[];
 };
 
@@ -62,6 +68,44 @@ export const workCases: WorkCase[] = [
         v: "Live at hitmanslibrary.xyz with 347 sites, and still growing.",
       },
     ],
+    chapters: [
+      {
+        title: "It started as a spreadsheet.",
+        body: "Florence and I kept the sites we loved in Excel. Links down one column, notes like “the image hover thing” beside them, and no way to see any of it. So we built what we wanted: a library you can look at.",
+        frames: [2, 1],
+      },
+      {
+        title: "Every site, taken apart.",
+        body: "Each one is photographed, with its colours and fonts pulled out. A card shows just enough to scan: the picture, the address, the main colours and what kind of site it is.",
+        frames: [3, 4],
+      },
+      {
+        title: "Find it by what you remember.",
+        body: "You rarely remember a site's name. You remember its colour or its type. So search is one key away, and filters work by colour, by font and by how readable the text is.",
+        frames: [5, 8],
+      },
+      {
+        title: "Open a site and study it.",
+        body: "Every site opens into its live page, its phone view, its colours and its fonts. Tap a colour to copy it.",
+        frames: [6, 7],
+      },
+      {
+        title: "Make it yours.",
+        body: "Heart what you like and file it into sets. Leave an email and every Monday brings new sites like the ones you've hearted. Pro members get a numbered card with everything they keep.",
+        frames: [9, 10, 11, 12],
+      },
+      {
+        title: "Built to work anywhere.",
+        body: "Light and dark from the start, and a phone layout designed as its own thing, not a shrunken desktop. Even the 404 page puts search one key away.",
+        frames: [13, 14, 15],
+      },
+      {
+        title: "The details around it.",
+        body: "A shelf of four books for a mark, a short about page, and a changelog where every fix is dated and signed by whoever made it.",
+        frames: [18, 16, 17],
+      },
+    ],
+    outcome: "Live at hitmanslibrary.xyz with 347 sites, and still growing.",
     gallery: [
       {
         src: "/dossier/work/hitman/hitmans-library-tour-v2.mp4",
@@ -222,6 +266,34 @@ export const workCases: WorkCase[] = [
         v: "Shipped across the logo, sylvanlabs.com, hero visuals and supporting artwork.",
       },
     ],
+    chapters: [
+      {
+        title: "Every rival looked like the problem.",
+        body: "Sylvan turns messy customer data into clear revenue signals. But the category all looks alike: dense dashboards and cold, technical brands. So the identity starts from one idea, noise becoming signal. The signal mark draws customer actions as patterns over time.",
+        frames: [1, 2, 13],
+      },
+      {
+        title: "Clear, but never cold.",
+        body: "Untitled Sans from Klim carries the display type, Inter the interface and Geist Mono the small labels. One type system, H1 to P3, tracked and leaded.",
+        frames: [3, 4, 5, 6],
+      },
+      {
+        title: "A quiet palette.",
+        body: "Primary is a deep green, #1C3B37, with mint and butter as accents and four neutrals underneath. Calm, so the signals stand out.",
+        frames: [7, 8],
+      },
+      {
+        title: "Data, drawn like nature.",
+        body: "The illustrations are ASCII trees: data and nature in the same characters, growing from small signals the way the product grows revenue. Mario Prasetyo hand-drew them.",
+        frames: [9, 10, 11],
+      },
+      {
+        title: "Words to match.",
+        body: "Foundations of Growth. Built above the Noise. The voice says the idea plainly.",
+        frames: [12],
+      },
+    ],
+    outcome: "Shipped across the logo, sylvanlabs.com, hero visuals and supporting artwork.",
     gallery: [
       {
         src: "/dossier/work/sylvan/sylvan-cover.mp4",
@@ -358,6 +430,29 @@ export const workCases: WorkCase[] = [
         v: "5.0 on the App Store from 45 ratings and 4.8 on Google Play from 193 reviews. 1,000+ weekly active users. Pitched at TWiST Gamma.",
       },
     ],
+    chapters: [
+      {
+        title: "Following live chess was broken.",
+        body: "The tools fans had were clunky, slow or already shut down, and people watch on phones, desktops and the web. I was the founding designer, from the first sketches to launch. Getting in takes two steps, then you're straight into chess.",
+        frames: [1, 2],
+      },
+      {
+        title: "Swipe is the whole product.",
+        body: "A live game should not need a tutorial. So the board is the navigation: swipe to move between live games, and pin the ones that matter to you.",
+        frames: [3, 6, 4],
+      },
+      {
+        title: "Depth, only when you want it.",
+        body: "Engine reads, openings, standings and form sit one step from the board. The database goes deep, with TWIC lists, search and filters that stay out of the way. Alerts arrive before rounds and move by move.",
+        frames: [5, 7, 8, 9, 10, 11],
+      },
+      {
+        title: "A brand that lives off the board.",
+        body: "Four squares, one piece. The mark carries onto merch, with a voice that says it simply: follow chess better.",
+        frames: [12, 13, 14],
+      },
+    ],
+    outcome: "5.0 on the App Store and 4.8 on Google Play, with 1,000+ people using it every week. Pitched at TWiST Gamma.",
     gallery: [
       {
         src: "/dossier/work/chessever/13-mark.jpg",
@@ -498,6 +593,39 @@ export const workCases: WorkCase[] = [
         v: "4,000+ people have played Puzzle Run. 200+ players are in a game across web and mobile at any moment.",
       },
     ],
+    chapters: [
+      {
+        title: "The phone was a step behind.",
+        body: "I joined Endgame.ai after launch. The web had the full product and the app had less of it, so the first job was bringing mobile up to the bar the web set.",
+        frames: [3, 2, 7],
+      },
+      {
+        title: "Puzzle Run: three lives, one clock.",
+        body: "Pick a time, set a target, and solve until the strikes run out. It works the same on the web, the mobile web and the app. 4,000+ people have played it.",
+        frames: [4, 5, 6],
+      },
+      {
+        title: "Every change had to earn its place.",
+        body: "People were already playing, so I chose small, likely-right moves over redesigns. The Netflix spotlight is one: a single trailer slot for new fans, easy to hide, never in the way of Play Online.",
+        frames: [1],
+      },
+      {
+        title: "Watch it, learn it, review it.",
+        body: "Tournament coverage with live boards, standings and chat, team events included. Lessons in chapters, with checkpoints along the way. Coach review that grades every move.",
+        frames: [8, 9, 10, 11, 12, 13, 14, 15, 16],
+      },
+      {
+        title: "A reason to come back.",
+        body: "XP, streaks and achievements turn the profile into a game board. Two piece sets, CZAR and Hopea, were drawn from scratch.",
+        frames: [17, 18, 19, 20],
+      },
+      {
+        title: "One language, two skins.",
+        body: "Holding one product language across web and mobile made each new feature cheaper to add. The whole product flips between light and dark.",
+        frames: [21],
+      },
+    ],
+    outcome: "4,000+ people have played Puzzle Run, and 200+ players are in a game at any moment.",
     gallery: [
       {
         src: "/dossier/work/endgame/endgame-web.jpg",

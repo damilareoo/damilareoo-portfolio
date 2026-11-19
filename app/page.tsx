@@ -83,7 +83,7 @@ export default function Home() {
  <Link
  href={`/work/${w.slug}`}
  aria-label={`${w.title} — ${w.sub}`}
- className="group relative block overflow-hidden rounded-xl bg-surface-2 after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:shadow-[inset_0_0_0_1px_var(--color-line)]"
+ className="group relative block overflow-hidden bg-surface-2 after:pointer-events-none after:absolute after:inset-0 after:shadow-[inset_0_0_0_1px_var(--color-line)]"
  >
  {/* The cover is the object that carries over: opening a case
      study grows it into that page's lead frame. */}
@@ -110,7 +110,7 @@ export default function Home() {
  ? { background: w.bg as string }
  : { background: "var(--surface-2)" }
  }
- className={`aspect-[16/10] w-full rounded-xl ${"fit" in w && w.fit === "contain" ? "object-contain" : "object-cover"} ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
+ className={`aspect-[16/10] w-full ${"fit" in w && w.fit === "contain" ? "object-contain" : "object-cover"} ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
  />
  </ViewTransition>
  </Link>

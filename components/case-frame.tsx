@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Pic from "./pic";
-import { CASE_DIMENSIONS } from "./case-dimensions";
+import { CASE_CORNERS, CASE_DIMENSIONS } from "./case-dimensions";
 
 /**
  * One frame of a case-study run.
@@ -40,6 +40,11 @@ export function CaseImage({
   const [developed, setDeveloped] = useState(lead);
   const develop = () => setDeveloped(true);
   const [w, h] = CASE_DIMENSIONS[src] ?? [];
+  /* A plate exported with pre-rounded corners is scaled just enough that the
+     white wedges fall outside the square frame (which clips). Twelve pixels
+     of a 2248px plate: nothing of the design is lost, only the corners. */
+  const trim = CASE_CORNERS[src];
+  const zoom = trim && w && h ? Math.max(w / (w - 2 * trim), h / (h - 2 * trim)) : 0;
 
   useEffect(() => {
     const img = ref.current;
@@ -68,6 +73,7 @@ export function CaseImage({
       }}
       onError={develop}
       data-developed={developed ? "" : undefined}
+      style={zoom ? { transform: `scale(${zoom.toFixed(4)})` } : undefined}
       className={`${className} ${lead ? "" : "frame-in"}`}
     />
   );

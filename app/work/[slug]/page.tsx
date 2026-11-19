@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ViewTransition } from "react";
 import { notFound } from "next/navigation";
 import { DFloor } from "@/components/dfooter";
-import { CaseRail } from "@/components/case-rail";
 import { CaseImage, CaseVideo } from "@/components/case-frame";
 import { WayBack } from "@/components/way-back";
 import { findCase, workCases } from "@/data/dossier-work";
@@ -69,17 +68,15 @@ export default async function WorkCasePage({
  const frames = c.gallery;
 
  const lead = frames[0];
- const rest = frames.slice(1);
- const story = c.sections.filter((s) => s.k !== "Role & Contribution");
+ const chapters = c.chapters ?? [{ title: c.name, body: "", frames: frames.map((_, i) => i).slice(1) }];
+ const pad = (n: number) => String(n).padStart(2, "0");
 
  return (
  <main className="bg-bg text-ink">
  <WayBack />
- <CaseRail labels={frames.map((g) => g.caption || g.alt)} />
- {/* One column, one left edge. The header, the story, every caption and
-     the cards at the foot all start where the frames start, so nothing
-     floats in an inset of its own. Text keeps a reading measure inside it. */}
- <div id="top" className="mx-auto w-full max-w-[880px] scroll-mt-20 px-5 pb-16">
+ <div id="top" className="mx-auto w-full max-w-[1160px] scroll-mt-20 px-5 pb-16">
+ {/* The opening: the name and what it is on the left, the facts on the
+     right, on the same two columns the chapters use below. */}
  <header className="pt-8">
  <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-2xs tracking-wide text-ink-3">
  <Link href="/" className="link-sheen">
@@ -90,24 +87,44 @@ export default async function WorkCasePage({
  Case study
  </span>
  </nav>
- <div className="mt-3 grid gap-x-12 gap-y-6 sm:grid-cols-[minmax(0,1fr)_240px] sm:items-end">
+ <div className="mt-4 grid gap-x-16 gap-y-6 lg:grid-cols-[300px_minmax(0,1fr)]">
+ <h1 className="font-sans text-lg font-medium leading-snug">{c.name}</h1>
  <div>
- <h1 className="text-balance font-sans text-lg font-medium leading-snug">{c.name}</h1>
- <p className="mt-2 max-w-[52ch] text-pretty font-sans text-sm leading-normal text-ink-2">{c.oneLiner}</p>
- </div>
- <dl className="grid grid-cols-[56px_minmax(0,1fr)] gap-x-4 gap-y-1.5 font-sans text-sm">
+ <p className="max-w-[46ch] text-balance font-sans text-lg leading-snug text-ink-2">{c.oneLiner}</p>
+ <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 font-sans text-sm sm:flex sm:flex-wrap sm:gap-x-10">
  {c.year && (
- <>
+ <div>
  <dt className="text-ink-3">Year</dt>
- <dd className="text-ink">{c.year}</dd>
- </>
+ <dd className="mt-0.5 text-ink">{c.year}</dd>
+ </div>
  )}
+ <div>
  <dt className="text-ink-3">Role</dt>
- <dd className="text-ink">{c.role}</dd>
+ <dd className="mt-0.5 text-ink">{c.role}</dd>
+ </div>
+ <div>
+ <dt className="text-ink-3">With</dt>
+ <dd className="mt-0.5 text-ink">
+ {c.credits
+ .filter((cr) => cr.name !== "Damilare Osofisan")
+ .map((cr, i) => (
+ <span key={cr.name}>
+ {i > 0 && ", "}
+ {cr.href ? (
+ <a href={cr.href} target="_blank" rel="noopener noreferrer" className="link-sheen">
+ {cr.name}
+ </a>
+ ) : (
+ cr.name
+ )}
+ </span>
+ ))}
+ </dd>
+ </div>
  {c.links.length > 0 && (
- <>
+ <div>
  <dt className="text-ink-3">{c.links.length > 1 ? "Links" : "Link"}</dt>
- <dd className="flex flex-wrap gap-x-3">
+ <dd className="mt-0.5 flex flex-wrap gap-x-3">
  {c.links.map((l) => (
  <a
  key={l.href}
@@ -121,57 +138,63 @@ export default async function WorkCasePage({
  </a>
  ))}
  </dd>
- </>
+ </div>
  )}
  </dl>
  </div>
+ </div>
  </header>
 
- <div className="frame-run mt-10 space-y-14">
- {lead ? (
+ <div className="frame-run">
+ {lead && (
+ <div className="mt-12">
  <Frame g={lead} n={0} lead slug={c.slug} />
- ) : (
- [0, 1, 2].map((i) => (
- <div key={`slot-${i}`} aria-hidden className="aspect-[16/10] w-full rounded-xl bg-ink/[0.03] ring-1 ring-line" />
- ))
+ </div>
  )}
 
- {/* The story: a label column and a reading column, divided by
-     hairlines, so the four parts scan as a list before they are read. */}
- {story.length > 0 && (
- <section aria-label="About the project" className="border-b border-line">
- {story.map((s) => (
- <div key={s.k} className="grid gap-x-12 gap-y-1.5 border-t border-line py-5 sm:grid-cols-[160px_minmax(0,1fr)]">
- <h2 className="font-sans text-sm text-ink-3">{s.k}</h2>
- <p className="max-w-[60ch] text-pretty font-sans text-sm leading-relaxed text-ink">{s.v}</p>
+ {/* The chapters. On a wide screen each one's words stay pinned beside
+     its frames while they scroll past, so the claim is always next to
+     the work that makes it; the next chapter takes over as it arrives.
+     On a phone they simply stack. */}
+ {chapters.map((ch, k) => (
+ <section
+ key={ch.title}
+ aria-labelledby={`ch-${k}`}
+ className="mt-20 grid gap-x-16 gap-y-6 lg:grid-cols-[300px_minmax(0,1fr)]"
+ >
+ <div>
+ <div className="lg:sticky lg:top-20">
+ <p className="font-sans text-xs tabular-nums text-ink-3">
+ {pad(k + 1)} / {pad(chapters.length)}
+ </p>
+ <h2 id={`ch-${k}`} className="mt-2 text-balance font-sans text-lg font-medium leading-snug text-ink">
+ {ch.title}
+ </h2>
+ {ch.body && (
+ <p className="mt-3 text-pretty font-sans text-sm leading-relaxed text-ink-2">{ch.body}</p>
+ )}
  </div>
+ </div>
+ <div className="space-y-12">
+ {ch.frames.map((fi) => (
+ <Frame key={frames[fi].src} g={frames[fi]} n={fi} slug={c.slug} />
  ))}
+ </div>
+ </section>
+ ))}
+
+ {c.outcome && (
+ <section aria-labelledby="outcome" className="mt-24 grid gap-x-16 gap-y-3 border-t border-line pt-8 lg:grid-cols-[300px_minmax(0,1fr)]">
+ <h2 id="outcome" className="font-sans text-sm text-ink-3">
+ Where it landed
+ </h2>
+ <p className="max-w-[40ch] text-balance font-sans text-lg leading-snug text-ink">{c.outcome}</p>
  </section>
  )}
-
- {rest.map((g, i) => (
- <Frame key={g.src} g={g} n={i + 1} slug={c.slug} />
- ))}
  </div>
 
- <p className="mt-14 text-pretty font-sans text-sm leading-normal text-ink-2">
- <span className="text-ink-3">Credits</span>{" "}
- {c.credits.map((credit, i) => (
- <span key={credit.name}>
- {i > 0 && ", "}
- {credit.href ? (
- <a href={credit.href} target="_blank" rel="noopener noreferrer" className="link-sheen">
- {credit.name}
- </a>
- ) : (
- credit.name
- )}
- </span>
- ))}
- </p>
-
  {/* prev / next — visual cards, so the next project sells itself */}
- <nav aria-label="More work" className="mt-8 grid grid-cols-2 gap-3">
+ <nav aria-label="More work" className="mt-20 grid grid-cols-2 gap-3 lg:ml-[calc(300px+4rem)]">
  {(
  [
  { c: prev, label: "Previous" },
@@ -182,7 +205,7 @@ export default async function WorkCasePage({
  key={label}
  href={`/work/${w.slug}`}
  aria-label={`${label}: ${w.name}`}
- className="group block overflow-hidden rounded-xl ring-1 ring-line transition-[box-shadow,transform] duration-150 ease-out hover:ring-ink-3 active:scale-[0.99]"
+ className="group block overflow-hidden ring-1 ring-line transition-[box-shadow,transform] duration-150 ease-out hover:ring-ink-3 active:scale-[0.99]"
  >
  {/* eslint-disable-next-line @next/next/no-img-element */}
  <img
@@ -219,14 +242,14 @@ function Frame({ g, n, lead = false, slug }: { g: GalleryFrame; n: number; lead?
  poster={g.poster}
  alt={g.alt}
  lead={lead}
- className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full"}
+ className={g.tall ? "mx-auto block max-h-[72vh] w-auto" : "block h-auto w-full"}
  />
  ) : (
  <CaseImage
  src={g.src}
  alt={g.alt}
  lead={lead}
- className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full bg-surface-2"}
+ className={g.tall ? "mx-auto block max-h-[72vh] w-auto" : "block h-auto w-full bg-surface-2"}
  />
  )}
  {g.motion && <div aria-hidden className={`cover-${g.motion} pointer-events-none absolute inset-0`} />}
@@ -242,7 +265,7 @@ function Frame({ g, n, lead = false, slug }: { g: GalleryFrame; n: number; lead?
  box
  )}
  {(g.caption || g.note) && (
- <figcaption className={`mt-3 max-w-[64ch] text-pretty font-sans text-sm leading-normal ${g.tall ? "mx-auto sm:max-w-[400px]" : ""}`}>
+ <figcaption className={`mt-3 max-w-[64ch] text-pretty font-sans text-xs leading-normal ${g.tall ? "mx-auto sm:max-w-[400px]" : ""}`}>
  {g.caption && <span className="text-ink">{g.caption}.</span>}
  {g.caption && g.note && " "}
  {g.note && <span className="text-ink-2">{g.note}</span>}

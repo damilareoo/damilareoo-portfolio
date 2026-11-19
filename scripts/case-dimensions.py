@@ -27,11 +27,41 @@ DATA = "data/dossier-work.ts"
 OUT = "components/case-dimensions.ts"
 
 
+def baked_corner(im):
+    """How far in from each edge a pre-rounded corner reaches, or 0.
+
+    Many plates are exported with their corners already rounded and white
+    behind them. In a square frame that leaves white wedges at the corners.
+    A corner counts as baked when the corner pixel is white but the plate
+    itself reaches the edge a little way along it: a full-bleed screenshot
+    with a white page has white there too, and is left alone.
+
+    Returns the depth of the wedge along the diagonal plus two pixels, which
+    is how much the page trims from every edge to hide it.
+    """
+    rgb = im.convert("RGB")
+    w, h = rgb.size
+
+    def white(p):
+        return min(p) >= 250
+
+    if not white(rgb.getpixel((0, 0))):
+        return 0
+    probe = int(w * 0.04)
+    if white(rgb.getpixel((probe, 0))) or white(rgb.getpixel((0, int(h * 0.04)))):
+        return 0
+    for d in range(1, int(min(w, h) * 0.05)):
+        if not white(rgb.getpixel((d, d))):
+            return d + 2
+    return 0
+
+
 def main() -> int:
     body = open(DATA).read()
     # Gallery entries are flat objects with no nested braces.
     entries = re.findall(r'\{\s*src: "(/dossier/[^"]+)"(.*?)\}', body, re.S)
     dims = {}
+    corners = {}
     missing = []
     for src, rest in entries:
         measured = src
@@ -47,6 +77,10 @@ def main() -> int:
             continue
         with Image.open(path) as im:
             dims[src] = im.size
+            if measured == src:
+                inset = baked_corner(im)
+                if inset:
+                    corners[src] = inset
 
     if missing:
         for s in missing:
@@ -68,9 +102,17 @@ def main() -> int:
         )
         for k in sorted(dims):
             fh.write(f"  {json.dumps(k)}: {json.dumps(list(dims[k]))},\n")
+        fh.write("};\n\n")
+        fh.write(
+            "/** Plates exported with pre-rounded corners: how many source pixels\n"
+            " * to trim from every edge so a square frame shows no white wedges. */\n"
+            "export const CASE_CORNERS: Record<string, number> = {\n"
+        )
+        for k in sorted(corners):
+            fh.write(f"  {json.dumps(k)}: {corners[k]},\n")
         fh.write("};\n")
 
-    print(f"wrote {OUT}  ({len(dims)} frames)")
+    print(f"wrote {OUT}  ({len(dims)} frames, {len(corners)} with baked corners)")
     return 0
 
 
