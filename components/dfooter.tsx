@@ -1,9 +1,8 @@
+import { FooterWidgets } from "./footer-widgets";
 import { ClockTile, DotsTile, MusicTile, StepsTile } from "./instruments";
-import { NowLine } from "./now-line";
-import { LagosTime } from "./lagos-time";
 
-/** Site footer — the instruments free on the page, the sign-off on
- its own tinted band. Same on every page. */
+/** Home footer: the four instruments, with the footer widgets as their
+ second row, one panel. */
 export function DFooter() {
  return (
  <footer className="mt-12">
@@ -14,25 +13,17 @@ export function DFooter() {
  <MusicTile />
  </div>
 
- <DFloor />
+ <DFloor className="mt-3" />
  </footer>
  );
 }
 
-/** The foot of every page: one quiet row on the page's left edge. Who made
- it, the time where it was made, what was playing while it was (the music
- tile's feed), and the way back up. */
-export function DFloor({ className = "" }: { className?: string }) {
+/** The foot of every page: two more instruments in the tiles' family (see
+ FooterWidgets), at the tiles' width, on the page's left edge. */
+export function DFloor({ className = "mt-24" }: { className?: string }) {
  return (
- <div className={`mt-24 pb-10 ${className}`}>
- <p className="flex flex-col gap-2 font-sans text-xs text-ink-3 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-6">
- <span className="shrink-0">© {new Date().getFullYear()} Damilare Osofisan</span>
- <LagosTime />
- <NowLine />
- <a href="#top" className="shrink-0 transition-colors hover:text-ink sm:ml-auto">
- Back to top ↑
- </a>
- </p>
+ <div className={`max-w-[600px] pb-10 ${className}`}>
+ <FooterWidgets />
  </div>
  );
 }

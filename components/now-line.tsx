@@ -8,12 +8,9 @@ type Track = { title?: string; artist?: string; isPlaying?: boolean };
     already fetched instead of asking Spotify twice. */
 const KEY = "damilareoo-now-playing-v1";
 
-/**
- * "Built with love and music" — with the music named. While something is
- * playing it says so; otherwise it names the last thing played; with no
- * feed at all (no credentials, offline) it is just the sentence.
- */
-export function NowLine() {
+/** The current or last track, from the music tile's cache first and then
+    the feed. Null until anything is known, or when there is no feed. */
+export function useNowPlaying(): Track | null {
   const [track, setTrack] = useState<Track | null>(null);
 
   useEffect(() => {
@@ -39,24 +36,5 @@ export function NowLine() {
     };
   }, []);
 
-  return (
-    <span className="min-w-0">
-      Built with love and music
-      {track?.title && (
-        <span className="text-ink-3">
-          {" · "}
-          {track.isPlaying && (
-            /* Three bars that only move while something is playing. */
-            <span aria-hidden className="eq mr-1.5 inline-flex h-2.5 items-end gap-[2px] align-baseline">
-              <span />
-              <span />
-              <span />
-            </span>
-          )}
-          {track.isPlaying ? "now" : "last"}: <span className="text-ink-2">{track.title}</span>
-          {track.artist && <> — {track.artist}</>}
-        </span>
-      )}
-    </span>
-  );
+  return track;
 }
