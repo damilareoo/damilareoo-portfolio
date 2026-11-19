@@ -248,7 +248,7 @@ export const dossier = {
     {
       slug: "hitmans-library",
       title: "Hitman's Library",
-      sub: "A visual library of web experiences · Design + build, in progress",
+      sub: "Design and build of a visual library of web experiences",
       img: "/dossier/work/hitman/hitman-cover.gif",
       poster: "/dossier/work/hitman/hitman-cover-poster.jpg",
       alt: "Hitman's Library shelf mark and wordmark",
@@ -272,7 +272,7 @@ export const dossier = {
     {
       slug: "endgame",
       title: "Endgame",
-      sub: "Chess platform with 200+ players online at any moment · Product designer",
+      sub: "Product design for an online chess platform",
       img: "/dossier/work/endgame/endgame-cover.gif",
       poster: "/dossier/work/endgame/endgame-cover-poster.jpg",
       alt: "Endgame E mark in stars and stripes",
@@ -283,7 +283,7 @@ export const dossier = {
     {
       slug: "chessever",
       title: "ChessEver",
-      sub: "Live chess app with 1,000+ weekly users · Founding designer",
+      sub: "Founding product design for a live chess app",
       img: "/dossier/work/chessever/chessever-cover.gif",
       poster: "/dossier/work/chessever/chessever-cover-poster.jpg",
       alt: "ChessEver rookie rook mark",
