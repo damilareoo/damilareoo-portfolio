@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
 import Pic from "./pic";
 
 /** Thumb width and the pitch between thumbs, in px. The offset maths below
@@ -28,21 +28,16 @@ export function ScrubStrip({
   shots,
   focus,
   onSeek,
-  onCue,
-  onCueHide,
 }: {
   shots: { src: string; alt: string; caption?: string }[];
   focus: number;
   onSeek: (i: number) => void;
-  onCue: (e: ReactPointerEvent) => void;
-  onCueHide: () => void;
 }) {
   const n = shots.length;
   const boxRef = useRef<HTMLDivElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
   const pos = useRef(focus);
   const mounted = useRef(false);
-  const [dragging, setDragging] = useState(false);
   const draggingRef = useRef(false);
   const drag = useRef<{
     startX: number;
@@ -94,11 +89,9 @@ export function ScrubStrip({
       seen: focus,
     };
     draggingRef.current = true;
-    setDragging(true);
   };
 
   const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    onCue(e);
     const d = drag.current;
     if (!d) return;
     const dx = e.clientX - d.startX;
@@ -131,7 +124,6 @@ export function ScrubStrip({
     const d = drag.current;
     drag.current = null;
     draggingRef.current = false;
-    setDragging(false);
     if (!d) return;
     let target: number;
     if (!d.moved) {
@@ -168,14 +160,12 @@ export function ScrubStrip({
       onPointerMove={onPointerMove}
       onPointerUp={release}
       onPointerCancel={release}
-      onPointerLeave={() => {
-        if (!drag.current) onCueHide();
-      }}
       onTouchStart={(e) => e.stopPropagation()}
       onTouchEnd={(e) => e.stopPropagation()}
-      className={`relative h-14 w-full touch-none select-none overflow-hidden outline-none ${
-        dragging ? "cursor-grabbing" : "cursor-grab"
-      } [@media(pointer:fine)]:cursor-none`}
+      /* The system's horizontal-resize cursor, as fayemi.design uses on its
+         scrubbing carousel: the native left-right arrows say "slide this
+         sideways" without a drawn label, and stay crisp at any density. */
+      className="relative h-14 w-full cursor-ew-resize touch-none select-none overflow-hidden outline-none"
       style={{
         maskImage: "linear-gradient(to right, transparent, #000 14%, #000 86%, transparent)",
         WebkitMaskImage: "linear-gradient(to right, transparent, #000 14%, #000 86%, transparent)",
