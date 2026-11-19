@@ -22,7 +22,7 @@ export function DFooter() {
  FooterWidgets), at the tiles' width, on the page's left edge. */
 export function DFloor({ className = "mt-12" }: { className?: string }) {
  return (
- <div className={`max-w-[600px] pb-10 ${className}`}>
+ <div className={`max-w-[600px] ${className}`}>
  <FooterWidgets />
  </div>
  );

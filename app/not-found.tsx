@@ -14,9 +14,9 @@ export const metadata = { title: "Not found" };
 export default function NotFound() {
   return (
     <main className="bg-bg text-ink">
-      <div className="mx-auto w-full max-w-[600px] px-5 pb-16">
-        <p className="pt-24 font-sans text-xs tabular-nums text-ink-3">404</p>
-        <h1 className="mt-2 font-sans text-lg font-medium leading-snug text-ink">This page doesn&rsquo;t exist.</h1>
+      <div className="mx-auto w-full max-w-[600px] px-5 pb-10">
+        <p className="pt-8 font-sans text-xs tracking-wide text-ink-3">[404]</p>
+        <h1 className="mt-8 font-sans text-lg font-medium leading-snug text-ink">This page doesn&rsquo;t exist.</h1>
         <p className="mt-3 max-w-[46ch] text-pretty font-sans text-sm leading-relaxed text-ink-2">
           The link may be old, or mistyped. Everything that&rsquo;s here is one step away.
         </p>

@@ -1,3 +1,11 @@
+/* Spacing, one rule for every page:
+     20px side gutter
+     32px from the top to a page's label row, and from the label to content
+     48px between blocks            (mt-12)
+     96px between chapters          (mt-24, long case studies only)
+     16px between paragraphs        (space-y-4 / mt-4)
+     40px from the last element to the bottom of the page (pb-10)
+   Anything new should take one of these, not a value of its own. */
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));

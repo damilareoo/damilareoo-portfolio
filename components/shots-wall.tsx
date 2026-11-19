@@ -398,7 +398,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  </div>
  </div>
 
- <div className={`mt-6 gap-3 ${WALL_COLUMNS[size]}`}>
+ <div className={`mt-8 gap-3 ${WALL_COLUMNS[size]}`}>
  {ordered.map((s, i) => {
  const box = s.width && s.height ? { width: s.width, height: s.height } : shotBox(s.src);
  return (

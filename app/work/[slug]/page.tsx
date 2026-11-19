@@ -76,7 +76,7 @@ export default async function WorkCasePage({
  return (
  <main className="bg-bg text-ink">
  <WayBack />
- <div id="top" className="mx-auto w-full max-w-[1160px] scroll-mt-20 px-5 pb-16">
+ <div id="top" className="mx-auto w-full max-w-[1160px] scroll-mt-20 px-5 pb-10">
  {/* The opening: the name and what it is on the left, the facts on the
      right, on the same two columns the chapters use below. */}
  <header className="pt-8">
@@ -89,7 +89,7 @@ export default async function WorkCasePage({
  Case study
  </span>
  </nav>
- <div className="mt-4 grid gap-x-16 gap-y-6 lg:grid-cols-[300px_minmax(0,1fr)]">
+ <div className="mt-8 grid gap-x-16 gap-y-6 lg:grid-cols-[300px_minmax(0,1fr)]">
  <h1 className="font-sans text-lg font-medium leading-snug">{c.name}</h1>
  <div>
  <p className="text-pretty font-sans text-lg leading-snug text-ink-2">{c.oneLiner}</p>
@@ -158,11 +158,11 @@ export default async function WorkCasePage({
      for the whole story (components/chapter-reader.tsx): the chapter you
      are in, beside the frames that
      make its claim. On a phone each chapter's words sit above its frames. */}
- <div className="mt-20 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-x-16">
+ <div className="mt-24 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-x-16">
  <aside className="lg:relative">
  <ChapterReader chapters={chapters.map(({ title, body }) => ({ title, body }))} links={c.links} />
  </aside>
- <div className="space-y-20">
+ <div className="space-y-24">
  {chapters.map((ch, k) => (
  <section key={ch.title} data-chapter={k} aria-labelledby={`ch-${k}`} className="scroll-mt-20">
  <div className="mb-6 lg:sr-only">
@@ -196,7 +196,7 @@ export default async function WorkCasePage({
  </div>
 
  {c.outcome && (
- <section aria-labelledby="outcome" className="mt-28 grid gap-x-16 gap-y-3 lg:grid-cols-[300px_minmax(0,1fr)]">
+ <section aria-labelledby="outcome" className="mt-24 grid gap-x-16 gap-y-3 lg:grid-cols-[300px_minmax(0,1fr)]">
  <h2 id="outcome" className="font-sans text-sm text-ink-3">
  Where it landed
  </h2>
@@ -208,7 +208,7 @@ export default async function WorkCasePage({
  </div>
 
  {/* prev / next — visual cards, so the next project sells itself */}
- <nav aria-label="More work" className="mt-20 grid grid-cols-2 gap-3 lg:ml-[calc(300px+4rem)]">
+ <nav aria-label="More work" className="mt-12 grid grid-cols-2 gap-3 lg:ml-[calc(300px+4rem)]">
  {(
  [
  { c: prev, label: "Previous" },
@@ -237,7 +237,7 @@ export default async function WorkCasePage({
  ))}
  </nav>
 
- <DFloor className="mt-24 lg:ml-[calc(300px+4rem)]" />
+ <DFloor className="mt-12 lg:ml-[calc(300px+4rem)]" />
  </div>
  </main>
  );
