@@ -141,17 +141,35 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  [ordered.length],
  );
 
- /* Straight to a shot from the strip. Pointer-driven, so it keeps the fade. */
+ /* Straight to a shot from the strip. A scrub swaps instantly — the shot has
+    to keep up with the finger — and the neighbours preloaded either side are
+    what make that possible. */
  const jump = useCallback((i: number) => {
  const f = focusRef.current;
  if (f === null || i === f) return;
  focusRef.current = i;
  if (loadedRef.current) setPrevious(f);
  loadedRef.current = false;
- setInstant(false);
+ setInstant(true);
  setLoaded(false);
  setFocus(i);
  }, []);
+
+ /* The strip is one control, not seventy-odd targets. Press anywhere on it and
+    slide: the shot under the pointer is the shot on stage. Ticks are evenly
+    spaced, so the index is just the pointer's share of the strip's width. */
+ const stripRef = useRef<HTMLDivElement>(null);
+ const [scrubbing, setScrubbing] = useState(false);
+ const scrubTo = (x: number) => {
+ const el = stripRef.current;
+ if (!el || ordered.length === 0) return;
+ const first = el.firstElementChild?.getBoundingClientRect();
+ const last = el.lastElementChild?.getBoundingClientRect();
+ if (!first || !last) return;
+ const span = last.right - first.left;
+ const t = Math.min(1, Math.max(0, (x - first.left) / (span || 1)));
+ jump(Math.min(ordered.length - 1, Math.floor(t * ordered.length)));
+ };
 
  /* The cursor label. Position is written straight to the element's transform
     on every move — a state update per pointer event would re-render the whole
@@ -585,40 +603,60 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  {focus + 1} / {ordered.length}
  </p>
  </div>
- <nav aria-label="Shots" className="flex h-6 items-end justify-center gap-[2px] sm:gap-[3px]">
+ <div
+ ref={stripRef}
+ role="slider"
+ tabIndex={0}
+ aria-label="Shots"
+ aria-valuemin={1}
+ aria-valuemax={ordered.length}
+ aria-valuenow={focus + 1}
+ aria-valuetext={`${focus + 1} of ${ordered.length}: ${current.caption ?? current.alt}`}
+ onPointerDown={(e) => {
+ e.currentTarget.setPointerCapture(e.pointerId);
+ setScrubbing(true);
+ scrubTo(e.clientX);
+ }}
+ onPointerMove={(e) => {
+ if (scrubbing) scrubTo(e.clientX);
+ }}
+ onPointerUp={() => setScrubbing(false)}
+ onPointerCancel={() => setScrubbing(false)}
+ onTouchStart={(e) => e.stopPropagation()}
+ onTouchEnd={(e) => e.stopPropagation()}
+ className="relative flex h-10 cursor-grab touch-none select-none items-end justify-center gap-[2px] outline-none active:cursor-grabbing sm:gap-[3px]"
+ >
  {ordered.map((shot, i) => {
  const here = i === focus;
  const kin = !here && projectOf(shot) === projectOf(current);
  return (
- <button
- key={shot.src}
- type="button"
- tabIndex={here ? 0 : -1}
- onClick={() => jump(i)}
- aria-label={`Shot ${i + 1} of ${ordered.length}: ${shot.caption ?? shot.alt}`}
- aria-current={here ? "true" : undefined}
- className="group/tick relative flex h-6 cursor-pointer items-end"
- >
+ <span key={shot.src} aria-hidden className="group/tick relative flex h-full items-end pb-2">
  <span
- aria-hidden
  className={`block w-[2px] rounded-full transition-[height,background-color] duration-150 ease-out sm:w-[3px] ${
  here
  ? "h-5 bg-ink"
  : kin
- ? "h-3 bg-ink/45 group-hover/tick:h-4"
- : "h-3 bg-ink/15 group-hover/tick:h-4 group-hover/tick:bg-ink/40"
+ ? "h-3 bg-ink/45"
+ : `h-3 bg-ink/15 ${scrubbing ? "" : "group-hover/tick:h-4 group-hover/tick:bg-ink/40"}`
  }`}
  />
+ {/* A hovered tick previews where a press would land. While
+     scrubbing it stays out of the way: the caption at the foot
+     already names the shot under the finger, and a label riding
+     the ends of the strip would run off a phone's edge. */}
  <span
- aria-hidden
- className="pointer-events-none absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 whitespace-nowrap font-sans text-xs text-ink-2 opacity-0 transition-opacity duration-150 group-hover/tick:opacity-100 [@media(hover:hover)]:block"
+ className={`pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 whitespace-nowrap font-sans text-xs text-ink-2 transition-opacity duration-150 ${
+ scrubbing
+ ? "hidden"
+ : "hidden opacity-0 group-hover/tick:opacity-100 [@media(hover:hover)]:block"
+ }`}
  >
  {shot.caption ?? shot.alt}
  </span>
- </button>
+ </span>
  );
  })}
- </nav>
+ </div>
  <p className="hidden justify-self-end pb-0.5 font-sans text-xs tabular-nums text-ink-3 sm:block" aria-live="polite">
  {focus + 1} / {ordered.length}
  </p>
