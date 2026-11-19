@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ViewTransition } from "react";
 import { notFound } from "next/navigation";
-import { DFloor } from "@/components/dfooter";
 import { CaseImage, CaseVideo } from "@/components/case-frame";
 import { ChapterReader } from "@/components/chapter-reader";
 import { LinkedText } from "@/components/linked-text";
@@ -176,19 +175,9 @@ export default async function WorkCasePage({
  )}
  </div>
  <div className="space-y-12">
- {ch.frames.map((item) =>
- Array.isArray(item) ? (
- /* Two frames of one subject, side by side: it breaks the
-    single-file run and lets a comparison read as one. */
- <div key={item.join("-")} className="grid gap-x-4 gap-y-12 sm:grid-cols-2">
- {item.map((fi) => (
+ {ch.frames.flat().map((fi) => (
  <Frame key={frames[fi].src} g={frames[fi]} n={fi} slug={c.slug} />
  ))}
- </div>
- ) : (
- <Frame key={frames[item].src} g={frames[item]} n={item} slug={c.slug} />
- ),
- )}
  </div>
  </section>
  ))}
@@ -237,7 +226,6 @@ export default async function WorkCasePage({
  ))}
  </nav>
 
- <DFloor className="mt-12 lg:ml-[calc(300px+4rem)]" />
  </div>
  </main>
  );
@@ -248,22 +236,27 @@ type GalleryFrame = (typeof workCases)[number]["gallery"][number];
 /** One frame of the run, with its caption beneath, starting at the frame's
     own left edge. The caption names the frame; the note says what to see. */
 function Frame({ g, n, lead = false, slug }: { g: GalleryFrame; n: number; lead?: boolean; slug: string }) {
+ /* Every frame after the lead is one size: the run's full width at 16:10,
+    the shape most plates were made in. Art of another shape fills the box
+    (a 16:9 screen loses about 5% at each side) rather than leaving bars,
+    so the run reads as one even sequence. The lead keeps its own shape. */
+ const fit = lead ? "block h-auto w-full" : "absolute inset-0 h-full w-full object-cover";
  const box = (
- <div className={`frame relative overflow-hidden ${g.tall ? "mx-auto max-w-[400px] bg-surface p-3" : "bg-surface-2"}`}>
+ <div className={`frame relative overflow-hidden bg-surface-2 ${lead ? "" : "aspect-[16/10]"}`}>
  {g.kind === "video" ? (
  <CaseVideo
  src={g.src}
  poster={g.poster}
  alt={g.alt}
  lead={lead}
- className={g.tall ? "mx-auto block max-h-[72vh] w-auto" : "block h-auto w-full"}
+ className={fit}
  />
  ) : (
  <CaseImage
  src={g.src}
  alt={g.alt}
  lead={lead}
- className={g.tall ? "mx-auto block max-h-[72vh] w-auto" : "block h-auto w-full bg-surface-2"}
+ className={fit}
  />
  )}
  {g.motion && <div aria-hidden className={`cover-${g.motion} pointer-events-none absolute inset-0`} />}
@@ -281,7 +274,7 @@ function Frame({ g, n, lead = false, slug }: { g: GalleryFrame; n: number; lead?
  {/* The caption names the frame and nothing more: the chapter beside it
      already says what to see, and saying it twice made both weaker. */}
  {g.caption && (
- <figcaption className={`mt-2.5 font-sans text-xs text-ink-3 ${g.tall ? "mx-auto sm:max-w-[400px]" : ""}`}>
+ <figcaption className="mt-2.5 font-sans text-xs text-ink-3">
  {g.caption}
  </figcaption>
  )}

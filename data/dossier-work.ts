@@ -25,7 +25,8 @@ export type WorkCase = {
   /** The story, told beside the work. Each chapter is a claim, a line or
       two behind it, and the gallery frames (by index) that show it. The
       lead frame (index 0) sits above the chapters and belongs to none. */
-  /** A frame index, or two indices shown side by side on wide screens. */
+  /** Frame indices in reading order. A nested pair is a grouping only;
+      every frame renders at the same size. */
   chapters?: { title: string; body: string; frames: (number | [number, number])[] }[];
   /** Where it landed, said plainly. Closes the story. */
   outcome?: string;

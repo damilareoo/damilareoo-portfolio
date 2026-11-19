@@ -32,6 +32,8 @@ Typecheck: `pnpm exec tsc --noEmit`.
 
 After adding a case-study frame, run `python3 scripts/case-dimensions.py` so the frame holds its size before it loads. The test suite fails if a frame has no dimensions.
 
+Case studies are told in chapters (`chapters` in `data/dossier-work.ts`): a claim, a line or two, and the frames that show it. Every frame except the lead must belong to exactly one chapter; the test suite checks this. The script above also measures plates exported with pre-rounded corners so the page can trim them for square frames. Spacing follows one rule, written at the top of `app/globals.css`.
+
 ## Structure
 
 ```
