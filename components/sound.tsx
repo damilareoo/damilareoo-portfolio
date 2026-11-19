@@ -26,7 +26,7 @@ const KEY = "damilareoo-sound";
 
 let ctx: AudioContext | null = null;
 let enabled = true;
-let volume = 0.2;
+const volume = 0.2;
 
 function ac(): AudioContext | null {
   if (typeof window === "undefined") return null;

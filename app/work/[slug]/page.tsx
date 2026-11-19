@@ -196,7 +196,7 @@ export default async function WorkCasePage({
  </div>
 
  {c.outcome && (
- <section aria-labelledby="outcome" className="mt-24 grid gap-x-16 gap-y-3 border-t border-line pt-8 lg:grid-cols-[300px_minmax(0,1fr)]">
+ <section aria-labelledby="outcome" className="mt-28 grid gap-x-16 gap-y-3 lg:grid-cols-[300px_minmax(0,1fr)]">
  <h2 id="outcome" className="font-sans text-sm text-ink-3">
  Where it landed
  </h2>
@@ -227,7 +227,7 @@ export default async function WorkCasePage({
  alt=""
  loading="lazy"
  style={COVERS[w.slug]?.bg ? { background: COVERS[w.slug].bg } : undefined}
- className={`aspect-video w-full ${COVERS[w.slug]?.fit === "contain" ? "object-contain" : "object-cover"} transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.02]`}
+ className={`aspect-video w-full ${w.slug === "hitmans-library" ? "invert-dark" : ""} ${COVERS[w.slug]?.fit === "contain" ? "object-contain" : "object-cover"} transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.02]`}
  />
  <span className="block p-3">
  <span className="block text-2xs tracking-wide text-ink-3">{label}</span>

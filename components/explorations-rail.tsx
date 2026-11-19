@@ -69,19 +69,19 @@ export function ExplorationsRail() {
  />
  )}
  </div>
- <div className="mt-3 flex items-baseline justify-between gap-2 font-sans text-xs uppercase tracking-widest text-ink-3">
- <span className="min-w-0">{e.title}</span>
+ <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 font-sans text-xs uppercase tracking-widest text-ink-3">
+ <span className="whitespace-nowrap">{e.title}</span>
  {e.embed ? (
  <a
  href={e.embed}
  target="_blank"
  rel="noopener noreferrer"
- className="shrink-0 underline decoration-line underline-offset-2"
+ className="shrink-0 whitespace-nowrap underline decoration-line underline-offset-2"
  >
  Open live ↗
  </a>
  ) : (
- <span aria-hidden className="shrink-0">
+ <span aria-hidden className="shrink-0 whitespace-nowrap">
  Interaction concept
  </span>
  )}
