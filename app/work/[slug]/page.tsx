@@ -4,6 +4,7 @@ import { ViewTransition } from "react";
 import { notFound } from "next/navigation";
 import { DFloor } from "@/components/dfooter";
 import { CaseImage, CaseVideo } from "@/components/case-frame";
+import { ChapterReader } from "@/components/chapter-reader";
 import { WayBack } from "@/components/way-back";
 import { findCase, workCases } from "@/data/dossier-work";
 
@@ -152,28 +153,26 @@ export default async function WorkCasePage({
  </div>
  )}
 
- {/* The chapters. On a wide screen each one's words stay pinned beside
-     its frames while they scroll past, so the claim is always next to
-     the work that makes it; the next chapter takes over as it arrives.
-     On a phone they simply stack. */}
+ {/* The chapters. On a wide screen one reader stays pinned on the left
+     for the whole story (components/chapter-reader.tsx): the rail of
+     chapter meters, then the chapter you are in, beside the frames that
+     make its claim. On a phone each chapter's words sit above its frames
+     and a hairline at the top of the screen keeps the meters. */}
+ <div className="mt-20 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-x-16">
+ <aside className="lg:relative">
+ <ChapterReader chapters={chapters.map(({ title, body }) => ({ title, body }))} />
+ </aside>
+ <div className="space-y-20">
  {chapters.map((ch, k) => (
- <section
- key={ch.title}
- aria-labelledby={`ch-${k}`}
- className="mt-20 grid gap-x-16 gap-y-6 lg:grid-cols-[300px_minmax(0,1fr)]"
- >
- <div>
- <div className="lg:sticky lg:top-20">
+ <section key={ch.title} data-chapter={k} aria-labelledby={`ch-${k}`} className="scroll-mt-20">
+ <div className="mb-6 lg:sr-only">
  <p className="font-sans text-xs tabular-nums text-ink-3">
  {pad(k + 1)} / {pad(chapters.length)}
  </p>
  <h2 id={`ch-${k}`} className="mt-2 text-balance font-sans text-lg font-medium leading-snug text-ink">
  {ch.title}
  </h2>
- {ch.body && (
- <p className="mt-3 text-pretty font-sans text-sm leading-relaxed text-ink-2">{ch.body}</p>
- )}
- </div>
+ {ch.body && <p className="mt-3 text-pretty font-sans text-sm leading-relaxed text-ink-2">{ch.body}</p>}
  </div>
  <div className="space-y-12">
  {ch.frames.map((fi) => (
@@ -182,6 +181,8 @@ export default async function WorkCasePage({
  </div>
  </section>
  ))}
+ </div>
+ </div>
 
  {c.outcome && (
  <section aria-labelledby="outcome" className="mt-24 grid gap-x-16 gap-y-3 border-t border-line pt-8 lg:grid-cols-[300px_minmax(0,1fr)]">

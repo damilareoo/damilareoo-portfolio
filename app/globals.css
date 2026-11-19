@@ -1573,3 +1573,17 @@ html,
 body {
   overflow-x: clip;
 }
+
+/* The case reader's hand-over between chapters: the new claim settles in
+   from a soft blur, quickly, as the system responding to the scroll. */
+@keyframes chapter-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(4px);
+  }
+}
+
+.chapter-in {
+  animation: chapter-in 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
