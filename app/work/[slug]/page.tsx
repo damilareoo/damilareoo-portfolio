@@ -68,25 +68,20 @@ export default async function WorkCasePage({
 
  const frames = c.gallery;
 
- /* Cover first, then the story, then the rest — sections are the beats
- between the cover and the run. Role & Contribution stays out: the
- header already carries the role. Numbering runs straight through. */
- const first = frames.slice(0, 1);
+ const lead = frames[0];
  const rest = frames.slice(1);
- const beats = c.sections.filter((s) => s.k !== "Role & Contribution");
+ const story = c.sections.filter((s) => s.k !== "Role & Contribution");
 
  return (
  <main className="bg-bg text-ink">
- {/* the way back — fixed, always in reach, like the reference */}
  <WayBack />
  <CaseRail labels={frames.map((g) => g.caption || g.alt)} />
- {/* the story — narrow, quiet, like the reference prose */}
- <div id="top" className="mx-auto w-full max-w-[600px] scroll-mt-20 px-5 pb-10">
- <div className="pt-8">
- <nav
- aria-label="Breadcrumb"
- className="flex items-center gap-2 text-2xs tracking-wide text-ink-3"
- >
+ {/* One column, one left edge. The header, the story, every caption and
+     the cards at the foot all start where the frames start, so nothing
+     floats in an inset of its own. Text keeps a reading measure inside it. */}
+ <div id="top" className="mx-auto w-full max-w-[880px] scroll-mt-20 px-5 pb-16">
+ <header className="pt-8">
+ <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-2xs tracking-wide text-ink-3">
  <Link href="/" className="link-sheen">
  Home
  </Link>
@@ -95,26 +90,24 @@ export default async function WorkCasePage({
  Case study
  </span>
  </nav>
- <h1 className="mt-2 text-balance font-sans text-lg font-medium leading-snug">{c.name}</h1>
- <p className="mt-3 text-pretty font-sans text-sm leading-normal text-ink-2">
- {c.oneLiner}
- </p>
-
- <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
+ <div className="mt-3 grid gap-x-12 gap-y-6 sm:grid-cols-[minmax(0,1fr)_240px] sm:items-end">
+ <div>
+ <h1 className="text-balance font-sans text-lg font-medium leading-snug">{c.name}</h1>
+ <p className="mt-2 max-w-[52ch] text-pretty font-sans text-sm leading-normal text-ink-2">{c.oneLiner}</p>
+ </div>
+ <dl className="grid grid-cols-[56px_minmax(0,1fr)] gap-x-4 gap-y-1.5 font-sans text-sm">
  {c.year && (
- <div>
- <dt className="text-2xs tracking-wide text-ink-3">Year</dt>
- <dd className="mt-1 font-sans text-sm text-ink">{c.year}</dd>
- </div>
+ <>
+ <dt className="text-ink-3">Year</dt>
+ <dd className="text-ink">{c.year}</dd>
+ </>
  )}
- <div>
- <dt className="text-2xs tracking-wide text-ink-3">Role</dt>
- <dd className="mt-1 font-sans text-sm text-ink">{c.role}</dd>
- </div>
+ <dt className="text-ink-3">Role</dt>
+ <dd className="text-ink">{c.role}</dd>
  {c.links.length > 0 && (
- <div>
- <dt className="text-2xs tracking-wide text-ink-3">Links</dt>
- <dd className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-sans text-sm">
+ <>
+ <dt className="text-ink-3">{c.links.length > 1 ? "Links" : "Link"}</dt>
+ <dd className="flex flex-wrap gap-x-3">
  {c.links.map((l) => (
  <a
  key={l.href}
@@ -128,137 +121,46 @@ export default async function WorkCasePage({
  </a>
  ))}
  </dd>
- </div>
+ </>
  )}
  </dl>
+ </div>
+ </header>
 
- {c.summary.length > 0 && (
- <div className="mt-6 space-y-4">
- {c.summary.map((p, i) => (
- <p
- key={i}
- className="text-pretty font-sans text-sm leading-normal text-ink-2"
- >
- {p}
- </p>
- ))}
- </div>
- )}
- </div>
- </div>
- {/* the frame run — wide cards under narrow words, like the reference.
- A case with no frames at all keeps the three grey slots. Portrait work
- stays column-narrow. */}
- <div className="mx-auto w-full max-w-[880px] px-5 pb-10">
- <div className="frame-run mt-2 space-y-12">
- {first.map((g) => (
- <figure key={g.src} id="frame-1" data-frame={0} className="scroll-mt-24">
- {g.note && (
- <p className="mx-auto mb-3 w-full max-w-[560px] font-sans text-sm leading-normal text-ink-2">
- {g.note}
- </p>
- )}
- <ViewTransition name={`work-${c.slug}`} share="morph" default="none">
- <div className={`frame relative overflow-hidden ${g.tall ? "mx-auto max-w-[400px] bg-surface p-3" : "bg-surface-2"}`}>
- {g.kind === "video" ? (
- <CaseVideo
- src={g.src}
- poster={g.poster}
- alt={g.alt}
- lead={true}
- className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full"}
- />
+ <div className="frame-run mt-10 space-y-14">
+ {lead ? (
+ <Frame g={lead} n={0} lead slug={c.slug} />
  ) : (
- <CaseImage
- src={g.src}
- alt={g.alt}
- lead={true}
- className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full bg-surface-2"}
- />
- )}
- {g.motion && (
- <div aria-hidden className={`cover-${g.motion} pointer-events-none absolute inset-0`} />
- )}
- </div>
- </ViewTransition>
- </figure>
- ))}
- {beats.length > 0 && (
- <div className="mx-auto w-full max-w-[560px] space-y-6">
- {beats.map((s) => (
- <div key={s.k}>
- <h2 className="font-sans text-sm font-medium text-ink">
- {s.k}
- </h2>
- <p className="mt-2 text-pretty font-sans text-sm leading-normal text-ink-2">
- {s.v}
- </p>
- </div>
- ))}
- </div>
- )}
- {rest.map((g, i) => {
- const n = i + 1;
- return (
- <figure
- key={g.src}
- id={`frame-${n + 1}`}
- data-frame={n}
- className="scroll-mt-24"
- >
- {g.note && (
- <p className="mx-auto mb-3 w-full max-w-[560px] font-sans text-sm leading-normal text-ink-2">
- {g.note}
- </p>
- )}
- <div className={`frame relative overflow-hidden ${g.tall ? "mx-auto max-w-[400px] bg-surface p-3" : "bg-surface-2"}`}>
- {g.kind === "video" ? (
- <CaseVideo
- src={g.src}
- poster={g.poster}
- alt={g.alt}
- lead={false}
- className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full"}
- />
- ) : (
- <CaseImage
- src={g.src}
- alt={g.alt}
- lead={false}
- className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full bg-surface-2"}
- />
- )}
- {g.motion && (
- <div aria-hidden className={`cover-${g.motion} pointer-events-none absolute inset-0`} />
- )}
- </div>
- </figure>
- );
- })}
- {frames.length === 0 &&
  [0, 1, 2].map((i) => (
- <div
- key={`slot-${i}`}
- aria-hidden
- className="mx-auto aspect-[16/10] w-full max-w-[600px] bg-ink/[0.03] ring-1 ring-line dark:bg-ink/[0.04]"
- />
+ <div key={`slot-${i}`} aria-hidden className="aspect-[16/10] w-full rounded-xl bg-ink/[0.03] ring-1 ring-line" />
+ ))
+ )}
+
+ {/* The story: a label column and a reading column, divided by
+     hairlines, so the four parts scan as a list before they are read. */}
+ {story.length > 0 && (
+ <section aria-label="About the project" className="border-b border-line">
+ {story.map((s) => (
+ <div key={s.k} className="grid gap-x-12 gap-y-1.5 border-t border-line py-5 sm:grid-cols-[160px_minmax(0,1fr)]">
+ <h2 className="font-sans text-sm text-ink-3">{s.k}</h2>
+ <p className="max-w-[60ch] text-pretty font-sans text-sm leading-relaxed text-ink">{s.v}</p>
+ </div>
+ ))}
+ </section>
+ )}
+
+ {rest.map((g, i) => (
+ <Frame key={g.src} g={g} n={i + 1} slug={c.slug} />
  ))}
  </div>
- </div>
- <div className="mx-auto w-full max-w-[600px] px-5 pb-10">
- <div>
- <p className="mt-2 text-pretty font-sans text-sm leading-normal text-ink-2">
- Credits:{" "}
+
+ <p className="mt-14 text-pretty font-sans text-sm leading-normal text-ink-2">
+ <span className="text-ink-3">Credits</span>{" "}
  {c.credits.map((credit, i) => (
  <span key={credit.name}>
  {i > 0 && ", "}
  {credit.href ? (
- <a
- href={credit.href}
- target="_blank"
- rel="noopener noreferrer"
- className="link-sheen"
- >
+ <a href={credit.href} target="_blank" rel="noopener noreferrer" className="link-sheen">
  {credit.name}
  </a>
  ) : (
@@ -267,9 +169,9 @@ export default async function WorkCasePage({
  </span>
  ))}
  </p>
- </div>
+
  {/* prev / next — visual cards, so the next project sells itself */}
- <nav aria-label="More work" className="mt-12 grid grid-cols-2 gap-3">
+ <nav aria-label="More work" className="mt-8 grid grid-cols-2 gap-3">
  {(
  [
  { c: prev, label: "Previous" },
@@ -280,7 +182,7 @@ export default async function WorkCasePage({
  key={label}
  href={`/work/${w.slug}`}
  aria-label={`${label}: ${w.name}`}
- className="group block overflow-hidden rounded-xl ring-1 ring-line transition-colors hover:ring-ink-3 dark:hover:ring-ink-3"
+ className="group block overflow-hidden rounded-xl ring-1 ring-line transition-[box-shadow,transform] duration-150 ease-out hover:ring-ink-3 active:scale-[0.99]"
  >
  {/* eslint-disable-next-line @next/next/no-img-element */}
  <img
@@ -292,7 +194,7 @@ export default async function WorkCasePage({
  />
  <span className="block p-3">
  <span className="block text-2xs tracking-wide text-ink-3">{label}</span>
- <span className="mt-1 block font-sans text-sm font-medium link-sheen">{w.name}</span>
+ <span className="mt-1 block font-sans text-sm font-medium">{w.name}</span>
  </span>
  </Link>
  ))}
@@ -301,5 +203,51 @@ export default async function WorkCasePage({
  <DFloor />
  </div>
  </main>
+ );
+}
+
+type GalleryFrame = (typeof workCases)[number]["gallery"][number];
+
+/** One frame of the run, with its caption beneath, starting at the frame's
+    own left edge. The caption names the frame; the note says what to see. */
+function Frame({ g, n, lead = false, slug }: { g: GalleryFrame; n: number; lead?: boolean; slug: string }) {
+ const box = (
+ <div className={`frame relative overflow-hidden ${g.tall ? "mx-auto max-w-[400px] bg-surface p-3" : "bg-surface-2"}`}>
+ {g.kind === "video" ? (
+ <CaseVideo
+ src={g.src}
+ poster={g.poster}
+ alt={g.alt}
+ lead={lead}
+ className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full"}
+ />
+ ) : (
+ <CaseImage
+ src={g.src}
+ alt={g.alt}
+ lead={lead}
+ className={g.tall ? "mx-auto block max-h-[72vh] w-auto rounded-[calc(var(--frame-r)-6px)]" : "block h-auto w-full bg-surface-2"}
+ />
+ )}
+ {g.motion && <div aria-hidden className={`cover-${g.motion} pointer-events-none absolute inset-0`} />}
+ </div>
+ );
+ return (
+ <figure id={`frame-${n + 1}`} data-frame={n} className="scroll-mt-24">
+ {lead ? (
+ <ViewTransition name={`work-${slug}`} share="morph" default="none">
+ {box}
+ </ViewTransition>
+ ) : (
+ box
+ )}
+ {(g.caption || g.note) && (
+ <figcaption className={`mt-3 max-w-[64ch] text-pretty font-sans text-sm leading-normal ${g.tall ? "mx-auto sm:max-w-[400px]" : ""}`}>
+ {g.caption && <span className="text-ink">{g.caption}.</span>}
+ {g.caption && g.note && " "}
+ {g.note && <span className="text-ink-2">{g.note}</span>}
+ </figcaption>
+ )}
+ </figure>
  );
 }

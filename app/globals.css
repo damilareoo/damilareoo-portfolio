@@ -1572,3 +1572,13 @@ body {
     background-position: 140% 0, 0 0;
   }
 }
+
+/* Nothing on the site should scroll sideways. The vinyl pop-up above the
+   About page's artist names is laid out even while it is invisible, and near
+   the right edge it widened a phone page by a few pixels. `clip` rather than
+   `hidden`, so no scroll container is created and sticky elements keep
+   working. */
+html,
+body {
+  overflow-x: clip;
+}

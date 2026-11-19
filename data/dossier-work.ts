@@ -36,37 +36,38 @@ export const workCases: WorkCase[] = [
     role: "Design + build",
     links: [{ label: "hitmanslibrary.xyz", href: "https://hitmanslibrary.xyz/" }],
     oneLiner:
-      "A collection of cool experiences across the web. Currently building, so the case file stays open.",
+      "A visual library of 347 well-designed websites, each with its colours and fonts pulled out.",
     credits: [
       { name: "Damilare Osofisan" },
       { name: "Florence Eze", href: "https://florenceeze.com" },
     ],
     quote:
       "Collect the experiences worth stealing from.",
-    summary: [
-      "Florence and I were keeping sites in Excel sheets. Links down one column, notes beside them, and no way to actually look at any of it.",
-      "Now every entry gets a screenshot, its own link, and a preview that loads the real page beside it.",
-    ],
+    summary: [],
     sections: [
       {
-        k: "Role & Contribution",
-        v: "I designed and built it. Florence Eze contributed to the design and the build.",
+        k: "Problem",
+        v: "Florence and I kept the sites we liked in a spreadsheet. Links and notes, and no way to see any of them.",
       },
       {
-        k: "What Was Done",
-        v: "A visual library for collecting and studying web experiences. Every entry gets a screenshot, a link, and a place.",
+        k: "What I did",
+        v: "Designed and built it with Florence Eze, from structure to interface to code. Search, filters by colour and font, saved sets, a weekly digest and a Pro membership.",
       },
       {
-        k: "How",
-        v: "We wanted somewhere to keep the things we find interesting. Designed and built it together, structure to interface to code.",
-      }
+        k: "Decisions",
+        v: "Every entry leads with a picture of the site, not a link. The deeper detail, its colours, fonts and phone view, opens one click away, so the grid stays easy to scan. Light and dark, and a real phone layout, from the start.",
+      },
+      {
+        k: "Outcome",
+        v: "Live at hitmanslibrary.xyz with 347 sites, and still growing.",
+      },
     ],
     gallery: [
       {
         src: "/dossier/work/hitman/hitmans-library-tour-v2.mp4",
         alt: "A tour of Hitman's Library: browsing, opening a site, its colours and fonts, search, and dark mode",
-        caption: "Showcase",
-        note: "A quick tour. Browse the shelf, open a site, see its colours and fonts, search, then switch to dark.",
+        caption: "Tour",
+        note: "Browse the shelf, open a site, see its colours and fonts, search, then switch to dark.",
         kind: "video",
         poster: "/dossier/work/hitman/hitman-tour-poster.jpg",
       },
@@ -194,7 +195,7 @@ export const workCases: WorkCase[] = [
     role: "Brand design, logo design, web design, visual system",
     links: [{ label: "sylvanlabs.com", href: "https://sylvanlabs.com" }],
     oneLiner:
-      "Revenue intelligence that turns messy customer data into useful signals. I did brand, web and visual system.",
+      "Brand identity and website for Sylvan, a revenue intelligence platform.",
     credits: [
       { name: "Damilare Osofisan" },
       { name: "Mario Prasetyo" },
@@ -202,24 +203,24 @@ export const workCases: WorkCase[] = [
     ],
     quote:
       "Sylvan turns noise into signal.",
-    summary: [
-      "Sylvan is a revenue intelligence platform with a readability problem: every rival looks like the clutter it promises to remove.",
-      "The answer was an identity built around the signal mark: customer actions drawn as patterns over time. It shifts and adapts like real opportunity, and became the core of the brand.",
-      "The rule throughout: simple, but never cold. Every piece of the system reinforces one idea: Sylvan turns noise into signal.",
-    ],
+    summary: [],
     sections: [
       {
-        k: "Role & Contribution",
-        v: "I designed the brand, logo, website and visual system. Mario Prasetyo built the site, hand-drew the illustrations and contributed designs. Made at HEX, the studio.",
+        k: "Problem",
+        v: "Sylvan turns messy customer data into clear revenue signals. But its category all looks the same: busy dashboards and cold, technical brands, the clutter Sylvan promises to remove.",
       },
       {
-        k: "What Was Done",
-        v: "Built the identity around the idea of signals and patterns, then carried it across the logo, website, hero visuals and supporting artwork.",
+        k: "What I did",
+        v: "Brand, logo, website and visual system, made at HEX. Mario Prasetyo built the site, hand-drew the illustrations and contributed designs.",
       },
       {
-        k: "How",
-        v: "The product is dense, so the identity had to read clear without feeling like another analytics tool. Simple forms and movement make signals tangible.",
-      }
+        k: "Decisions",
+        v: "One idea runs through everything: the signal mark, customer actions drawn as patterns over time. Simple forms, but never cold. ASCII trees carry the idea into illustration, data and nature in the same characters.",
+      },
+      {
+        k: "Outcome",
+        v: "Shipped across the logo, sylvanlabs.com, hero visuals and supporting artwork.",
+      },
     ],
     gallery: [
       {
@@ -233,7 +234,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/sylvan/sylvan-logo-full.jpg",
         alt: "Sylvan logo lockup",
         caption: "Logo",
-        note: "The lockup: signal mark and wordmark on Primary.",
+        note: "Signal mark and wordmark on Primary.",
       },
       {
         src: "/dossier/work/sylvan/sylvan-mark-variants.jpg",
@@ -292,8 +293,8 @@ export const workCases: WorkCase[] = [
       {
         src: "/dossier/work/sylvan/sylvan-ascii-tree.jpg",
         alt: "Full ASCII signal tree",
-        caption: "The full tree",
-        note: "The mark's world, drawn in characters.",
+        caption: "ASCII tree",
+        note: "A full tree drawn in code characters, grown from small signals.",
       },
       {
         src: "/dossier/work/sylvan/sylvan-voice.jpg",
@@ -330,7 +331,7 @@ export const workCases: WorkCase[] = [
       },
     ],
     oneLiner:
-      "Following professional chess as it actually happens, across phone, desktop and web. I was the founding designer, from first sketches to launch.",
+      "An app for following professional chess live. 1,000+ weekly users and 5.0 on the App Store.",
     credits: [
       { name: "Damilare Osofisan" },
       { name: "Kenny Olajide" },
@@ -338,41 +339,38 @@ export const workCases: WorkCase[] = [
     ],
     quote:
       "Everything works exactly how you'd expect it to. No learning curve.",
-    summary: [
-      "Following live chess was genuinely awkward. The platforms that existed were clunky, slow, or already shut down, so anyone who cared about a tournament had to learn a new tool every round.",
-      "It also had to live in three places, because that is where people actually watch chess. The tournaments are the same in all of them.",
-    ],
+    summary: [],
     sections: [
       {
-        k: "Role & Contribution",
-        v: "I designed the product and interface across iOS, Android, desktop and web. Kenny Olajide gave UX direction. Vasif Durarbayli is the founder.",
+        k: "Problem",
+        v: "Following a live tournament was awkward. The tools were clunky, slow or already shut down, and fans watch on their phone, desktop and the web.",
       },
       {
-        k: "What Was Done",
-        v: "On the phone, live games with engine evaluation, full stats and head-to-heads, plus the games you follow and save. On desktop, the round goes big-screen and deep into the database. On the web, I worked on the first version of the experience: the essentials, a creator directory, memorial pages and news.",
+        k: "What I did",
+        v: "Founding designer, from first sketches to launch, across iOS, Android, desktop and web. Kenny Olajide gave UX direction. Vasif Durarbayli is the founder.",
       },
       {
-        k: "How",
-        v: "Simple was the whole brief, because following a live game should not need a tutorial. I designed the phone first and treated it as the reference, then let desktop and web stretch from the same parts rather than inventing their own. Three platforms, one set of rules.",
+        k: "Decisions",
+        v: "Simple was the brief: a live game should not need a tutorial. I designed the phone first as the reference, then built desktop and web from the same parts. Swiping between live boards became the core interaction.",
       },
       {
-        k: "Proof",
-        v: "5.0 on the App Store with 45 ratings. 4.8 on Google Play with 193 reviews. 1,000+ weekly active users. Pitched at TWiST Gamma.",
-      }
+        k: "Outcome",
+        v: "5.0 on the App Store from 45 ratings and 4.8 on Google Play from 193 reviews. 1,000+ weekly active users. Pitched at TWiST Gamma.",
+      },
     ],
     gallery: [
       {
         src: "/dossier/work/chessever/13-mark.jpg",
         alt: "ChessEver mark on black",
         caption: "Mark",
-        note: "The mark in motion. Four squares, one piece.",
+        note: "In motion: four squares, one piece.",
         motion: "chessever",
       },
       {
         src: "/dossier/work/chessever/01-onboarding.jpg",
         alt: "ChessEver onboarding, welcome and locale",
         caption: "Onboarding",
-        note: "The entry. Two steps, then straight to chess.",
+        note: "Two steps, then straight to chess.",
       },
       {
         src: "/dossier/work/chessever/02-follow-players.jpg",
@@ -384,7 +382,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/chessever/04-swipe-between-games.jpg",
         alt: "Swiping the board between live games",
         caption: "Swipe between games",
-        note: "The core interaction. Swipe the board to move between live games.",
+        note: "The core interaction: swipe the board to move between live games.",
       },
       {
         src: "/dossier/work/chessever/05-game-review.jpg",
@@ -414,7 +412,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/chessever/10-library.jpg",
         alt: "Database library lists",
         caption: "Library",
-        note: "Every list in one quiet place.",
+        note: "Your saved games and folders, with the full TWIC database a tap away.",
       },
       {
         src: "/dossier/work/chessever/15-database.jpg",
@@ -450,7 +448,7 @@ export const workCases: WorkCase[] = [
         src: "/dossier/work/chessever/17-lockup.jpg",
         alt: "ChessEver full lockup",
         caption: "Lockup",
-        note: "The lockup. Wordmark and mark, front and back.",
+        note: "Wordmark and mark, front and back.",
       },
     ],
   },
@@ -475,32 +473,29 @@ export const workCases: WorkCase[] = [
       },
     ],
     oneLiner:
-      "I joined after Endgame.ai had already launched, to help restructure a live product and bring the mobile app up to the web.",
+      "Product design for Endgame.ai, an online chess platform. 4,000+ people have played Puzzle Run, a feature I designed.",
     credits: [
       { name: "Damilare Osofisan" },
       { name: "Kenny Olajide" },
       { name: "Hans Niemann" },
     ],
-    summary: [
-      "The two sides had drifted apart, and the phone was the one behind. Anyone on a phone got less of the product than anyone on a laptop, which is a strange thing to have shipped. Bringing mobile up to the web was the first real block of work.",
-      "I joined after launch, so none of this started from a blank page. Once the two sides matched, the design work opened up into whatever came next.",
-    ],
+    summary: [],
     sections: [
       {
-        k: "Role & Contribution",
-        v: "I designed across web and mobile: UX, interaction, UI and new features. Kenny Olajide gave UX direction. Hans Niemann is the founder.",
+        k: "Problem",
+        v: "Endgame.ai was already live, but the mobile app had fallen behind the web. Anyone on a phone got less of the product.",
       },
       {
-        k: "What Was Done",
-        v: "Restructured the live product, then designed what came after. Puzzle Run, Club, Watch, Coach, Learn, gamification, custom piece sets and avatars.",
+        k: "What I did",
+        v: "Designed across web and mobile: UX, interaction, UI and new features. First, brought mobile up to the web. Then Puzzle Run, Clubs, Watch, Coach, Learn, gamification, piece sets and avatars. Kenny Olajide gave UX direction. Hans Niemann is the founder.",
       },
       {
-        k: "How",
-        v: "The product was live with people already using it, so every change had to earn itself. I would rather move something small and probably right than redesign it to look considered. Holding one product language across both sides is what made the later features cheap to add.",
+        k: "Decisions",
+        v: "People were already using it, so every change had to earn its place. I chose small, likely-right moves over redesigns that only look considered. One product language across web and mobile made each new feature cheaper to add.",
       },
       {
-        k: "Proof",
-        v: "4,000+ people have played Puzzle Run, a feature I designed. 200+ players are in a game across web and mobile at any moment.",
+        k: "Outcome",
+        v: "4,000+ people have played Puzzle Run. 200+ players are in a game across web and mobile at any moment.",
       },
     ],
     gallery: [
@@ -543,8 +538,8 @@ export const workCases: WorkCase[] = [
       {
         src: "/dossier/work/endgame/endgame-puzzle-3.jpg",
         alt: "Puzzle Run frame",
-        caption: "Puzzle Run III",
-        note: "The run, continued.",
+        caption: "Puzzle Run, in play",
+        note: "The clock and strikes while you solve, then the result: solved, accuracy and average time.",
       },
       {
         src: "/dossier/work/endgame/endgame-puzzle-mobile.jpg",
@@ -573,20 +568,20 @@ export const workCases: WorkCase[] = [
       {
         src: "/dossier/work/endgame/endgame-learn-1.jpg",
         alt: "Learn lesson frame",
-        caption: "Learn I",
-        note: "The lesson system, another pass.",
+        caption: "Learn, on desktop",
+        note: "Course outline, board and the checkpoint question, side by side.",
       },
       {
         src: "/dossier/work/endgame/endgame-learn-2.jpg",
         alt: "Learn lesson frame",
-        caption: "Learn II",
-        note: "Board and lesson side by side.",
+        caption: "Learn, on the phone",
+        note: "Lessons, checkpoints and the course outline, sized for the phone.",
       },
       {
         src: "/dossier/work/endgame/endgame-learn-3.jpg",
         alt: "Learn lesson frame",
-        caption: "Learn III",
-        note: "Checkpoints that read like chapters.",
+        caption: "Lesson complete",
+        note: "Finish a lesson, earn XP and move on to the next chapter.",
       },
       {
         src: "/dossier/work/endgame/endgame-coach.jpg",
@@ -615,8 +610,8 @@ export const workCases: WorkCase[] = [
       {
         src: "/dossier/work/endgame/endgame-gamification-1.jpg",
         alt: "Gamification frame",
-        caption: "Gamification II",
-        note: "Avatars, piece sets, and the full reward loop.",
+        caption: "Achievements",
+        note: "Badges to unlock as you play, with XP toward your next rank.",
       },
       {
         src: "/dossier/work/endgame/endgame-pieces.jpg",

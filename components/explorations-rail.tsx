@@ -70,7 +70,7 @@ export function ExplorationsRail() {
  )}
  </div>
  <div className="mt-3 flex items-baseline justify-between gap-2 font-sans text-xs uppercase tracking-widest text-ink-3">
- <span className="truncate">{e.title}</span>
+ <span className="min-w-0">{e.title}</span>
  {e.embed ? (
  <a
  href={e.embed}
