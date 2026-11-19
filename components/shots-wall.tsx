@@ -165,7 +165,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  const moveCue = (e: { clientX: number; clientY: number; pointerType: string }) => {
  const el = cueRef.current;
  if (!el || e.pointerType !== "mouse") return;
- el.style.transform = `translate(${e.clientX}px, ${e.clientY - 48}px) translateX(-50%)`;
+ el.style.transform = `translate(${e.clientX}px, ${e.clientY - 36}px) translateX(-50%)`;
  el.style.opacity = "1";
  };
  const hideCue = () => {
@@ -523,9 +523,11 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  <span
  ref={cueRef}
  aria-hidden
- className="pointer-events-none fixed left-0 top-0 z-30 hidden whitespace-nowrap font-sans text-xs text-ink opacity-0 transition-opacity duration-150 ease-out [@media(pointer:fine)]:block"
+ className="pointer-events-none fixed left-0 top-0 z-30 hidden text-ink opacity-0 transition-opacity duration-150 ease-out [@media(pointer:fine)]:block"
  >
- ← drag →
+ <svg viewBox="0 0 24 12" width="24" height="12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+ <path d="M2 6h20M6 2 2 6l4 4M18 2l4 4-4 4" />
+ </svg>
  </span>
  <button
  type="button"
