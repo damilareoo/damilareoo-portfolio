@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ViewTransition } from "react";
 import { notFound } from "next/navigation";
 import { DFloor } from "@/components/dfooter";
 import { CaseRail } from "@/components/case-rail";
@@ -157,6 +158,7 @@ export default async function WorkCasePage({
  {g.note}
  </p>
  )}
+ <ViewTransition name={`work-${c.slug}`} share="morph" default="none">
  <div className={`frame relative overflow-hidden ${g.tall ? "mx-auto max-w-[400px] bg-surface p-3" : "bg-surface-2"}`}>
  {g.kind === "video" ? (
  <CaseVideo
@@ -178,6 +180,7 @@ export default async function WorkCasePage({
  <div aria-hidden className={`cover-${g.motion} pointer-events-none absolute inset-0`} />
  )}
  </div>
+ </ViewTransition>
  </figure>
  ))}
  {beats.length > 0 && (

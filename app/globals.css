@@ -1509,3 +1509,66 @@ body {
  transform: rotate(360deg);
  }
 }
+
+/* Shared-element morphs: a home cover growing into its case study, a
+   playground tile growing into the viewer. A strong ease-out so the object
+   leaves at once and settles gently, a touch of blur mid-flight to hide the
+   two images handing over, and the rest of the page crossfades quickly so
+   the moving object is the only thing the eye follows. */
+::view-transition-group(.morph),
+::view-transition-group(shot-stage) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::view-transition-image-pair(.morph),
+::view-transition-image-pair(shot-stage) {
+  animation-name: via-blur;
+  animation-duration: 420ms;
+}
+
+@keyframes via-blur {
+  35% {
+    filter: blur(3px);
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* The signature, as a loading state. Until a case frame has developed,
+   its ground is the scrubber's language — a run of fine ticks — with a
+   slow light passing along it, like a playhead finding its place. The
+   moment the image lands it covers the ticks and the sweep stops. */
+.frame:not(:has(> video)) {
+  background-image:
+    linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--color-ink) 7%, transparent) 50%, transparent 100%),
+    repeating-linear-gradient(90deg, color-mix(in oklab, var(--color-ink) 9%, transparent) 0 1px, transparent 1px 8px);
+  background-size: 40% 100%, auto;
+  background-repeat: no-repeat, repeat;
+  animation: frame-scan 1.4s linear infinite;
+}
+
+.frame:has(img[data-developed]) {
+  background-image: none;
+  animation: none;
+}
+
+@keyframes frame-scan {
+  from {
+    background-position: -40% 0, 0 0;
+  }
+  to {
+    background-position: 140% 0, 0 0;
+  }
+}

@@ -902,7 +902,10 @@ export function StepsTile() {
  let raf = 0;
  const t0 = performance.now();
  const loop = (now: number) => {
- const [nx, ny] = ROUTE_PTS[Math.floor(((now - t0) / 45) % ROUTE_PTS.length)];
+ /* A frame's timestamp is when the frame began, which can be a moment
+    before t0 was read; a negative elapsed time indexed off the start of the
+    route, threw, and stopped the walker for good. */
+ const [nx, ny] = ROUTE_PTS[Math.floor((Math.max(0, now - t0) / 45) % ROUTE_PTS.length)];
  el.setAttribute("cx", String(ROUTE_TX + nx * 360 * ROUTE_SC));
  el.setAttribute("cy", String(ROUTE_TY + ny * 250 * ROUTE_SC));
  raf = requestAnimationFrame(loop);

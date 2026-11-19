@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ViewTransition } from "react";
+import { CoverPeek } from "@/components/cover-peek";
 import { DFooter } from "@/components/dfooter";
 import { ContactLinks } from "@/components/contact-links";
 import { DNav } from "@/components/dnav";
@@ -21,6 +23,15 @@ export const metadata: Metadata = {
 };
 
 const WORK = dossier.workCovers;
+
+/* The product, in motion, behind each cover. Prototype mapping: these are the
+   clips already on disk, and two of them are far heavier than a hover should
+   cost — they would be cut down to short, small loops before shipping. */
+const PEEK: Record<string, string> = {
+ "hitmans-library": "/dossier/work/hitman/hitman-k-panel.mp4",
+ sylvan: "/dossier/work/sylvan/sylvan-cover.mp4",
+ endgame: "/dossier/work/endgame/endgame-theme.mov",
+};
 
 export default function Home() {
  return (
@@ -84,6 +95,10 @@ export default function Home() {
  aria-label={`${w.title} — ${w.sub}`}
  className="group relative block overflow-hidden bg-surface-2 ring-1 ring-line"
  >
+ {/* The cover is the object that carries over: opening a case
+     study grows it into that page's lead frame. */}
+ <ViewTransition name={`work-${w.slug}`} share="morph" default="none">
+ <CoverPeek clip={PEEK[w.slug]}>
  {/* eslint-disable-next-line @next/next/no-img-element */}
  <img
  src={w.img}
@@ -108,6 +123,8 @@ export default function Home() {
  }
  className={`aspect-[16/10] w-full ${"fit" in w && w.fit === "contain" ? "object-contain" : "object-cover"} ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
  />
+ </CoverPeek>
+ </ViewTransition>
  </Link>
  <p className="mt-2 font-sans text-sm">
  <Link href={`/work/${w.slug}`} className="font-medium link-sheen">

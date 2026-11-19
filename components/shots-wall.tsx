@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type TouchEvent } from "react";
+import { flushSync } from "react-dom";
 import { WALL_SEED, orderGroups, projectOf } from "@/lib/wall-order";
 import Pic from "./pic";
 import { SHOT_DIMENSIONS } from "./shot-dimensions";
@@ -67,6 +68,19 @@ export function shotBox(src: string): { width: number; height: number } | null {
   return d ? { width: d[0], height: d[1] } : null;
 }
 
+/** The browser's view transition, or null where it is missing or the visitor
+    asked for less motion — callers then just apply the change. */
+function startMorph(): { run: (update: () => void | Promise<void>) => Promise<void> } | null {
+  const doc = document as Document & {
+    startViewTransition?: (update: () => void | Promise<void>) => { finished: Promise<void> };
+  };
+  if (typeof doc.startViewTransition !== "function") return null;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return null;
+  return {
+    run: (update) => doc.startViewTransition!.call(doc, update).finished.catch(() => {}),
+  };
+}
+
 /** "zlink — study 01." reads as two lines in the viewer: the project, then
     which piece of it. A caption with no dash is a single line. */
 function splitCaption(caption: string): [string, string | null] {
@@ -107,21 +121,69 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  const ordered = useMemo(() => orderGroups(shots, seed), [shots, seed]);
  const projectCount = useMemo(() => new Set(ordered.map(projectOf)).size, [ordered]);
 
- const openShot = useCallback((i: number) => {
+ const openShot = useCallback((i: number, from?: HTMLElement) => {
+ const open = () => {
  focusRef.current = i;
  loadedRef.current = false;
  setPrevious(null);
  setInstant(false);
  setLoaded(false);
  setFocus(i);
+ };
+ /* The tile grows into the stage. The tile carries the shared name for the
+    "before" picture, hands it to the stage image inside the update, and the
+    update waits (briefly) for that image to be ready so the "after" picture
+    is the shot, not an empty frame. */
+ const vt = from ? startMorph() : null;
+ if (!vt || !from) return open();
+ from.style.viewTransitionName = "shot-stage";
+ vt.run(async () => {
+ from.style.viewTransitionName = "";
+ flushSync(() => {
+ open();
+ setInstant(true);
+ });
+ const img = currentImg.current;
+ if (img) {
+ const ready = img.complete
+ ? Promise.resolve()
+ : new Promise<void>((done) => {
+ img.addEventListener("load", () => done(), { once: true });
+ img.addEventListener("error", () => done(), { once: true });
+ });
+ await Promise.race([ready.then(() => img.decode().catch(() => {})), new Promise((t) => setTimeout(t, 300))]);
+ }
+ flushSync(() => {
+ loadedRef.current = true;
+ setLoaded(true);
+ });
+ });
  }, []);
 
- const closeViewer = useCallback(() => {
+ /* `morph` is for pointer closes (the ✕, the backdrop): the stage shrinks
+    back into its tile. Esc closes outright — a keyboard action never waits
+    on an animation — and so does a tile that has scrolled out of view,
+    since there is nowhere visible for it to land. */
+ const closeViewer = useCallback((morph = false) => {
+ const f = focusRef.current;
+ const close = () => {
  focusRef.current = null;
  loadedRef.current = false;
  setPrevious(null);
  setLoaded(false);
  setFocus(null);
+ };
+ const tile = morph && f !== null ? document.querySelector<HTMLElement>(`[data-shot="${f}"]`) : null;
+ const r = tile?.getBoundingClientRect();
+ const visible = r && r.bottom > 0 && r.top < window.innerHeight;
+ const vt = tile && visible ? startMorph() : null;
+ if (!vt || !tile) return close();
+ vt.run(() => {
+ flushSync(close);
+ tile.style.viewTransitionName = "shot-stage";
+ }).finally(() => {
+ tile.style.viewTransitionName = "";
+ });
  }, []);
 
  const step = useCallback(
@@ -343,9 +405,10 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  <button
  key={s.src}
  type="button"
+ data-shot={i}
  onClick={(e) => {
  returnFocus.current = e.currentTarget;
- openShot(i);
+ openShot(i, e.currentTarget);
  }}
  aria-label={`Open ${s.alt}${s.caption ? ` — ${s.caption}` : ""}`}
  data-tone="tap"
@@ -396,7 +459,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  >
  <div
  className="absolute inset-0 overflow-hidden bg-bg dark:bg-black"
- onClick={() => closeViewer()}
+ onClick={() => closeViewer(true)}
  aria-hidden
  >
  {/* The shot's own colours fill the stage on a phone, where a 16:9 frame
@@ -486,6 +549,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  <Pic
  ref={currentImg}
  key={current.src}
+ style={{ viewTransitionName: "shot-stage" }}
  src={current.src}
  alt={current.alt}
  draggable={false}
@@ -508,7 +572,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  </figure>
  <button
  type="button"
- onClick={() => closeViewer()}
+ onClick={() => closeViewer(true)}
  aria-label="Close viewer"
  data-tone="tap"
  className="absolute right-5 top-5 z-20 grid h-10 w-10 cursor-pointer place-items-center rounded-full bg-ink/[0.06] text-ink-2 transition-[color,background-color,transform] duration-150 ease-out hover:bg-ink/[0.12] hover:text-ink active:scale-[0.96] dark:bg-ink/10 dark:hover:bg-ink/20"
