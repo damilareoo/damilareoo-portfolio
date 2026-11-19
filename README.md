@@ -205,6 +205,10 @@ the hard way:
   `{"isPlaying": false, "reason": "no-credentials"}`, `/api/steps` answers
   `{"configured": false, "backend": "file"}`, and a case-study page answers with
   its prose intact and no frames at all.
+- **`next.config.ts` headers never reach `public/`.** Static files are served
+  by Workers assets, so their cache rule lives in `public/_headers` (a year,
+  immutable, for `/dossier/*` and `/_next/static/*`). Replace artwork under a
+  new filename, never in place.
 
 ## Conventions
 
