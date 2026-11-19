@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DFloor } from "@/components/dfooter";
 import { CaseRail } from "@/components/case-rail";
-import Pic from "@/components/pic";
+import { CaseImage, CaseVideo } from "@/components/case-frame";
 import { WayBack } from "@/components/way-back";
 import { findCase, workCases } from "@/data/dossier-work";
 
@@ -159,15 +159,11 @@ export default async function WorkCasePage({
  )}
  <div className={g.motion ? "relative overflow-hidden bg-surface-2 ring-1 ring-line" : g.tall ? "mx-auto max-w-[400px] bg-surface p-3 ring-1 ring-line" : "bg-surface-2 ring-1 ring-line"}>
  {g.kind === "video" ? (
- <video
+ <CaseVideo
  src={g.src}
  poster={g.poster}
- autoPlay
- muted
- loop
- playsInline
- preload="auto"
- aria-label={g.alt}
+ alt={g.alt}
+ lead={true}
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
@@ -175,12 +171,10 @@ export default async function WorkCasePage({
  }
  />
  ) : (
- <Pic
+ <CaseImage
  src={g.src}
  alt={g.alt}
- loading="eager"
- fetchPriority="high"
- decoding="async"
+ lead={true}
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
@@ -224,15 +218,11 @@ export default async function WorkCasePage({
  )}
  <div className={g.motion ? "relative overflow-hidden bg-surface-2 ring-1 ring-line" : g.tall ? "mx-auto max-w-[400px] bg-surface p-3 ring-1 ring-line" : "bg-surface-2 ring-1 ring-line"}>
  {g.kind === "video" ? (
- <video
+ <CaseVideo
  src={g.src}
  poster={g.poster}
- autoPlay
- muted
- loop
- playsInline
- preload="metadata"
- aria-label={g.alt}
+ alt={g.alt}
+ lead={false}
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
@@ -240,11 +230,10 @@ export default async function WorkCasePage({
  }
  />
  ) : (
- <Pic
+ <CaseImage
  src={g.src}
  alt={g.alt}
- loading="lazy"
- decoding="async"
+ lead={false}
  className={
  g.tall
  ? `mx-auto max-h-[72vh] w-auto ${g.motion ? "" : g.tall ? "" : "ring-1 ring-line"}`
@@ -312,7 +301,7 @@ export default async function WorkCasePage({
  alt=""
  loading="lazy"
  style={COVERS[w.slug]?.bg ? { background: COVERS[w.slug].bg } : undefined}
- className={`aspect-video w-full ${COVERS[w.slug]?.fit === "contain" ? "object-contain" : "object-cover"} transition-transform duration-500 group-hover:scale-[1.02]`}
+ className={`aspect-video w-full ${COVERS[w.slug]?.fit === "contain" ? "object-contain" : "object-cover"} transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.02]`}
  />
  <span className="block p-3">
  <span className="block text-2xs tracking-wide text-ink-3">{label}</span>

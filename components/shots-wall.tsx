@@ -471,7 +471,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  onClick={() => step(-1)}
  aria-label="Previous shot"
  data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
  >
  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
  <path d="M10 3 5 8l5 5" />
@@ -482,7 +482,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  onClick={() => step(1)}
  aria-label="Next shot"
  data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
  >
  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
  <path d="m6 3 5 5-5 5" />
@@ -495,7 +495,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  onClick={() => closeViewer()}
  aria-label="Close viewer"
  data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
  >
  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
  <path d="M3 3l10 10M13 3 3 13" />
@@ -515,7 +515,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  onClick={() => step(-1)}
  aria-label="Previous shot"
  data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
  >
  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
  <path d="M10 3 5 8l5 5" />
@@ -526,7 +526,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  onClick={() => step(1)}
  aria-label="Next shot"
  data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
  >
  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
  <path d="m6 3 5 5-5 5" />
@@ -539,7 +539,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  onClick={() => closeViewer()}
  aria-label="Close viewer"
  data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
  >
  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
  <path d="M3 3l10 10M13 3 3 13" />

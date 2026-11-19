@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { CASE_DIMENSIONS } from "@/components/case-dimensions";
 import { PIC_CANDIDATES } from "@/components/pic-manifest";
 import { workCases } from "./dossier-work";
 
@@ -29,6 +30,16 @@ describe("case-file frames", () => {
       for (const g of c.gallery) {
         if (g.kind === "video" || /\.(gif|svg|mov)$/i.test(g.src)) continue;
         expect(PIC_CANDIDATES[g.src], `${c.name} — ${g.src} has no manifest entry`).toBeDefined();
+      }
+    }
+  });
+  /* A frame with no known size is zero pixels tall until it decodes, so its
+     arrival shoves the rest of the run down mid-scroll. Regenerate with
+     `python3 scripts/case-dimensions.py` after adding a frame. */
+  it("knows the size of every frame before it loads", () => {
+    for (const c of workCases) {
+      for (const g of c.gallery) {
+        expect(CASE_DIMENSIONS[g.src], `${c.name} — ${g.src} has no dimensions`).toBeDefined();
       }
     }
   });

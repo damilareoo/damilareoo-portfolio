@@ -78,7 +78,7 @@ export function PhotoDeck() {
  data-tone="shuffle"
  aria-label={depth === 0 ? "Photos of Damilare — tap to shuffle" : `Show ${p.alt}`}
  tabIndex={depth > 2 ? -1 : 0}
- className={`absolute left-8 top-0 h-24 w-20 cursor-pointer overflow-hidden rounded-md bg-surface-2 ring-1 ring-line transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 motion-reduce:transition-none ${fan.s}`}
+ className={`absolute left-8 top-0 h-24 w-20 cursor-pointer overflow-hidden rounded-md bg-surface-2 ring-1 ring-line transition-[transform,opacity] duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 motion-reduce:transition-none ${fan.s}`}
  onPointerDown={depth === 0 ? (e) => { e.currentTarget.setPointerCapture(e.pointerId); setDrag(0); } : undefined}
  onPointerMove={depth === 0 && drag !== null ? (e) => {
  const r = e.currentTarget.getBoundingClientRect();

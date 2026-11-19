@@ -30,6 +30,8 @@ pnpm dev --port 3002     # http://localhost:3002
 
 Typecheck: `pnpm exec tsc --noEmit`.
 
+After adding a case-study frame, run `python3 scripts/case-dimensions.py` so the frame holds its size before it loads. The test suite fails if a frame has no dimensions.
+
 ## Structure
 
 ```

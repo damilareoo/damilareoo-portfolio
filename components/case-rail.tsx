@@ -121,7 +121,7 @@ export function CaseRail({ labels }: { labels: string[] }) {
               ?.scrollIntoView({ behavior: "smooth", block: "start" });
           }}
           aria-label={`Previous frame — ${labels[(active - 1 + count) % count]}`}
-          className="grid min-h-9 min-w-9 cursor-pointer place-items-center rounded-full text-[#595959] transition-colors hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
+          className="grid min-h-9 min-w-9 cursor-pointer place-items-center rounded-full text-[#595959] transition-[color,transform] duration-150 ease-out active:scale-[0.96] hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
         >
           <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M10 3 5 8l5 5" />
@@ -149,7 +149,7 @@ export function CaseRail({ labels }: { labels: string[] }) {
               ?.scrollIntoView({ behavior: "smooth", block: "start" });
           }}
           aria-label={`Next frame — ${labels[(active + 1) % count]}`}
-          className="grid min-h-9 min-w-9 cursor-pointer place-items-center rounded-full text-[#595959] transition-colors hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
+          className="grid min-h-9 min-w-9 cursor-pointer place-items-center rounded-full text-[#595959] transition-[color,transform] duration-150 ease-out active:scale-[0.96] hover:text-[#171717] dark:text-[#8a8a8a] dark:hover:text-white"
         >
           <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 3l5 5-5 5" />

@@ -22,7 +22,7 @@ function IconButton({
  aria-pressed={pressed}
  aria-label={label}
  data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center text-ink-3 transition-colors hover:text-ink dark:hover:text-ink"
+ className="grid min-h-11 min-w-11 cursor-pointer place-items-center text-ink-3 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
  >
  {children}
  </button>

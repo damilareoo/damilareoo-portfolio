@@ -8,7 +8,7 @@ export function WayBack() {
  <Link
  href="/"
  aria-label="Back home"
- className="fixed right-5 top-5 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-ink/[0.06] text-ink-2 transition-colors hover:bg-ink/[0.12] hover:text-ink dark:bg-ink/10 dark:hover:bg-ink/20 dark:hover:text-ink"
+ className="fixed right-5 top-5 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-ink/[0.06] text-ink-2 transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.96] hover:bg-ink/[0.12] hover:text-ink dark:bg-ink/10 dark:hover:bg-ink/20 dark:hover:text-ink"
  >
  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
  <path

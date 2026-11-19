@@ -44,7 +44,7 @@ function Tile({
  const face = (
  <div
  style={faceStyle}
- className="aspect-square w-full overflow-hidden rounded-xl bg-[#141414] ring-1 ring-transparent transition-transform duration-200 hover:-translate-y-0.5 dark:bg-surface dark:ring-white/10"
+ className="aspect-square w-full overflow-hidden rounded-xl bg-[#141414] ring-1 ring-transparent transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 dark:bg-surface dark:ring-white/10"
  >
  {children}
  </div>

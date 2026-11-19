@@ -342,6 +342,29 @@ body {
   }
 }
 
+/* A case-study frame develops in once it has fully decoded (components/
+   case-frame.tsx): opacity and a light blur settle together, so the frame
+   reads as one image resolving rather than a placeholder swapped for a
+   picture. The box is already held by the frame's width and height, so
+   nothing moves — only the image appears. Short and ease-out: it is the
+   system responding, and it happens dozens of times down a long run.
+   Guarded on scripting like `.arrive`; reduced motion drops the blur and
+   keeps a plain fade, since a fade aids reading and moves nothing. */
+@media (scripting: enabled) {
+  .frame-in {
+    opacity: 0;
+    filter: blur(8px);
+    transition:
+      opacity 360ms cubic-bezier(0.16, 1, 0.3, 1),
+      filter 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .frame-in[data-developed] {
+    opacity: 1;
+    filter: none;
+  }
+}
+
 /* The About timeline's line, which is the same arrival one layer down.
 
    `.arrive` moves a whole element into place; this draws a hairline along a
@@ -388,6 +411,12 @@ body {
   /* The delay the blanket rule above cannot reach. See `.tl-track`. */
   .tl-track {
     transition-delay: 0ms !important;
+  }
+
+  /* A case frame keeps its fade, without the blur. See `.frame-in`. */
+  .frame-in {
+    filter: none;
+    transition: opacity 200ms ease !important;
   }
 }
 

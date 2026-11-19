@@ -74,11 +74,12 @@ describe("the stylesheet's own reduced-motion guard", () => {
     expect(css).toMatch(/\.tl-track \{\s*transition-delay: 0ms !important;\s*\}/);
   });
 
-  it("guards both arrival mechanisms on scripting, so a page with no JS still renders", () => {
-    // `.arrive` starts at opacity 0 and `.tl-track` at a full dash offset;
-    // nothing sets `data-arrived` or `data-drawn` without JS, so both starting
-    // states must be withheld when scripting is off or the page ships blank.
+  it("guards every arrival mechanism on scripting, so a page with no JS still renders", () => {
+    // `.arrive` and `.frame-in` start at opacity 0 and `.tl-track` at a full
+    // dash offset; nothing sets `data-arrived`, `data-developed` or
+    // `data-drawn` without JS, so all three starting states must be withheld
+    // when scripting is off or the page ships blank.
     const guarded = [...css.matchAll(/@media \(scripting: enabled\)\s*\{/g)];
-    expect(guarded.length).toBe(2);
+    expect(guarded.length).toBe(3);
   });
 });
