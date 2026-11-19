@@ -16,6 +16,9 @@ type Shot = {
   /** Animated covers carry their own pixels; stills read the manifest. */
   width?: number;
   height?: number;
+  /** A lighter file for the wall tile (the animated covers' 900px builds);
+      the viewer still opens `src`. */
+  thumb?: string;
 };
 
 /**
@@ -415,7 +418,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  className="group relative mb-3 block w-full cursor-zoom-in break-inside-avoid overflow-hidden bg-surface-2 text-left"
  >
  <WarpShot
-                  src={s.src}
+                  src={s.thumb ?? s.src}
                   alt={s.alt}
                   eager={i < 6}
                   index={i}

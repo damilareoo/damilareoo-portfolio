@@ -16,6 +16,10 @@ export const metadata: Metadata = {
  */
 const covers = dossier.workCovers.map((c) => ({
   src: c.img,
+  /* The wall shows the 900px animated WebP (scripts/shrink-cover-gifs.py):
+     a fifth to a half the bytes of the 1600px GIF, at more pixels than a
+     tile ever draws. The viewer opens the full GIF. */
+  thumb: c.img.replace(/\.gif$/, "-sm.webp"),
   alt: c.alt,
   caption: `${c.title.toLowerCase()} \u2014 cover.`,
   fit: c.fit,

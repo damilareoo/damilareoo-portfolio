@@ -1,0 +1,9 @@
+# Cloudflare serves /public straight from Workers static assets, so the
+# headers() rule in next.config.ts never reaches these files. Without this,
+# every image revalidates on every visit (max-age=0, must-revalidate).
+# Artwork is replaced under new filenames, never overwritten.
+/dossier/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
