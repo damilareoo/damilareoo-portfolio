@@ -4,6 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import { WALL_SEED, orderGroups, projectOf } from "@/lib/wall-order";
 import Pic from "./pic";
 import { SHOT_DIMENSIONS } from "./shot-dimensions";
+import { ScrubStrip } from "./scrub-strip";
 import { WarpShot } from "./warp-shot";
 
 type Shot = {
@@ -155,34 +156,17 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  setFocus(i);
  }, []);
 
- /* The strip is one control, not seventy-odd targets. Press anywhere on it and
-    slide: the shot under the pointer is the shot on stage. Ticks are evenly
-    spaced, so the index is just the pointer's share of the strip's width. */
- const stripRef = useRef<HTMLDivElement>(null);
- const [scrubbing, setScrubbing] = useState(false);
- const scrubTo = (x: number) => {
- const el = stripRef.current;
- if (!el || ordered.length === 0) return;
- const first = el.firstElementChild?.getBoundingClientRect();
- const last = el.lastElementChild?.getBoundingClientRect();
- if (!first || !last) return;
- const span = last.right - first.left;
- const t = Math.min(1, Math.max(0, (x - first.left) / (span || 1)));
- jump(Math.min(ordered.length - 1, Math.floor(t * ordered.length)));
- };
 
- /* The cursor label. Position is written straight to the element's transform
-    on every move — a state update per pointer event would re-render the whole
-    viewer — and only the word itself, which changes when the pointer crosses
-    the middle, goes through React. */
+ /* The strip's cursor label. Position is written straight to the element's
+    transform on every move — a state update per pointer event would
+    re-render the whole viewer. It sits centred above the pointer, clear of
+    the thumbs it describes, and only on a mouse: touch has no cursor. */
  const cueRef = useRef<HTMLSpanElement>(null);
- const [cue, setCue] = useState<"back" | "next">("next");
- const moveCue = (e: { clientX: number; clientY: number; pointerType: string }, side: "back" | "next") => {
+ const moveCue = (e: { clientX: number; clientY: number; pointerType: string }) => {
  const el = cueRef.current;
  if (!el || e.pointerType !== "mouse") return;
- el.style.transform = `translate(${e.clientX + 14}px, ${e.clientY + 14}px)`;
+ el.style.transform = `translate(${e.clientX}px, ${e.clientY - 48}px) translateX(-50%)`;
  el.style.opacity = "1";
- if (side !== cue) setCue(side);
  };
  const hideCue = () => {
  if (cueRef.current) cueRef.current.style.opacity = "0";
@@ -532,38 +516,16 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  const decoded = typeof img.decode === "function" ? img.decode().catch(() => {}) : Promise.resolve();
  void decoded.then(show);
  }}
- className={`relative z-10 max-h-[74dvh] w-auto max-w-[calc(100vw-32px)] rounded-xl object-contain ring-1 ring-line shadow-[0_24px_48px_rgba(0,0,0,0.24)] transition-opacity ${instant ? "duration-0" : "duration-150"} ease-out motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
+ className={`pointer-events-auto relative z-10 max-h-[74dvh] w-auto max-w-[calc(100vw-32px)] rounded-xl object-contain ring-1 ring-line shadow-[0_24px_48px_rgba(0,0,0,0.24)] transition-opacity ${instant ? "duration-0" : "duration-150"} ease-out motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
  />
  </div>
  </figure>
- {/* Navigation is the stage itself. Each half of the screen is a way
-     through — left goes back, right goes on — and on a pointer that can
-     hover, a small label rides the cursor to say which. Taps on a phone
-     do the same, alongside the swipes. Keys are unchanged. */}
- <button
- type="button"
- tabIndex={-1}
- aria-hidden
- onClick={() => step(-1)}
- onPointerMove={(e) => moveCue(e, "back")}
- onPointerLeave={hideCue}
- className="absolute inset-y-0 left-0 z-[15] w-1/2 cursor-pointer [@media(pointer:fine)]:cursor-none"
- />
- <button
- type="button"
- tabIndex={-1}
- aria-hidden
- onClick={() => step(1)}
- onPointerMove={(e) => moveCue(e, "next")}
- onPointerLeave={hideCue}
- className="absolute inset-y-0 right-0 z-[15] w-1/2 cursor-pointer [@media(pointer:fine)]:cursor-none"
- />
  <span
  ref={cueRef}
  aria-hidden
  className="pointer-events-none fixed left-0 top-0 z-30 hidden whitespace-nowrap font-sans text-xs text-ink opacity-0 transition-opacity duration-150 ease-out [@media(pointer:fine)]:block"
  >
- {cue === "back" ? "← back" : "next →"}
+ ← drag →
  </span>
  <button
  type="button"
@@ -584,7 +546,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
      through a wall that deals projects against each other. Hover a tick
      for its caption; click to go there. */}
  <div
- className="absolute inset-x-0 bottom-0 z-20 flex flex-col gap-3 px-5 pt-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-end sm:gap-6"
+ className="absolute inset-x-0 bottom-0 z-20 flex flex-col gap-3 px-5 pt-4 sm:grid sm:grid-cols-[1fr_min(560px,52vw)_1fr] sm:items-end sm:gap-6"
  style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))" }}
  >
  <div className="flex min-w-0 items-end justify-between gap-4 font-sans text-sm">
@@ -603,60 +565,13 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  {focus + 1} / {ordered.length}
  </p>
  </div>
- <div
- ref={stripRef}
- role="slider"
- tabIndex={0}
- aria-label="Shots"
- aria-valuemin={1}
- aria-valuemax={ordered.length}
- aria-valuenow={focus + 1}
- aria-valuetext={`${focus + 1} of ${ordered.length}: ${current.caption ?? current.alt}`}
- onPointerDown={(e) => {
- e.currentTarget.setPointerCapture(e.pointerId);
- setScrubbing(true);
- scrubTo(e.clientX);
- }}
- onPointerMove={(e) => {
- if (scrubbing) scrubTo(e.clientX);
- }}
- onPointerUp={() => setScrubbing(false)}
- onPointerCancel={() => setScrubbing(false)}
- onTouchStart={(e) => e.stopPropagation()}
- onTouchEnd={(e) => e.stopPropagation()}
- className="relative flex h-10 cursor-grab touch-none select-none items-end justify-center gap-[2px] outline-none active:cursor-grabbing sm:gap-[3px]"
- >
- {ordered.map((shot, i) => {
- const here = i === focus;
- const kin = !here && projectOf(shot) === projectOf(current);
- return (
- <span key={shot.src} aria-hidden className="group/tick relative flex h-full items-end pb-2">
- <span
- className={`block w-[2px] rounded-full transition-[height,background-color] duration-150 ease-out sm:w-[3px] ${
- here
- ? "h-5 bg-ink"
- : kin
- ? "h-3 bg-ink/45"
- : `h-3 bg-ink/15 ${scrubbing ? "" : "group-hover/tick:h-4 group-hover/tick:bg-ink/40"}`
- }`}
+ <ScrubStrip
+ shots={ordered}
+ focus={focus}
+ onSeek={jump}
+ onCue={(e) => moveCue(e)}
+ onCueHide={hideCue}
  />
- {/* A hovered tick previews where a press would land. While
-     scrubbing it stays out of the way: the caption at the foot
-     already names the shot under the finger, and a label riding
-     the ends of the strip would run off a phone's edge. */}
- <span
- className={`pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 whitespace-nowrap font-sans text-xs text-ink-2 transition-opacity duration-150 ${
- scrubbing
- ? "hidden"
- : "hidden opacity-0 group-hover/tick:opacity-100 [@media(hover:hover)]:block"
- }`}
- >
- {shot.caption ?? shot.alt}
- </span>
- </span>
- );
- })}
- </div>
  <p className="hidden justify-self-end pb-0.5 font-sans text-xs tabular-nums text-ink-3 sm:block" aria-live="polite">
  {focus + 1} / {ordered.length}
  </p>
