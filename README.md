@@ -211,8 +211,8 @@ the hard way:
   new filename, never in place.
 - **The Worker's config is in the repo.** `wrangler.jsonc` pins the runtime
   flags (including `no_handle_cross_request_promise_resolution`, without which
-  about 1 request in 20 returned 500) and builds the OpenNext bundle before
-  `wrangler deploy`. Before it existed, the build generated a config each run.
+  about 1 request in 20 returned 500) and `pnpm run build` now produces the
+  OpenNext bundle that `wrangler deploy` hands to `opennextjs-cloudflare deploy`. Before it existed, the build generated a config each run.
 
 ## Conventions
 

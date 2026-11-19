@@ -6,16 +6,11 @@
   // no_handle_cross_request_promise_resolution: Next/OpenNext share a promise
   // across requests; with the runtime's default, the next request to await it
   // 500s ("created by a request that has since ended"), about 1 in 20.
-  // build.command: Workers Builds only runs `next build`; this makes
-  // `wrangler deploy` produce .open-next/ itself.
   "compatibility_flags": [
     "global_fetch_strictly_public",
     "nodejs_compat",
     "no_handle_cross_request_promise_resolution"
   ],
-  "build": {
-    "command": "npx opennextjs-cloudflare build"
-  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
