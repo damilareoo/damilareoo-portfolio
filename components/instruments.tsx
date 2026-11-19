@@ -503,7 +503,9 @@ type Track = {
 
 export function MusicTile() {
  const [track, setTrack] = useState<Track | null>(null);
- const [artOk, setArtOk] = useState(true);
+ /* The art URL that failed, not a flag: a new track brings a new URL, so its
+    art is allowed to try without an effect resetting anything. */
+ const [failedArt, setFailedArt] = useState<string | null>(null);
 
  useEffect(() => {
  let dead = false;
@@ -553,10 +555,6 @@ export function MusicTile() {
  };
  }, []);
 
- useEffect(() => {
- setArtOk(true);
- }, [track?.albumArt]);
-
  if (track === null || !track.title) return null;
  const playing = Boolean(track?.isPlaying && track.title);
  const lastPlayed = Boolean(!playing && track?.title);
@@ -574,7 +572,7 @@ export function MusicTile() {
     returning visitor does not re-request Spotify at all. Art is decorative
     here — the tile's accessible name carries the track — so if Spotify is
     unreachable the tile falls back to the bare record. */
- const artUrl = art && artOk ? `/api/now-playing/art?u=${encodeURIComponent(art)}` : null;
+ const artUrl = art && failedArt !== art ? `/api/now-playing/art?u=${encodeURIComponent(art)}` : null;
 
  return (
  <Tile
@@ -606,7 +604,7 @@ export function MusicTile() {
  width="100"
  height="100"
  preserveAspectRatio="xMidYMid slice"
- onError={() => setArtOk(false)}
+ onError={() => setFailedArt(art)}
  />
  <rect x="0" y="0" width="100" height="100" fill="url(#cover-scrim)" />
  <g className={playing ? "vinyl-spin" : undefined}>
@@ -623,7 +621,7 @@ export function MusicTile() {
  height="16"
  preserveAspectRatio="xMidYMid slice"
  clipPath="url(#vinyl-peek-label)"
- onError={() => setArtOk(false)}
+ onError={() => setFailedArt(art)}
  />
  <circle cx="84" cy="64" r="8" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
  <circle cx="84" cy="64" r="1.4" fill="#0A0A0A" stroke="rgba(255,255,255,0.4)" strokeWidth="0.4" />

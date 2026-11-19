@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type TouchEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type TouchEvent } from "react";
 import { WALL_SEED, orderGroups, projectOf } from "@/lib/wall-order";
 import Pic from "./pic";
 import { SHOT_DIMENSIONS } from "./shot-dimensions";
@@ -66,6 +66,14 @@ export function shotBox(src: string): { width: number; height: number } | null {
   return d ? { width: d[0], height: d[1] } : null;
 }
 
+/** "zlink — study 01." reads as two lines in the viewer: the project, then
+    which piece of it. A caption with no dash is a single line. */
+function splitCaption(caption: string): [string, string | null] {
+  const at = caption.indexOf("—");
+  if (at === -1) return [caption, null];
+  return [caption.slice(0, at).trim(), caption.slice(at + 1).trim()];
+}
+
 /**
  * The wall — every study at its own shape.
  *
@@ -86,6 +94,11 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  const [focus, setFocus] = useState<number | null>(null);
  const [previous, setPrevious] = useState<number | null>(null);
  const [loaded, setLoaded] = useState(false);
+ /* A key press swaps the shot outright. Arrow keys get held and repeated, and
+    a crossfade on every press is what made stepping feel like it lagged a
+    beat behind the finger. Clicks and swipes keep the short fade. */
+ const [instant, setInstant] = useState(false);
+ const currentImg = useRef<HTMLImageElement>(null);
  const [size, setSize] = useState<WallSize>("m");
  const focusRef = useRef<number | null>(null);
  const loadedRef = useRef(false);
@@ -97,6 +110,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  focusRef.current = i;
  loadedRef.current = false;
  setPrevious(null);
+ setInstant(false);
  setLoaded(false);
  setFocus(i);
  }, []);
@@ -110,7 +124,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  }, []);
 
  const step = useCallback(
- (dir: 1 | -1) => {
+ (dir: 1 | -1, via: "key" | "pointer" = "pointer") => {
  const f = focusRef.current;
  if (f === null || ordered.length < 2) return;
  const next = (f + dir + ordered.length) % ordered.length;
@@ -120,6 +134,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
     an empty stage while this one loads. */
  if (loadedRef.current) setPrevious(f);
  loadedRef.current = false;
+ setInstant(via === "key");
  setLoaded(false);
  setFocus(next);
  },
@@ -167,16 +182,28 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
  e.preventDefault();
  e.stopImmediatePropagation();
- step(1);
+ step(1, "key");
  } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
  e.preventDefault();
  e.stopImmediatePropagation();
- step(-1);
+ step(-1, "key");
  }
  };
  window.addEventListener("keydown", onKey, true);
  return () => window.removeEventListener("keydown", onKey, true);
  }, [focus, step, closeViewer]);
+
+ /* A shot the preloader already fetched is complete the moment it mounts, so
+    waiting for its load event only adds blank frames. Check before paint and
+    show it at once. */
+ useLayoutEffect(() => {
+ const img = currentImg.current;
+ if (focus === null || !img || loadedRef.current) return;
+ if (img.complete && img.naturalWidth > 0) {
+ loadedRef.current = true;
+ setLoaded(true);
+ }
+ }, [focus]);
 
  /* Lock the page behind the viewer. This used to write the previous value
     straight back, so a swipe over the overlay scrolled the wall underneath
@@ -240,6 +267,8 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  ...new Set([
  (focus - 1 + ordered.length) % ordered.length,
  (focus + 1) % ordered.length,
+ (focus - 2 + ordered.length) % ordered.length,
+ (focus + 2) % ordered.length,
  ]),
  ].filter((i) => i !== focus && i !== previous);
 
@@ -364,7 +393,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  loading="eager"
  fetchPriority="low"
  sizes="240px"
- className={`absolute inset-0 h-full w-full scale-110 object-cover blur-3xl saturate-150 transition-opacity duration-200 ease-out motion-reduce:transition-none ${loaded ? "opacity-0" : "opacity-60"}`}
+ className={`absolute inset-0 h-full w-full scale-110 object-cover blur-3xl saturate-150 transition-opacity ${instant ? "duration-0" : "duration-150"} ease-out motion-reduce:transition-none ${loaded ? "opacity-0" : "opacity-60"}`}
  />
  )}
  <Pic
@@ -375,7 +404,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  loading="eager"
  fetchPriority="low"
  sizes="240px"
- className={`absolute inset-0 h-full w-full scale-110 object-cover blur-3xl saturate-150 transition-opacity duration-200 ease-out motion-reduce:transition-none ${loaded ? "opacity-60" : "opacity-0"}`}
+ className={`absolute inset-0 h-full w-full scale-110 object-cover blur-3xl saturate-150 transition-opacity ${instant ? "duration-0" : "duration-150"} ease-out motion-reduce:transition-none ${loaded ? "opacity-60" : "opacity-0"}`}
  />
  </div>
  <div className="absolute inset-0 bg-bg/35 dark:bg-black/45" />
@@ -386,7 +415,19 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
      merely non-blank. */}
  {neighborIndices.length > 0 && (
  <div aria-hidden className="pointer-events-none absolute left-0 top-0 h-px w-px overflow-hidden opacity-0">
- {neighborIndices.map((i) => (
+ {neighborIndices.flatMap((i) => [
+ /* The wash draws from a smaller file than the stage, so it needs
+    its own preload or every step fetches it fresh. */
+ <Pic
+ key={`${ordered[i].src}#wash`}
+ src={ordered[i].src}
+ alt=""
+ draggable={false}
+ loading="eager"
+ fetchPriority="low"
+ sizes="240px"
+ className="h-px w-px"
+ />,
  <Pic
  key={ordered[i].src}
  src={ordered[i].src}
@@ -400,23 +441,10 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  if (typeof img.decode === "function") void img.decode().catch(() => {});
  }}
  className="h-px w-px"
- />
- ))}
+ />,
+ ])}
  </div>
  )}
- <div
- className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col items-start gap-2 px-4 py-4 sm:hidden"
- style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}
- >
- <span className="rounded-full bg-surface/85 px-2.5 py-1 font-sans text-xs text-ink-2 ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
- {focus + 1} / {ordered.length}
- </span>
- {current.caption && (
- <span className="max-w-[80vw] truncate rounded-full bg-surface/85 px-2.5 py-1 font-sans text-xs text-ink-2 ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
- {current.caption}
- </span>
- )}
- </div>
  <figure
  onTouchStart={onTouchStart}
  onTouchEnd={onTouchEnd}
@@ -434,11 +462,12 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  loading="eager"
  fetchPriority="low"
  sizes={VIEWER_SIZES}
- className={`max-h-[74dvh] w-auto max-w-[calc(100vw-32px)] rounded-xl object-contain ring-1 ring-line drop-shadow-[0_24px_48px_rgba(0,0,0,0.24)] transition-opacity duration-200 ease-out motion-reduce:transition-none ${loaded ? "opacity-0" : "opacity-100"}`}
+ className={`max-h-[74dvh] w-auto max-w-[calc(100vw-32px)] rounded-xl object-contain ring-1 ring-line shadow-[0_24px_48px_rgba(0,0,0,0.24)] transition-opacity ${instant ? "duration-0" : "duration-150"} ease-out motion-reduce:transition-none ${loaded ? "opacity-0" : "opacity-100"}`}
  />
  </div>
  )}
  <Pic
+ ref={currentImg}
  key={current.src}
  src={current.src}
  alt={current.alt}
@@ -456,96 +485,63 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  const decoded = typeof img.decode === "function" ? img.decode().catch(() => {}) : Promise.resolve();
  void decoded.then(show);
  }}
- className={`relative z-10 max-h-[74dvh] w-auto max-w-[calc(100vw-32px)] rounded-xl object-contain ring-1 ring-line drop-shadow-[0_24px_48px_rgba(0,0,0,0.24)] transition-opacity duration-200 ease-out motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
+ className={`relative z-10 max-h-[74dvh] w-auto max-w-[calc(100vw-32px)] rounded-xl object-contain ring-1 ring-line shadow-[0_24px_48px_rgba(0,0,0,0.24)] transition-opacity ${instant ? "duration-0" : "duration-150"} ease-out motion-reduce:transition-none ${loaded ? "opacity-100" : "opacity-0"}`}
  />
  </div>
- <figcaption className="mt-4 hidden items-center gap-2 sm:flex">
- {current.caption && (
- <span className="max-w-[40ch] truncate rounded-full bg-surface/85 px-3 py-1.5 font-sans text-xs text-ink-2 ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
- {current.caption}
- </span>
- )}
- <span className="flex items-center gap-1 rounded-full bg-surface/85 p-1 ring-1 ring-line backdrop-blur-md dark:ring-white/10">
- <button
- type="button"
- onClick={() => step(-1)}
- aria-label="Previous shot"
- data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
- >
- <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
- <path d="M10 3 5 8l5 5" />
- </svg>
- </button>
- <button
- type="button"
- onClick={() => step(1)}
- aria-label="Next shot"
- data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
- >
- <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
- <path d="m6 3 5 5-5 5" />
- </svg>
- </button>
- </span>
- <span className="rounded-full bg-surface/85 p-1 ring-1 ring-line backdrop-blur-md dark:ring-white/10">
- <button
- type="button"
- onClick={() => closeViewer()}
- aria-label="Close viewer"
- data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
- >
- <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
- <path d="M3 3l10 10M13 3 3 13" />
- </svg>
- </button>
- </span>
- </figcaption>
  </figure>
- <div
- className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex justify-center sm:hidden"
- style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
- >
- <div className="pointer-events-auto flex items-center gap-1">
- <span className="flex items-center gap-1 rounded-full bg-surface/85 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
- <button
- type="button"
- onClick={() => step(-1)}
- aria-label="Previous shot"
- data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
- >
- <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
- <path d="M10 3 5 8l5 5" />
- </svg>
- </button>
- <button
- type="button"
- onClick={() => step(1)}
- aria-label="Next shot"
- data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
- >
- <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
- <path d="m6 3 5 5-5 5" />
- </svg>
- </button>
- </span>
- <span className="rounded-full bg-surface/85 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-line backdrop-blur-md dark:bg-black/50 dark:ring-white/10">
+ {/* The viewer's chrome, as one band along the foot of the stage: what the
+     shot is on the left, where you are in the middle, the way on to the
+     right. Plain type over the wash rather than a row of outlined pills —
+     the image is the object here, the controls only frame it. Close sits
+     where it does on every other page, top right. */}
  <button
  type="button"
  onClick={() => closeViewer()}
  aria-label="Close viewer"
  data-tone="tap"
- className="grid min-h-11 min-w-11 cursor-pointer place-items-center rounded-full text-ink-2 transition-[color,transform] duration-150 ease-out hover:text-ink active:scale-[0.96] dark:hover:text-ink"
+ className="absolute right-5 top-5 z-20 grid h-10 w-10 cursor-pointer place-items-center rounded-full bg-ink/[0.06] text-ink-2 transition-[color,background-color,transform] duration-150 ease-out hover:bg-ink/[0.12] hover:text-ink active:scale-[0.96] dark:bg-ink/10 dark:hover:bg-ink/20"
+ style={{ top: "max(1.25rem, env(safe-area-inset-top))" }}
  >
- <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
- <path d="M3 3l10 10M13 3 3 13" />
+ <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+ <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
  </svg>
  </button>
- </span>
+ <div
+ className="absolute inset-x-0 bottom-0 z-20 grid grid-cols-[1fr_auto_1fr] items-end gap-4 px-5 pt-4"
+ style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))" }}
+ >
+ <div className="min-w-0 font-sans text-sm">
+ {(() => {
+ const [project, detail] = splitCaption(current.caption ?? current.alt);
+ return (
+ <>
+ <p className="truncate font-medium text-ink">{project}</p>
+ {detail && <p className="truncate text-ink-2">{detail}</p>}
+ </>
+ );
+ })()}
+ </div>
+ <p className="pb-0.5 font-sans text-xs tabular-nums text-ink-3" aria-live="polite">
+ {focus + 1} / {ordered.length}
+ </p>
+ <div className="flex justify-end gap-2">
+ {([
+ { dir: -1, label: "Previous shot", d: "M13 8H3m4-4L3 8l4 4" },
+ { dir: 1, label: "Next shot", d: "M3 8h10M9 4l4 4-4 4" },
+ ] as const).map((b) => (
+ <button
+ key={b.label}
+ type="button"
+ onClick={() => step(b.dir)}
+ aria-label={b.label}
+ data-tone="tap"
+ className="grid h-11 w-11 cursor-pointer place-items-center rounded-full bg-ink/[0.06] text-ink-2 transition-[color,background-color,transform] duration-150 ease-out hover:bg-ink/[0.12] hover:text-ink active:scale-[0.96] dark:bg-ink/10 dark:hover:bg-ink/20"
+ >
+ <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+ <path d={b.d} />
+ </svg>
+ </button>
+ ))}
  </div>
  </div>
  </div>

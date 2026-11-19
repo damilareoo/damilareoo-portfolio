@@ -69,6 +69,9 @@ describe("the wall's labels", () => {
 
     const dialog = host.querySelector<HTMLElement>('[role="dialog"]')!;
     expect(dialog).toBeTruthy();
-    expect(dialog.textContent).toContain(caption);
+    // The viewer sets "project — detail" as two lines, so check each half.
+    for (const part of caption.split("—").map((t) => t.trim()).filter(Boolean)) {
+      expect(dialog.textContent).toContain(part);
+    }
   });
 });
