@@ -110,7 +110,7 @@ export default function Home() {
  ? { background: w.bg as string }
  : { background: "var(--surface-2)" }
  }
- className={`aspect-[16/10] w-full ${"fit" in w && w.fit === "contain" ? "object-contain" : "object-cover"} ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
+ className={`aspect-[16/10] w-full ${w.slug === "hitmans-library" ? "invert-dark" : ""} ${"fit" in w && w.fit === "contain" ? "object-contain" : "object-cover"} ${"still" in w && w.still ? "" : "transition-transform duration-500 group-hover:scale-[1.02]"}`}
  />
  </ViewTransition>
  </Link>

@@ -49,6 +49,8 @@ export function WarpShot({
  const frame = frameRef.current;
  const img = imgRef.current;
  if (!frame || !img) return;
+ /* A cached tile can finish before hydration attaches onLoad. */
+ if (img.complete && img.naturalWidth > 0) img.setAttribute("data-loaded", "");
  if (window.matchMedia("(hover: none), (pointer: coarse)").matches) return;
  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -81,7 +83,7 @@ export function WarpShot({
  return (
  <figure
  ref={frameRef}
- className={`shot-in block w-full break-inside-avoid overflow-hidden ring-1 ring-line motion-reduce:animate-none ${intrinsic ? "" : "h-full"}`}
+ className={`shot-in tile-scan block w-full break-inside-avoid overflow-hidden ring-1 ring-line motion-reduce:animate-none ${intrinsic ? "" : "h-full"}`}
  style={{ perspective: "600px", animationDelay: `${Math.min(index, 10) * 40}ms` }}
  >
  <Pic
@@ -95,6 +97,7 @@ export function WarpShot({
  width={width}
  height={height}
  draggable={false}
+ onLoad={(e) => e.currentTarget.setAttribute("data-loaded", "")}
  className={`${intrinsic ? "h-auto" : "h-full"} w-full will-change-transform ${fit === "contain" ? "object-contain" : "object-cover"} ${square ? "aspect-square" : ""}`}
 />
  </figure>

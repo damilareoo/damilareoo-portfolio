@@ -224,7 +224,7 @@ export default async function WorkCasePage({
  ))}
  </nav>
 
- <DFloor />
+ <DFloor className="lg:ml-[calc(300px+4rem)]" />
  </div>
  </main>
  );
