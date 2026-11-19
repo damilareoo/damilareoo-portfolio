@@ -1597,3 +1597,23 @@ body {
 .dark .invert-dark {
   filter: invert(1);
 }
+
+/* The footer's playing bars: three hairline bars at offset tempos, only
+   rendered while a track is actually playing. Reduced motion holds them. */
+.eq > span {
+  display: block;
+  width: 2px;
+  height: 100%;
+  background: currentColor;
+  transform-origin: bottom;
+  animation: eq 900ms ease-in-out infinite alternate;
+}
+.eq > span:nth-child(2) { animation-duration: 700ms; animation-delay: -300ms; }
+.eq > span:nth-child(3) { animation-duration: 1100ms; animation-delay: -600ms; }
+@keyframes eq {
+  from { transform: scaleY(0.3); }
+  to { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eq > span { animation: none; transform: scaleY(0.6); }
+}

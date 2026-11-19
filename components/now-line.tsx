@@ -45,6 +45,14 @@ export function NowLine() {
       {track?.title && (
         <span className="text-ink-3">
           {" · "}
+          {track.isPlaying && (
+            /* Three bars that only move while something is playing. */
+            <span aria-hidden className="eq mr-1.5 inline-flex h-2.5 items-end gap-[2px] align-baseline">
+              <span />
+              <span />
+              <span />
+            </span>
+          )}
           {track.isPlaying ? "now" : "last"}: <span className="text-ink-2">{track.title}</span>
           {track.artist && <> — {track.artist}</>}
         </span>

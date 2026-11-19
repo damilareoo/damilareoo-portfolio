@@ -52,7 +52,7 @@ describe("case-file chapters", () => {
   it("places every frame but the lead in exactly one chapter", () => {
     for (const c of workCases) {
       if (!c.chapters) continue;
-      const placed = c.chapters.flatMap((ch) => ch.frames).sort((a, b) => a - b);
+      const placed = c.chapters.flatMap((ch) => ch.frames.flat()).sort((a, b) => a - b);
       const expected = c.gallery.map((_, i) => i).slice(1);
       expect(placed, `${c.name} chapters`).toEqual(expected);
       for (const ch of c.chapters) {

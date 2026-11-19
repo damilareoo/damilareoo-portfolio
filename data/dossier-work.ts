@@ -25,7 +25,8 @@ export type WorkCase = {
   /** The story, told beside the work. Each chapter is a claim, a line or
       two behind it, and the gallery frames (by index) that show it. The
       lead frame (index 0) sits above the chapters and belongs to none. */
-  chapters?: { title: string; body: string; frames: number[] }[];
+  /** A frame index, or two indices shown side by side on wide screens. */
+  chapters?: { title: string; body: string; frames: (number | [number, number])[] }[];
   /** Where it landed, said plainly. Closes the story. */
   outcome?: string;
   gallery: { src: string; alt: string; caption: string; note?: string; kind?: "video"; poster?: string; tall?: boolean; motion?: "rainbow" | "chessever" | "hitman" | "sylvan" }[];
@@ -92,7 +93,7 @@ export const workCases: WorkCase[] = [
       {
         title: "Make it yours.",
         body: "Heart what you like and file it into sets. Leave an email and every Monday brings new sites like the ones you've hearted. Pro members get a numbered card with everything they keep.",
-        frames: [9, 10, 11, 12],
+        frames: [[9, 10], 11, 12],
       },
       {
         title: "Built to work anywhere.",
@@ -102,7 +103,7 @@ export const workCases: WorkCase[] = [
       {
         title: "The details around it.",
         body: "A shelf of four books for a mark, a short about page, and a changelog where every fix is dated and signed by whoever made it.",
-        frames: [18, 16, 17],
+        frames: [18, [16, 17]],
       },
     ],
     outcome: "Live at hitmanslibrary.xyz with 347 sites, and still growing.",
@@ -275,17 +276,17 @@ export const workCases: WorkCase[] = [
       {
         title: "Clear, but never cold.",
         body: "Untitled Sans from Klim carries the display type, Inter the interface and Geist Mono the small labels. One type system, H1 to P3, tracked and leaded.",
-        frames: [3, 4, 5, 6],
+        frames: [[3, 4], [5, 6]],
       },
       {
         title: "A quiet palette.",
         body: "Primary is a deep green, #1C3B37, with mint and butter as accents and four neutrals underneath. Calm, so the signals stand out.",
-        frames: [7, 8],
+        frames: [[7, 8]],
       },
       {
         title: "Data, drawn like nature.",
         body: "The illustrations are ASCII trees: data and nature in the same characters, growing from small signals the way the product grows revenue. Mario Prasetyo hand-drew them.",
-        frames: [9, 10, 11],
+        frames: [9, [10, 11]],
       },
       {
         title: "Words to match.",
@@ -443,13 +444,18 @@ export const workCases: WorkCase[] = [
       },
       {
         title: "Depth, only when you want it.",
-        body: "Engine reads, openings, standings and form sit one step from the board. The database goes deep, with TWIC lists, search and filters that stay out of the way. Alerts arrive before rounds and move by move.",
-        frames: [5, 7, 8, 9, 10, 11],
+        body: "Engine reads, openings, standings and player form sit one step from the board, never in the way of it.",
+        frames: [5, 7],
+      },
+      {
+        title: "A database that goes deep.",
+        body: "TWIC lists, search, filters that stay out of the way, and folders for the games you keep. Alerts arrive before rounds, then move by move.",
+        frames: [8, 9, 10, 11],
       },
       {
         title: "A brand that lives off the board.",
         body: "Four squares, one piece. The mark carries onto merch, with a voice that says it simply: follow chess better.",
-        frames: [12, 13, 14],
+        frames: [12, [13, 14]],
       },
     ],
     outcome: "5.0 on the App Store and 4.8 on Google Play, with 1,000+ people using it every week. Pitched at TWiST Gamma.",
@@ -610,14 +616,24 @@ export const workCases: WorkCase[] = [
         frames: [1],
       },
       {
-        title: "Watch it, learn it, review it.",
-        body: "Tournament coverage with live boards, standings and chat, team events included. Lessons in chapters, with checkpoints along the way. Coach review that grades every move.",
-        frames: [8, 9, 10, 11, 12, 13, 14, 15, 16],
+        title: "Tournaments, in your pocket.",
+        body: "Live boards, standings and chat for every event, team events included. Team standings keep only what matters: match points and game points.",
+        frames: [8, 9, [15, 16]],
+      },
+      {
+        title: "Lessons that read like chapters.",
+        body: "Learn is built in chapters, with checkpoints along the way, on desktop and on the phone. Finish a lesson, earn XP, move on.",
+        frames: [10, 11, [12, 13]],
+      },
+      {
+        title: "A coach for every game.",
+        body: "Coach review grades every move and breaks accuracy down by phase of the game.",
+        frames: [14],
       },
       {
         title: "A reason to come back.",
         body: "XP, streaks and achievements turn the profile into a game board. Two piece sets, CZAR and Hopea, were drawn from scratch.",
-        frames: [17, 18, 19, 20],
+        frames: [17, 18, [19, 20]],
       },
       {
         title: "One language, two skins.",

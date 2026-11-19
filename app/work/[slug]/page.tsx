@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { DFloor } from "@/components/dfooter";
 import { CaseImage, CaseVideo } from "@/components/case-frame";
 import { ChapterReader } from "@/components/chapter-reader";
+import { LinkedText } from "@/components/linked-text";
 import { WayBack } from "@/components/way-back";
 import { findCase, workCases } from "@/data/dossier-work";
 
@@ -69,8 +70,8 @@ export default async function WorkCasePage({
  const frames = c.gallery;
 
  const lead = frames[0];
- const chapters = c.chapters ?? [{ title: c.name, body: "", frames: frames.map((_, i) => i).slice(1) }];
- const pad = (n: number) => String(n).padStart(2, "0");
+ const chapters: { title: string; body: string; frames: (number | [number, number])[] }[] =
+ c.chapters ?? [{ title: c.name, body: "", frames: frames.map((_, i) => i).slice(1) }];
 
  return (
  <main className="bg-bg text-ink">
@@ -91,7 +92,7 @@ export default async function WorkCasePage({
  <div className="mt-4 grid gap-x-16 gap-y-6 lg:grid-cols-[300px_minmax(0,1fr)]">
  <h1 className="font-sans text-lg font-medium leading-snug">{c.name}</h1>
  <div>
- <p className="max-w-[46ch] text-balance font-sans text-lg leading-snug text-ink-2">{c.oneLiner}</p>
+ <p className="text-pretty font-sans text-lg leading-snug text-ink-2">{c.oneLiner}</p>
  <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 font-sans text-sm sm:flex sm:flex-wrap sm:gap-x-10">
  {c.year && (
  <div>
@@ -153,31 +154,41 @@ export default async function WorkCasePage({
  </div>
  )}
 
- {/* The chapters. On a wide screen one reader stays pinned on the left
-     for the whole story (components/chapter-reader.tsx): the rail of
-     chapter meters, then the chapter you are in, beside the frames that
-     make its claim. On a phone each chapter's words sit above its frames
-     and a hairline at the top of the screen keeps the meters. */}
+ {/* The chapters. On a wide screen one guide stays pinned on the left
+     for the whole story (components/chapter-reader.tsx): the chapter you
+     are in, beside the frames that
+     make its claim. On a phone each chapter's words sit above its frames. */}
  <div className="mt-20 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-x-16">
  <aside className="lg:relative">
- <ChapterReader chapters={chapters.map(({ title, body }) => ({ title, body }))} />
+ <ChapterReader chapters={chapters.map(({ title, body }) => ({ title, body }))} links={c.links} />
  </aside>
  <div className="space-y-20">
  {chapters.map((ch, k) => (
  <section key={ch.title} data-chapter={k} aria-labelledby={`ch-${k}`} className="scroll-mt-20">
  <div className="mb-6 lg:sr-only">
- <p className="font-sans text-xs tabular-nums text-ink-3">
- {pad(k + 1)} / {pad(chapters.length)}
- </p>
- <h2 id={`ch-${k}`} className="mt-2 text-balance font-sans text-lg font-medium leading-snug text-ink">
+ <h2 id={`ch-${k}`} className="text-pretty font-sans text-lg font-medium leading-snug text-ink">
  {ch.title}
  </h2>
- {ch.body && <p className="mt-3 text-pretty font-sans text-sm leading-relaxed text-ink-2">{ch.body}</p>}
+ {ch.body && (
+ <p className="mt-3 text-pretty font-sans text-sm leading-relaxed text-ink-2">
+ <LinkedText text={ch.body} links={c.links} />
+ </p>
+ )}
  </div>
  <div className="space-y-12">
- {ch.frames.map((fi) => (
+ {ch.frames.map((item) =>
+ Array.isArray(item) ? (
+ /* Two frames of one subject, side by side: it breaks the
+    single-file run and lets a comparison read as one. */
+ <div key={item.join("-")} className="grid gap-x-4 gap-y-12 sm:grid-cols-2">
+ {item.map((fi) => (
  <Frame key={frames[fi].src} g={frames[fi]} n={fi} slug={c.slug} />
  ))}
+ </div>
+ ) : (
+ <Frame key={frames[item].src} g={frames[item]} n={item} slug={c.slug} />
+ ),
+ )}
  </div>
  </section>
  ))}
@@ -189,7 +200,9 @@ export default async function WorkCasePage({
  <h2 id="outcome" className="font-sans text-sm text-ink-3">
  Where it landed
  </h2>
- <p className="max-w-[40ch] text-balance font-sans text-lg leading-snug text-ink">{c.outcome}</p>
+ <p className="text-pretty font-sans text-lg leading-snug text-ink">
+ <LinkedText text={c.outcome} links={c.links} />
+ </p>
  </section>
  )}
  </div>
@@ -265,11 +278,11 @@ function Frame({ g, n, lead = false, slug }: { g: GalleryFrame; n: number; lead?
  ) : (
  box
  )}
- {(g.caption || g.note) && (
- <figcaption className={`mt-3 max-w-[64ch] text-pretty font-sans text-xs leading-normal ${g.tall ? "mx-auto sm:max-w-[400px]" : ""}`}>
- {g.caption && <span className="text-ink">{g.caption}.</span>}
- {g.caption && g.note && " "}
- {g.note && <span className="text-ink-2">{g.note}</span>}
+ {/* The caption names the frame and nothing more: the chapter beside it
+     already says what to see, and saying it twice made both weaker. */}
+ {g.caption && (
+ <figcaption className={`mt-2.5 font-sans text-xs text-ink-3 ${g.tall ? "mx-auto sm:max-w-[400px]" : ""}`}>
+ {g.caption}
  </figcaption>
  )}
  </figure>
