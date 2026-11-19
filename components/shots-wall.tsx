@@ -121,6 +121,8 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  const ordered = useMemo(() => orderGroups(shots, seed), [shots, seed]);
  const projectCount = useMemo(() => new Set(ordered.map(projectOf)).size, [ordered]);
 
+ const [standIn, setStandIn] = useState<{ src: string; url: string } | null>(null);
+
  const openShot = useCallback((i: number, from?: HTMLElement) => {
  const open = () => {
  focusRef.current = i;
@@ -130,35 +132,33 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  setLoaded(false);
  setFocus(i);
  };
- /* The tile grows into the stage. The tile carries the shared name for the
-    "before" picture, hands it to the stage image inside the update, and the
-    update waits (briefly) for that image to be ready so the "after" picture
-    is the shot, not an empty frame. */
+ /* The tile grows into the stage, at once, the way a cover grows into its
+    case study. Three things make that possible:
+    - the tile's hover tilt is cleared first, so the "before" picture is the
+      flat tile, not a skewed one;
+    - the stage image is sized before it loads (its box comes from the
+      shot's known dimensions) and shows the tile's own, already-loaded
+      picture behind it until the full-size file lands, so the "after"
+      picture is never empty and nothing has to wait;
+    - the update is synchronous. It used to wait up to 300ms for the
+      full-size image, which froze the page between click and motion. */
  const vt = from ? startMorph() : null;
- if (!vt || !from) return open();
- from.style.viewTransitionName = "shot-stage";
- vt.run(async () => {
- from.style.viewTransitionName = "";
+ const tileImg = from?.querySelector("img") ?? null;
+ if (!vt || !from || !tileImg) return open();
+ tileImg.style.transition = "none";
+ tileImg.style.transform = "";
+ setStandIn({ src: ordered[i].src, url: tileImg.currentSrc || tileImg.src });
+ tileImg.style.viewTransitionName = "shot-stage";
+ vt.run(() => {
+ tileImg.style.viewTransitionName = "";
  flushSync(() => {
  open();
  setInstant(true);
- });
- const img = currentImg.current;
- if (img) {
- const ready = img.complete
- ? Promise.resolve()
- : new Promise<void>((done) => {
- img.addEventListener("load", () => done(), { once: true });
- img.addEventListener("error", () => done(), { once: true });
- });
- await Promise.race([ready.then(() => img.decode().catch(() => {})), new Promise((t) => setTimeout(t, 300))]);
- }
- flushSync(() => {
  loadedRef.current = true;
  setLoaded(true);
  });
  });
- }, []);
+ }, [ordered]);
 
  /* `morph` is for pointer closes (the ✕, the backdrop): the stage shrinks
     back into its tile. Esc closes outright — a keyboard action never waits
@@ -173,7 +173,7 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  setLoaded(false);
  setFocus(null);
  };
- const tile = morph && f !== null ? document.querySelector<HTMLElement>(`[data-shot="${f}"]`) : null;
+ const tile = morph && f !== null ? document.querySelector<HTMLElement>(`[data-shot="${f}"] img`) : null;
  const r = tile?.getBoundingClientRect();
  const visible = r && r.bottom > 0 && r.top < window.innerHeight;
  const vt = tile && visible ? startMorph() : null;
@@ -549,7 +549,13 @@ export function ShotsWall({ shots }: { shots: Shot[] }) {
  <Pic
  ref={currentImg}
  key={current.src}
- style={{ viewTransitionName: "shot-stage" }}
+ {...(current.width && current.height ? { width: current.width, height: current.height } : (shotBox(current.src) ?? {}))}
+ style={{
+ viewTransitionName: "shot-stage",
+ ...(standIn?.src === current.src
+ ? { backgroundImage: `url("${standIn.url}")`, backgroundSize: "cover", backgroundPosition: "center" }
+ : {}),
+ }}
  src={current.src}
  alt={current.alt}
  draggable={false}
